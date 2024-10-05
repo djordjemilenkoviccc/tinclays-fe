@@ -1,0 +1,6 @@
+
+.custom-dropdown-btn .dropdown-toggle::after {
+    display: none; /* This hides the arrow */
+    color: white !important;
+}
+

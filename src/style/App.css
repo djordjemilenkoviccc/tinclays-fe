@@ -1,0 +1,29 @@
+html,
+body {
+  background-color: #ffffff;
+  overflow-x: hidden;
+
+  background-size: cover;
+  min-height: 100%;
+  font-optical-sizing: auto;
+  font-style: normal;
+  font-variation-settings:
+    "wdth" 100;
+}
+
+.root-div {
+  padding-left: 5%;
+  padding-right: 5%;
+  margin-top: 100px;
+}
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.content-wrap {
+  flex: 1;
+  padding-bottom: 100px;
+}

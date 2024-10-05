@@ -1,0 +1,39 @@
+
+
+
+.hidden-button {
+    opacity: 0;
+    transition: opacity 0.3s;
+    cursor: pointer;
+}
+
+.product-root {
+    opacity: 1;
+    margin-bottom: 40px ;
+}
+
+.product-root:hover .hidden-button {
+    opacity: 1;
+}
+
+@media (max-width: 991px) {
+    .product-root .hidden-button {
+        opacity: 1;
+    }
+}
+
+.disabled-add-to-cart {
+    background-color: #cccccc; /* Light gray background */
+    color: #666666; /* Darker text color */
+    cursor: not-allowed; /* Shows a "not-allowed" cursor */
+    transition: opacity 0.3s;
+    opacity: 0 !important; /* Maintain full opacity */
+    
+}
+
+/* Optionally, override other styles that may apply to a standard button */
+.disabled-add-to-cart:hover {
+    background-color: #cccccc; /* Prevent hover effect */
+    color: #666666;
+    opacity: 1 !important;
+}

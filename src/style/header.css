@@ -1,0 +1,27 @@
+
+.navbar-shadow {
+    /* box-shadow: 0 7px 10px -10px gray; */
+    background-color: #f2f1f0;
+    padding-left: 5%;
+    padding-right: 5%;
+    height: 100px;
+  }
+  
+
+  .cart-menu {
+    position: relative;
+    display: block;
+  }
+
+  .cart-menu svg {
+    overflow: visible;
+  }
+
+  .cart-count {
+    text-decoration: none;
+  }
+
+  .cart-icon-text {
+    width: 30px;
+    height: 30px;
+  }

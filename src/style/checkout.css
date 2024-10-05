@@ -1,0 +1,49 @@
+@import url('../style/App.css');
+@import url('../style/home.css');
+
+.custom-input {
+    border: none;
+    /* Remove all borders */
+    border-radius: 0;
+    border-bottom: 2px solid black;
+    /* Add a bottom border */
+    padding: 8px 0;
+    /* Adjust padding to create space at the top */
+    font-size: 16px;
+    outline: none;
+    background-color: transparent;
+}
+
+.custom-input:focus {
+    border-bottom: 2px solid black;
+    background-color: white;
+    box-shadow: none;
+}
+
+.custom-input::placeholder {
+    color: #aaa;
+}
+
+/* Placeholder styling */
+.custom-input::placeholder {
+    color: #666;
+}
+
+.root-div {
+    padding-left: 10%;
+    padding-right: 10%;
+    margin-top: 150px;
+}
+
+@media (max-width: 767.98px) { /* Adjust this value based on your breakpoints */
+    .product-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+  
+    .product-item img {
+      width: 100%; /* Full width on small screens */
+      margin-top: 10px; /* Spacing between text and image */
+    }
+  }
