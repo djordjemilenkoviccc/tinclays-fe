@@ -1,4 +1,4 @@
-import { Card, Button, Row, Col, Modal, Form, Alert } from 'react-bootstrap';
+import { Card, Button, Row, Col, Modal, Form, Alert, Dropdown, DropdownButton } from 'react-bootstrap';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -149,10 +149,9 @@ export default function AdminProducts() {
                     )}
                     <Form>
                         <Form.Group className="mb-3" controlId="formNewCategoryName">
-                            <Form.Label>Ime nove kategorije</Form.Label>
+                            <Form.Label>Naziv proizvoda</Form.Label>
                             <Form.Control
                                 type="text"
-                                onChange={(e) => setUpdatedName(e.target.value)}
                             />
                         </Form.Group>
 
@@ -171,6 +170,46 @@ export default function AdminProducts() {
                                 />
                             )}
                         </Form.Group>
+
+
+                        <Form.Group className="mb-3" controlId="formNewCategoryImage">
+                            <Form.Label>Kategorija proizvoda</Form.Label>
+                            <Form.Select aria-label="Default select example">
+                                <option>Open this select menu</option>
+                                <option value="1">One</option>
+                                <option value="2">Two</option>
+                                <option value="3">Three</option>
+                            </Form.Select>
+                        </Form.Group>
+
+                        <Form.Group className="mb-3" controlId="formNewCategoryName">
+                            <Form.Label>Opis proizvoda</Form.Label>
+                            <Form.Control
+                                type="text"
+                            />
+                        </Form.Group>
+
+                        <Form.Group className="mb-3" controlId="formNewCategoryName">
+                            <Form.Label>Cena</Form.Label>
+                            <Form.Control
+                                type="number"
+                            />
+                        </Form.Group>
+
+                        <Form.Group className="mb-3" controlId="formNewCategoryName">
+                            <Form.Label>Koliko ovakvih solja je na stanju</Form.Label>
+                            <Form.Control
+                                type="number"
+                            />
+                        </Form.Group>
+
+                        <Form.Group className="mb-3" controlId="formNewCategoryName">
+                            <Form.Label>Prikazi na sajtu</Form.Label>
+                            <Form.Control
+                                type="check"
+                            />
+                        </Form.Group>
+
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>

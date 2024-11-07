@@ -18,7 +18,7 @@ export default function AdminCategories() {
             try {
                 const token = localStorage.getItem('jwtToken');
                 const response = await fetch('http://localhost:8080/api/v1/category/getAllCategories', {
-                    method: 'POST',
+                    method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
