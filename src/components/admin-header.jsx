@@ -3,7 +3,7 @@ import { AuthContext } from './auth-context';
 import { useNavigate } from 'react-router-dom';
 import { Navbar, Nav, Button } from 'react-bootstrap';
 import { NavLink } from 'react-router-dom';
-import '../assets/bootstrap.min.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 export default function AdminHeader() {
     const { logout } = useContext(AuthContext);  // Access the logout function from AuthContext
