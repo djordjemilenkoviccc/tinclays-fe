@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom';
 
 export default function AdminProducts() {
     const [products, setProducts] = useState([]);
+    const [categories, setCategories] = useState([]);
+    const [selectedImage, setSelectedImage] = useState(null);
     const [productsWithImages, setProductsWithImages] = useState([]);
     const navigate = useNavigate();
 
@@ -11,12 +13,20 @@ export default function AdminProducts() {
     const [showAdd, setShowAdd] = useState(false);
     const [showSuccessBanner, setShowSuccessBanner] = useState(false);
     const [imagePreview, setImagePreview] = useState(null);
-    const [imageType, setImageType] = useState(null); // Default to JPEG
+    const [imageType, setImageType] = useState(null);
+
+    const [name, setName] = useState('');
+    const [image, setImage] = useState(null);
+    const [category, setCategory] = useState('');
+    const [description, setDescription] = useState('');
+    const [price, setPrice] = useState('');
+    const [stock, setStock] = useState('');
+    const [showOnSite, setShowOnSite] = useState(false);
 
     const handleImageChange = (e) => {
         const file = e.target.files[0];
         if (file) {
-            setUpdatedImage(file);
+            setSelectedImage(file);
             //console.log(file.type.split("/")[1]);
             const reader = new FileReader();
             reader.onloadend = () => {
@@ -30,7 +40,6 @@ export default function AdminProducts() {
     const handleAddClose = () => {
         setShowAdd(false);
         setShowSuccessBanner(false);
-
         setImagePreview(null);
     };
 
@@ -42,13 +51,31 @@ export default function AdminProducts() {
     const submitAddProduct = async () => {
         const formData = new FormData();
 
-        const token = localStorage.getItem('jwtToken');
+        const productDtoRequestBlob = new Blob(
+            [JSON.stringify({
+                name: name,
+                categoryId: category,
+                description: description,
+                price: price,
+                stock: stock,
+                showOnSite: showOnSite,
+            })],
+            { type: "application/json" }
+        );
+
+        formData.append("productDtoRequest", productDtoRequestBlob);
+
+        if (selectedImage) {
+            formData.append("images", selectedImage); // Assuming `image` is the file object
+        }
+
+        const token = localStorage.getItem("jwtToken");
 
         try {
-            const response = await fetch('http://localhost:8080/api/v1/category/addCategory', {
-                method: 'POST',
+            const response = await fetch("http://localhost:8080/api/v1/product/addProduct", {
+                method: "POST",
                 headers: {
-                    'Authorization': `Bearer ${token}`
+                    "Authorization": `Bearer ${token}`
                 },
                 body: formData
             });
@@ -56,12 +83,13 @@ export default function AdminProducts() {
             if (response.ok) {
                 setShowSuccessBanner(true);
             } else {
-                console.error('Failed to add category');
+                console.error("Failed to add product");
             }
         } catch (error) {
-            console.error('Error:', error);
+            console.error("Error:", error);
         }
     };
+
 
 
     useEffect(() => {
@@ -88,6 +116,33 @@ export default function AdminProducts() {
         };
 
         fetchProducts();
+    }, []);
+
+    useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                const token = localStorage.getItem('jwtToken');
+                const response = await fetch('http://localhost:8080/api/v1/category/getAllCategoriesWithIdAndNames', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    // console.log(data);
+                    setCategories(data);
+
+                } else {
+                    console.error('Failed to fetch categories');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        };
+
+        fetchCategories();
     }, []);
 
 
@@ -148,15 +203,17 @@ export default function AdminProducts() {
                         </Alert>
                     )}
                     <Form>
-                        <Form.Group className="mb-3" controlId="formNewCategoryName">
+                        <Form.Group className="mb-3">
                             <Form.Label>Naziv proizvoda</Form.Label>
                             <Form.Control
                                 type="text"
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
                             />
                         </Form.Group>
 
-                        <Form.Group className="mb-3" controlId="formNewCategoryImage">
-                            <Form.Label>Slika nove kategorije</Form.Label>
+                        <Form.Group className="mb-3">
+                            <Form.Label>Slika proizvoda</Form.Label>
                             <Form.Control
                                 type="file"
                                 accept="image/*"
@@ -165,48 +222,61 @@ export default function AdminProducts() {
                             {imagePreview && (
                                 <Card.Img
                                     variant="top"
-                                    src={imagePreview.startsWith("data:image") ? imagePreview : `data:${imageType};base64,${imagePreview}`}
+                                    src={imagePreview}
                                     style={{ height: '100%', objectFit: 'cover' }}
                                 />
                             )}
                         </Form.Group>
 
-
-                        <Form.Group className="mb-3" controlId="formNewCategoryImage">
+                        <Form.Group className="mb-3">
                             <Form.Label>Kategorija proizvoda</Form.Label>
-                            <Form.Select aria-label="Default select example">
-                                <option>Open this select menu</option>
-                                <option value="1">One</option>
-                                <option value="2">Two</option>
-                                <option value="3">Three</option>
+                            <Form.Select
+                                aria-label="Izaberi kategoriju"
+                                value={category}
+                                onChange={(e) => setCategory(e.target.value)}
+                            >
+                                <option value="">Izaberi kategoriju</option>
+                                {categories.map(category => (
+                                    <option key={category.id} value={category.id}>
+                                        {category.name}
+                                    </option>
+                                ))}
                             </Form.Select>
                         </Form.Group>
 
-                        <Form.Group className="mb-3" controlId="formNewCategoryName">
+                        <Form.Group className="mb-3">
                             <Form.Label>Opis proizvoda</Form.Label>
                             <Form.Control
                                 type="text"
+                                value={description}
+                                onChange={(e) => setDescription(e.target.value)}
                             />
                         </Form.Group>
 
-                        <Form.Group className="mb-3" controlId="formNewCategoryName">
+                        <Form.Group className="mb-3">
                             <Form.Label>Cena</Form.Label>
                             <Form.Control
                                 type="number"
+                                value={price}
+                                onChange={(e) => setPrice(e.target.value)}
                             />
                         </Form.Group>
 
-                        <Form.Group className="mb-3" controlId="formNewCategoryName">
-                            <Form.Label>Koliko ovakvih solja je na stanju</Form.Label>
+                        <Form.Group className="mb-3">
+                            <Form.Label>Koliko ovakvih proizvoda je na stanju</Form.Label>
                             <Form.Control
                                 type="number"
+                                value={stock}
+                                onChange={(e) => setStock(e.target.value)}
                             />
                         </Form.Group>
 
-                        <Form.Group className="mb-3" controlId="formNewCategoryName">
+                        <Form.Group className="mb-3">
                             <Form.Label>Prikazi na sajtu</Form.Label>
-                            <Form.Control
-                                type="check"
+                            <Form.Check
+                                type="checkbox"
+                                checked={showOnSite}
+                                onChange={(e) => setShowOnSite(e.target.checked)}
                             />
                         </Form.Group>
 
