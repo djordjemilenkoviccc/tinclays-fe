@@ -23,7 +23,7 @@ export default function Login() {
             const token = response.data.jwtToken;
             login(token);
 
-            navigate('/admin-panel');
+            navigate('/admin-panel/in_progress');
         } catch (error) {
             if (error.response && error.response.status === 403) {
                 setError('Invalid username or password. Please try again.');

@@ -1,10 +1,42 @@
-import React, { createContext, useState, useRef } from 'react';
+import React, { createContext, useState, useRef, useEffect } from 'react';
 import products from '../assets/data/products.json';
 
 export const CartContext = createContext();
 
 export default function CartProvider({ children }) {
-    const [cartItems, setCartItems] = useState([]);
+    const getWithExpiry = (key) => {
+        const data = localStorage.getItem(key);
+        if (!data) return null;
+
+        const { value, expiry } = JSON.parse(data);
+
+        if (new Date().getTime() > expiry) {
+            localStorage.removeItem(key); // Remove expired data
+            return null;
+        }
+
+        return value;
+    };
+
+    const setWithExpiry = (key, value, expiryTimeInMs) => {
+        const data = {
+            value,
+            expiry: new Date().getTime() + expiryTimeInMs,
+        };
+        localStorage.setItem(key, JSON.stringify(data));
+    };
+
+    const [cartItems, setCartItems] = useState(() => {
+        const savedCart = getWithExpiry('cartItems');
+        return savedCart ? savedCart : [];
+    });
+
+    useEffect(() => {
+        setWithExpiry('cartItems', cartItems, 60 * 60 * 1000);
+    }, [cartItems]);
+
+
+
     const [showCart, setShowCart] = useState(false);
     const cartItemsEndRef = useRef(null);
 
@@ -22,7 +54,7 @@ export default function CartProvider({ children }) {
                         : item
                 );
             } else {
-                return [...prevItems, { ...product, quantity: 1 }];
+                return [...prevItems, { ...product, quantity: 1, stock: product.stock }];
             }
         });
         setShowCart(true);
@@ -33,8 +65,7 @@ export default function CartProvider({ children }) {
         setCartItems((prevItems) => {
             return prevItems.map(item => {
                 if (item.id === productId) {
-                    const product = products.find(p => p.id === productId);
-                    if (item.quantity < product.amount) {
+                    if (item.quantity < item.stock) {
                         return { ...item, quantity: item.quantity + 1 };
                     }
                 }

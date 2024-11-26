@@ -1,5 +1,5 @@
 .home-root {
-    margin-top: 100px;
+    margin-top: 120px;
     padding-left: 5%;
     padding-right: 5%;
 }
@@ -23,10 +23,11 @@
     transition: 0.3s;
 }
 
-.btn-shop-now:active {
+.btn-shop-now:hover {
     background-color: #bfb09c !important;
-    color: black !important;
+    color: black;
 }
+
 
 .collection-paragraph {
     margin-top: 1%;
@@ -40,21 +41,18 @@
     background-color: white;
 }
 
-.btn-shop-now:hover {
-    background-color: #bfb09c;
-    color: black;
-}
+
 
 .text-on-cover-image {
     color: white;
-    font-size: 70px;
+    font-size: 36px;
     font-family: Arial, Helvetica, sans-serif;
 }
 
 
 .product-image {
     width: 100%;
-    height: auto;
+    height: 350px;
     object-fit: cover;
     object-position: 50% 50%
 }

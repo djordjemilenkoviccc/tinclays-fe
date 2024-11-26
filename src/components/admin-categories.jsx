@@ -70,7 +70,7 @@ export default function AdminCategories() {
         const formData = new FormData();
         formData.append('id', selectedCategory.id);
         formData.append('name', updatedName);
-        formData.append('image', updatedImage);
+        formData.append('image', updatedImage); // TODO: Set this only if image was changed
 
         const token = localStorage.getItem('jwtToken');
 
@@ -127,7 +127,6 @@ export default function AdminCategories() {
         const file = e.target.files[0];
         if (file) {
             setUpdatedImage(file);
-            //console.log(file.type.split("/")[1]);
             const reader = new FileReader();
             reader.onloadend = () => {
                 setImageType(file.type.split("/")[1]);
@@ -140,15 +139,15 @@ export default function AdminCategories() {
 
 
     return (
-        <div className="align-items-center" style={{ marginTop: "40px", paddingLeft: "5%", paddingRight: "5%" }}>
+        <div className="align-items-center" style={{ marginTop: "140px", paddingLeft: "5%", paddingRight: "5%" }}>
             <Row className="mb-4">
                 <Col className="text-center">
                     <Button variant="primary" onClick={handleAddShow}>Dodaj novu kategoriju</Button>
                 </Col>
             </Row>
-            <Row lg={12} md={12} sm={12} className="justify-content-center">
+            <Row className="justify-content-center">
                 {categories.map((category) => (
-                    <Col lg={6} md={12} sm={12} className="mb-5" key={category.id}>
+                    <Col lg={4} md={4} sm={12} className="mb-5" key={category.id}>
                         <Card className="d-flex flex-column justify-content-between h-100" style={{ border: "1px solid black" }}>
                             <Card.Img
                                 variant="top"

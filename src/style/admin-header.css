@@ -1,0 +1,32 @@
+.custom-navbar {
+    transition: all 0.3s ease-in-out;
+    padding-left: 5%;
+    padding-right: 5%;
+}
+
+/* Custom Height for Small Screens */
+@media (max-width: 768px) {
+    .custom-navbar {
+        min-height: 70px;
+        /* Increase the navbar height */
+    }
+
+    .custom-nav .nav-link,
+    .custom-nav .dropdown-item {
+        padding: 15px 20px;
+        /* Increase item height */
+        font-size: 18px;
+        /* Optional: Increase font size */
+    }
+
+    .custom-nav .dropdown-item:hover,
+    .custom-nav .nav-link:hover {
+        background-color: #444;
+        /* Optional: Hover effect */
+    }
+
+    .navbar-toggler {
+        padding: 12px;
+        /* Optional: Adjust toggle button size */
+    }
+}

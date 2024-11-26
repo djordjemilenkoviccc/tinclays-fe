@@ -137,23 +137,23 @@ export default function Checkout() {
                         </Form.Group>
                         <div className="text-center mt-4">
                             <h5>
-                                Ukupno za placanje: {cartItems.reduce((total, item) => total + item.quantity * item.price, 0)} rsd
+                                Ukupno za plaćanje: {cartItems.reduce((total, item) => total + item.quantity * item.price, 0)} rsd
                             </h5>
                         </div>
 
                     </Form>
                 </Col>
 
-               
+
                 <Col md={12} lg={6} sm={12} style={{ maxHeight: '600px', overflowY: 'auto' }}>
                     <ListGroup variant="flush" style={{ textAlign: "center", backgroundColor: "white" }}>
                         {cartItems.map((item, index) => (
                             <ListGroup.Item key={index}>
                                 <p>{item.name} - {item.quantity} x {item.price} rsd</p>
                                 <img
-                                    src={item.imageUrl}
+                                    src={`data:${item.imageList[0].mimeType};base64,${item.imageList[0].imageData}`}
                                     alt={item.name}
-                                    style={{ width: "70%", height: "auto" }}
+                                    style={{ width: "70%", height: "auto", objectFit: "cover" }}
                                     className='product-image'
                                     fetchpriority="high"
                                 />
@@ -162,12 +162,13 @@ export default function Checkout() {
                     </ListGroup>
 
                 </Col>
-
-                <Button variant="dark" type="submit" className='w-50'>
-                    Naruči
-                </Button>
-
-
+            </Row>
+            <Row>
+                <Col md={12} lg={6} sm={12}>
+                    <Button className="btn btn-dark w-100 rounded-0 checkout-btn" type="submit">
+                        Naruči
+                    </Button>
+                </Col>
             </Row>
         </div>
     );

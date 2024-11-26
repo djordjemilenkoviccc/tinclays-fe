@@ -27,7 +27,6 @@ export default function AdminProducts() {
         const file = e.target.files[0];
         if (file) {
             setSelectedImage(file);
-            //console.log(file.type.split("/")[1]);
             const reader = new FileReader();
             reader.onloadend = () => {
                 setImageType(file.type.split("/")[1]);
@@ -151,7 +150,7 @@ export default function AdminProducts() {
     };
 
     return (
-        <div className="align-items-center" style={{ marginTop: "40px", paddingLeft: "5%", paddingRight: "5%" }}>
+        <div className="align-items-center" style={{ marginTop: "140px", paddingLeft: "5%", paddingRight: "5%" }}>
             <Row className="mb-4">
                 <Col className="text-center">
                     <Button variant="primary" onClick={handleAddShow}>Dodaj novi proizvod</Button>
@@ -197,11 +196,6 @@ export default function AdminProducts() {
                     <Modal.Title>Dodaj novi proizvod</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    {showSuccessBanner && (
-                        <Alert variant="success" onClose={() => setShowSuccessBanner(false)} dismissible>
-                            Kategorija uspešno dodata!
-                        </Alert>
-                    )}
                     <Form>
                         <Form.Group className="mb-3">
                             <Form.Label>Naziv proizvoda</Form.Label>
@@ -279,6 +273,12 @@ export default function AdminProducts() {
                                 onChange={(e) => setShowOnSite(e.target.checked)}
                             />
                         </Form.Group>
+
+                        {showSuccessBanner && (
+                            <Alert variant="success" onClose={() => setShowSuccessBanner(false)} dismissible>
+                                Proizvod uspešn dodat!
+                            </Alert>
+                        )}
 
                     </Form>
                 </Modal.Body>

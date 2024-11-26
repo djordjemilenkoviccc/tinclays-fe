@@ -33,7 +33,7 @@ export default function Cart({ show, handleClose, setCartItems }) {
                             <div key={item.id} className="cart-item">
                                 <h5>{item.name}</h5>
                                 <img
-                                    src={item.imageUrl}
+                                    src={`data:${item.imageList[0].mimeType};base64,${item.imageList[0].imageData}`}
                                     alt={item.name}
                                     fetchpriority="high"
                                     className='image-in-cart'

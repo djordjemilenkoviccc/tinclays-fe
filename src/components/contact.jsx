@@ -1,11 +1,11 @@
 import '../style/contact.css';
-
+import '../style/home.css';
 import React from 'react';
 import { Row, Col, Form, Button } from 'react-bootstrap';
 
 function Contact() {
     return (
-        <div className="">
+        <div className="home-root">
             <Row id="contactForm" className="justify-content-center align-items-center mt-3 contact-div">
                 <Col lg="12" md="12" sm="12" className="d-flex justify-content-center align-items-center w-100">
                     <Form action="#" method="post">

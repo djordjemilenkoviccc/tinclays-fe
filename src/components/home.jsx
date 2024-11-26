@@ -1,11 +1,12 @@
 import '../style/home.css';
 
-import Contact from './contact';
-import { Button, Row, Col } from 'react-bootstrap';
+import { Button, Row, Col, Card } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 
 export default function Home() {
     const navigate = useNavigate();
+    const [categories, setCategories] = useState([]);
 
     const handleCardClick = (id) => {
         sessionStorage.setItem('scrollPosition', window.scrollY);
@@ -20,8 +21,35 @@ export default function Home() {
         }
     };
 
+    useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                const response = await fetch('http://localhost:8080/api/v1/category/getAllCategoriesWithProducts', {
+                    method: 'GET'
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    setCategories(data.categoryList);
+                } else {
+                    console.error('Failed to fetch categories');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        };
+
+        fetchCategories();
+    }, []);
+
     return (
         <div className='home-root'>
+
+            <Row>
+                <Col lg="12" md="12" sm="12">
+                    <p className="mt-3 mt-md-5" style={{ textAlign: "center", paddingBottom: "2%", fontSize: "18px" }}>Solje ce biti na stanju 12.12.2024.</p>
+                </Col>
+            </Row>
 
             <div className="overlay-container position-relative">
                 <img
@@ -31,27 +59,37 @@ export default function Home() {
                 </img>
 
                 <div className="overlay-content position-absolute top-50 start-50 translate-middle text-center">
-                    <h1 className='text-on-cover-image'>TINCLAYS</h1>
                     <p className='text-on-cover-image'>Mugs and More</p>
-                    <Button className="btn-shop-now" onClick={scrollToCollection}>Shop now</Button>
+                    <button className="btn-shop-now" onClick={scrollToCollection}>Shop now</button>
                 </div>
             </div>
 
             <Row id="id-collection" className='collection-paragraph'>
                 <Col lg="12" md="12" sm="12">
-                    <h3 className="pt-5">OUR COLLECTION</h3>
-
-                    <p className="mt-3 mt-md-5">I'm a paragraph. Click here to add your own text and
-                        edit
-                        me. It’s easy.
-                        Just click “Edit Text” or
-                        double click me to add your own content and make changes to the font. I’m a great place for you
-                        to
-                        tell a story and let your users know a little more about you.</p>
                 </Col>
             </Row>
 
-            <Row>
+            <Row className="justify-content-center">
+                {categories.map((category) => (
+                    <Col lg={4} md={4} sm={12} className="mb-5" key={category.id} onClick={() => handleCardClick(category.id)}>
+                        <Card className="d-flex flex-column justify-content-between h-100 category-card">
+                            <div>
+                                <Card.Img
+                                    className='product-image'
+                                    variant="top"
+                                    src={category.image.startsWith("data:image") ? category.image : `data:${category.mimeType};base64,${category.image}`}
+                                />
+                            </div>
+                            <Card.Body>
+                                <Card.Title className="text-center">{category.name}</Card.Title>
+                            </Card.Body>
+                        </Card>
+                    </Col>
+                ))}
+
+            </Row>
+
+            {/* <Row>
                 <Col lg="6" md="6" sm="12" className='text-center category-card' onClick={() => handleCardClick(1)}>
                     <img src="https://static.wixstatic.com/media/697bc8_5b14db998c9f45379e50e7e7fb0ad18c~mv2_d_3000_1744_s_2.jpg/v1/fill/w_1036,h_690,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/697bc8_5b14db998c9f45379e50e7e7fb0ad18c~mv2_d_3000_1744_s_2.jpg"
                         alt="I'm a product"
@@ -89,9 +127,9 @@ export default function Home() {
                     </img>
                     <p>Ostalo</p>
                 </Col>
-            </Row>
+            </Row> */}
 
-            
+
         </div>
     )
 }

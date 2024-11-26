@@ -1,57 +1,18 @@
 import "../style/admin-panel.css";
 import React, { useContext, useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { AuthContext } from './auth-context';
 import { Card, Button, Row, Col, Dropdown, DropdownButton, Form } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { Pencil } from 'react-bootstrap-icons'; // Bootstrap icon for hamburger
 
 export default function AdminPanel() {
+
+    const { status } = useParams();
     const { isAuthenticated } = useContext(AuthContext);
     const navigate = useNavigate();
 
-    // State to hold the current orders and their status
-    const [orders, setOrders] = useState([
-        {
-            "id": "1",
-            "date": "03.09.2024",
-            "quantity": "2",
-            "price": "5600",
-            "address": "Generala Stefanika 25",
-            "status": "1",
-            "firstName": "Ivana",
-            "lastName": "Peric"
-        },
-        {
-            "id": "2",
-            "date": "03.09.2024",
-            "quantity": "1",
-            "price": "2800",
-            "address": "Vojvode Stefanika 25",
-            "status": "2",
-            "firstName": "Jovana",
-            "lastName": "Peric"
-        },
-        {
-            "id": "3",
-            "date": "03.09.2024",
-            "quantity": "1",
-            "price": "2800",
-            "address": "Marka Stefanika 25",
-            "status": "1",
-            "firstName": "Natasa",
-            "lastName": "Markovic"
-        },
-        {
-            "id": "4",
-            "date": "03.09.2024",
-            "quantity": "1",
-            "price": "2800",
-            "address": "Milana Stefanika 25",
-            "status": "1",
-            "firstName": "Tina",
-            "lastName": "Cikaric"
-        }
-    ]);
+    const [orders, setOrders] = useState([]);
 
     useEffect(() => {
         if (!isAuthenticated) {
@@ -59,80 +20,172 @@ export default function AdminPanel() {
         }
     }, [isAuthenticated, navigate]);
 
-    const handleOrderClick = (orderId) => {
-        // Navigate to order-details page with the order ID as a parameter
-        navigate(`/order-details/${orderId}`);
+    useEffect(() => {
+        const fetchOrders = async () => {
+            try {
+                const token = localStorage.getItem('jwtToken');
+                const response = await fetch(`http://localhost:8080/api/v1/order/getAllByStatus/${status}`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log(data);
+                    setOrders(data);
+                } else {
+                    console.error('Failed to fetch orders');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        };
+
+        fetchOrders();
+    }, [status]);
+
+
+    const handleStatusChange = async (orderId, newStatus) => {
+
+        const formData = new FormData();
+        formData.append('status', newStatus);
+        formData.append('orderId', orderId);
+        const token = localStorage.getItem('jwtToken');
+
+        try {
+            const response = await fetch('http://localhost:8080/api/v1/order/updateOrderStatus', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
+                body: formData
+            });
+
+            if (response.ok) {
+                const updatedOrders = orders.filter(order => order.id !== orderId);
+                setOrders(updatedOrders);
+                console.log("Changed");
+            } else {
+                console.error('Failed to update category');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
     };
 
-    // Handle status change for an order
-    const handleStatusChange = (orderId, newStatus) => {
-        const updatedOrders = orders.map(order =>
-            order.id === orderId ? { ...order, status: newStatus } : order
-        );
-        setOrders(updatedOrders);
+    const getMessage = () => {
+
+        if (orders.length === 0) {
+            return "Trenutno nema porudzbina";
+        }
+
+        if (status === "in_progress") {
+            return "Lista svih porudžbina koje su u toku";
+        } else if (status === "completed") {
+            return "Lista svih porudžbina koje su realizovane";
+        }
     };
 
     return (
-        <div className="align-items-center" style={{ marginTop: "40px", paddingLeft: "5%", paddingRight: "5%" }}>
-
-            <Row lg="12" md="12" sm="12" className="justify-content-center">
+        <div className="align-items-center" style={{ marginTop: "140px", paddingLeft: "5%", paddingRight: "5%" }}>
+            <h2 style={{ textAlign: "center" }}>{getMessage()}</h2>
+            <hr></hr>
+            <Row className="justify-content-center">
                 {orders.map((order) => (
-                    <Col lg="6" md="12" sm="12" className="mb-5 sm-5" key={order.id}>
-                        <Card className="d-flex flex-column justify-content-between" style={{ height: '100%', position: 'relative', border: "1px solid black" }}>
-                            {order.status === "1" && (
-                                <div style={{ backgroundColor: '#e6c363', padding: '10px', textAlign: 'center', color: "black" }}>
-                                    Narudzbina u procesu
-                                </div>
-                            )}
-                            {order.status === "2" && (
-                                <div style={{ backgroundColor: '#95e683', padding: '10px', textAlign: 'center', color: "black" }}>
-                                    Realizovana
-                                </div>
-                            )}
-                            <DropdownButton
-                                id={`status-dropdown-${order.id}`}
-                                title={<Pencil />}
-                                variant="secondar"
-                                onSelect={(eventKey) => handleStatusChange(order.id, eventKey)}
-                                align="end"
+                    <Col key={order.id} lg={4} md={4} sm={12} className="mb-4">
+                        <Card className="border">
+                            <div
                                 style={{
-                                    position: 'absolute',
-                                    top: 2,
-                                    right: 0,
-                                    zIndex: 1
+                                    backgroundColor: order.status === "IN_PROGRESS" ? "#ffeb3b" : "#4caf50",
+                                    color: order.status === "IN_PROGRESS" ? "#000" : "#fff",
+                                    padding: "10px",
+                                    textAlign: "center",
+                                    fontWeight: "bold",
+                                    borderBottom: "1px solid #ddd",
                                 }}
-                                className="custom-dropdown-btn"
                             >
-                                <Dropdown.Item eventKey="1">U procesu</Dropdown.Item>
-                                <Dropdown.Item eventKey="2">Realizovana</Dropdown.Item>
-                                <Dropdown.Item eventKey="3">Vracena nazad</Dropdown.Item>
-                            </DropdownButton>
-                            <Card.Body>
-                                <div style={{ position: 'relative' }}>
-                                    <Card.Text><span style={{fontWeight: "bold"}}>Datum porucivanja: </span>{order.date}</Card.Text>
-                                    <hr></hr>
-                                    <Card.Text><span style={{fontWeight: "bold"}}>Ime: </span>{order.firstName} {order.lastName}</Card.Text>
-                                    <hr></hr>
-                                    <Card.Text><span style={{fontWeight: "bold"}}>Adresa: </span> {order.address}</Card.Text>
-                                    <hr></hr>
-                                    <Card.Text><span style={{fontWeight: "bold"}}>Cena narudzbine: </span> {order.price} rsd</Card.Text>
-                                    <hr></hr>
+                                {order.status === "IN_PROGRESS" ? "U Toku" : "Završena"}
 
-                                    <div className="d-flex justify-content-center">
-                                        <Button
-                                            variant="primary"
-                                            onClick={() => handleOrderClick(order.id)}
-                                            className="btn btn-dark"
+                                <DropdownButton
+                                    id={`status-dropdown-${order.id}`}
+                                    title={<Pencil />}
+                                    variant="secondar"
+                                    onSelect={(eventKey) => handleStatusChange(order.id, eventKey)}
+                                    align="end"
+                                    style={{
+                                        position: 'absolute',
+                                        top: 2,
+                                        right: 0,
+                                        zIndex: 1
+                                    }}
+                                    className="custom-dropdown-btn"
+                                >
+                                    <Dropdown.Item eventKey="IN_PROGRESS">U toku</Dropdown.Item>
+                                    <Dropdown.Item eventKey="COMPLETED">Završena</Dropdown.Item>
+                                </DropdownButton>
+                            </div>
+
+                            <Card.Body>
+                                {order.products.map((product, productIndex) =>
+                                    product.images.map((image, imageIndex) => (
+                                        <div
+                                            key={`${productIndex}-${imageIndex}`}
+                                            style={{
+                                                display: "flex",
+                                                justifyContent: "space-between",
+                                                alignItems: "center",
+                                                marginBottom: "10px",
+                                                border: "1px solid #ddd",
+                                                borderRadius: "4px",
+                                                padding: "5px",
+                                            }}
                                         >
-                                            Vidi detalje
-                                        </Button>
-                                    </div>
-                                </div>
+                                            {/* Product Image */}
+                                            <Card.Img
+                                                src={`data:${image.mimeType};base64,${image.imageData}`}
+                                                alt={product.productName}
+                                                style={{
+                                                    width: "90%",
+                                                    height: "90%",
+                                                    objectFit: "cover",
+                                                    borderRadius: "4px",
+                                                }}
+                                            />
+
+                                            {/* Quantity */}
+                                            <span
+                                                style={{
+                                                    fontWeight: "bold",
+                                                    fontSize: "18px",
+                                                    color: "#555",
+                                                }}
+                                            >
+                                                x {product.quantity}
+                                            </span>
+                                        </div>
+                                    ))
+                                )}
+
+                                {/* Order Details */}
+                                <Card.Text><span style={{ fontWeight: "bold" }}>Broj porudžbine: </span>{order.id} </Card.Text>
+                                <Card.Text><span style={{ fontWeight: "bold" }}>Vrednost: </span>{order.totalPrice} rsd </Card.Text>
+                                <Card.Text><span style={{ fontWeight: "bold" }}>Datum i vreme kreiranja: </span>{order.dateCreated} </Card.Text>
+                                <Card.Text><span style={{ fontWeight: "bold" }}>Ime i prezime: </span>{order.firstName} {order.lastName}</Card.Text>
+                                <Card.Text><span style={{ fontWeight: "bold" }}>Adresa: </span>{order.address} {order.houseNumber}</Card.Text>
+                                <Card.Text><span style={{ fontWeight: "bold" }}>Poštanski broj: </span>{order.postalCode}</Card.Text>
+                                <Card.Text><span style={{ fontWeight: "bold" }}>Grad: </span>{order.city}</Card.Text>
+                                <Card.Text><span style={{ fontWeight: "bold" }}>Telefon: </span>{order.phoneNumber}</Card.Text>
+                                <Card.Text><span style={{ fontWeight: "bold" }}>Email: </span>{order.email}</Card.Text>
                             </Card.Body>
                         </Card>
                     </Col>
                 ))}
             </Row>
+
+
+
         </div>
     );
 }

@@ -1,9 +1,10 @@
 import React, { useContext, useState } from 'react';
 import { AuthContext } from './auth-context';
 import { useNavigate } from 'react-router-dom';
-import { Navbar, Nav, Button } from 'react-bootstrap';
+import { Navbar, Nav, Button, NavDropdown } from 'react-bootstrap';
 import { NavLink } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import '../style/admin-header.css'
 
 export default function AdminHeader() {
     const { logout } = useContext(AuthContext);  // Access the logout function from AuthContext
@@ -15,36 +16,59 @@ export default function AdminHeader() {
         navigate('/login');
     };
 
+    const handleNavClick = () => {
+        setExpanded(false); // Close the navbar after clicking a link
+    };
+
+
     return (
         <Navbar
             bg="dark"
             variant="dark"
             expand="lg"
-            expanded={expanded}  // Control navbar expand state
-            onToggle={() => setExpanded(!expanded)}  // Toggle navbar expand state
-            style={{
-                minHeight: expanded ? '350px' : '80px',  // Adjust height when expanded
-                padding: '0 40px',
-                transition: 'min-height 0.3s ease-in-out',  // Smooth transition for height
-            }}
+            expanded={expanded}
+            onToggle={() => setExpanded(!expanded)}
+            fixed="top"
+            className="custom-navbar"
         >
-            <Navbar.Brand href="#">Admin Panel</Navbar.Brand>
+            <Navbar.Brand>Admin Panel</Navbar.Brand>
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Navbar.Collapse id="basic-navbar-nav">
-                <Nav className="me-auto">
-                    <Nav.Link as={NavLink} to="/admin-panel">
-                        Porudžbine
-                    </Nav.Link>
-                    <Nav.Link as={NavLink} to="/admin-products">
+                <Nav className="me-auto custom-nav">
+                    <NavDropdown
+                        title="Porudžbine"
+                        id="basic-nav-dropdown"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <NavDropdown.Item
+                            as={NavLink}
+                            to="/admin-panel/in_progress"
+                            onClick={handleNavClick}
+                        >
+                            U toku
+                        </NavDropdown.Item>
+                        <NavDropdown.Item
+                            as={NavLink}
+                            to="/admin-panel/completed"
+                            onClick={handleNavClick}
+                        >
+                            Realizovane
+                        </NavDropdown.Item>
+                    </NavDropdown>
+
+                    {/* Single Links */}
+                    <Nav.Link as={NavLink} to="/admin-products" onClick={handleNavClick}>
                         Uređivanje proizvoda
                     </Nav.Link>
-                    <Nav.Link as={NavLink} to="/admin-categories">
+                    <Nav.Link as={NavLink} to="/admin-categories" onClick={handleNavClick}>
                         Uređivanje kategorija
                     </Nav.Link>
-                    <Nav.Link as={NavLink} to="/admin-orders">
+                    <Nav.Link as={NavLink} to="/admin-costs" onClick={handleNavClick}>
                         Praćenje troškova
                     </Nav.Link>
                 </Nav>
+
+                {/* Logout Button */}
                 <Button variant="outline-light" onClick={handleLogout}>
                     Logout
                 </Button>

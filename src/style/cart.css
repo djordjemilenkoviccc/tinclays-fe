@@ -50,17 +50,35 @@
 
 .cart-root {
     width: 40% !important;
+    background-color: #f2f1f0;
 }
 
 @media (max-width: 991px) {
     .cart-root {
-        width: 90% !important;
+        width: 100% !important;
     }
 }
+
+.offcanvas.cart-root {
+    transform: translateX(100%); /* Start off-screen to the right */
+    transition: transform 0.5s ease-in-out; /* Smooth transition */
+}
+
+/* When Offcanvas is shown */
+.offcanvas.cart-root.show {
+    transform: translateX(0); /* Slide into view */
+}
+
+/* Optional: Add custom styles for the overlay */
+.offcanvas-backdrop {
+    transition: opacity 0.5s ease-in-out;
+}
+
 
 .image-in-cart {
     width: 70%;
     height: auto;
+    object-fit: contain;
 }
 
 .checkout-btn {
