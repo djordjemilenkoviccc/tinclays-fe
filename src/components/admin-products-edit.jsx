@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Form, Button, Row, Col, Image, Alert } from 'react-bootstrap';
-import axios from 'axios';
 import '../style/admin-products-edit.css';
 
 export default function AdminProductsEdit() {
@@ -93,6 +92,7 @@ export default function AdminProductsEdit() {
                 categoryId: category,
                 price: product.price,
                 stock: product.stock,
+                archived: false,
                 showOnSite: product.showOnSite,
             })],
             { type: "application/json" }
@@ -100,8 +100,8 @@ export default function AdminProductsEdit() {
 
         formData.append("productDtoRequest", productDtoRequestBlob);
 
-        if (imagePreview) {
-            formData.append("images", imagePreview);
+        if (selectedImage) {
+            formData.append("images", selectedImage);
         }
 
         const token = localStorage.getItem('jwtToken');

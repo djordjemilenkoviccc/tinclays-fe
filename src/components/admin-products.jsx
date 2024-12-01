@@ -3,10 +3,11 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 export default function AdminProducts() {
+    const [filteredProducts, setFilteredProducts] = useState([]);
+    const [selectedCategory, setSelectedCategory] = useState(null);
     const [products, setProducts] = useState([]);
     const [categories, setCategories] = useState([]);
     const [selectedImage, setSelectedImage] = useState(null);
-    const [productsWithImages, setProductsWithImages] = useState([]);
     const navigate = useNavigate();
 
 
@@ -58,6 +59,7 @@ export default function AdminProducts() {
                 price: price,
                 stock: stock,
                 showOnSite: showOnSite,
+                archived: false
             })],
             { type: "application/json" }
         );
@@ -65,7 +67,7 @@ export default function AdminProducts() {
         formData.append("productDtoRequest", productDtoRequestBlob);
 
         if (selectedImage) {
-            formData.append("images", selectedImage); // Assuming `image` is the file object
+            formData.append("images", selectedImage);
         }
 
         const token = localStorage.getItem("jwtToken");
@@ -81,6 +83,9 @@ export default function AdminProducts() {
 
             if (response.ok) {
                 setShowSuccessBanner(true);
+                // TODO: Fix this (Image not loading in newProduct)
+                // const newProduct = await response.json();
+                // setProducts([...products, newProduct]);
             } else {
                 console.error("Failed to add product");
             }
@@ -105,6 +110,7 @@ export default function AdminProducts() {
                 if (response.ok) {
                     const data = await response.json();
                     setProducts(data.products);
+                    setFilteredProducts(data.products);
 
                 } else {
                     console.error('Failed to fetch products');
@@ -117,6 +123,7 @@ export default function AdminProducts() {
         fetchProducts();
     }, []);
 
+    // This is because we Add new Product modal
     useEffect(() => {
         const fetchCategories = async () => {
             try {
@@ -130,7 +137,6 @@ export default function AdminProducts() {
 
                 if (response.ok) {
                     const data = await response.json();
-                    // console.log(data);
                     setCategories(data);
 
                 } else {
@@ -149,6 +155,54 @@ export default function AdminProducts() {
         navigate(`/admin-products/edit/${product.id}`);
     };
 
+    const handleArchiveProduct = async (product) => {
+        const formData = new FormData();
+        formData.append('productId', product.id);
+
+        const token = localStorage.getItem('jwtToken');
+
+        try {
+            const response = await fetch('http://localhost:8080/api/v1/product/archiveProduct', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
+                body: formData
+            });
+
+            if (response.ok) {
+                alert('Proizvod uspesno arhiviran');
+                setProducts((prevProducts) => {
+                    const updatedProducts = prevProducts.filter((p) => p.id !== product.id);
+
+                    // Update filteredProducts based on the selected category
+                    if (selectedCategory === '') {
+                        setFilteredProducts(updatedProducts); // Show all products
+                    } else {
+                        setFilteredProducts(updatedProducts.filter((p) => p.category.id === selectedCategory));
+                    }
+
+                    return updatedProducts;
+                });
+            } else {
+                const errorMessage = await response.text();
+                alert(`${errorMessage}`);
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const handleCategorySelect = (categoryId) => {
+        setSelectedCategory(categoryId);
+        if (categoryId === null) {
+            setFilteredProducts(products); // Reset to show all products
+        } else {
+            const filtered = products.filter(product => product.category.id === categoryId);
+            setFilteredProducts(filtered);
+        }
+    };
+
     return (
         <div className="align-items-center" style={{ marginTop: "140px", paddingLeft: "5%", paddingRight: "5%" }}>
             <Row className="mb-4">
@@ -156,8 +210,25 @@ export default function AdminProducts() {
                     <Button variant="primary" onClick={handleAddShow}>Dodaj novi proizvod</Button>
                 </Col>
             </Row>
+            {/* Filter Section */}
+            <Row className="mb-4">
+                <Col>
+                    <DropdownButton
+                        id="category-filter-dropdown"
+                        title={selectedCategory ? categories.find(cat => cat.id === selectedCategory)?.name : 'Filter po kategoriji'}
+                        onSelect={(e) => handleCategorySelect(e ? parseInt(e) : null)}
+                    >
+                        <Dropdown.Item eventKey={null}>Show All</Dropdown.Item>
+                        {categories.map(category => (
+                            <Dropdown.Item key={category.id} eventKey={category.id}>
+                                {category.name}
+                            </Dropdown.Item>
+                        ))}
+                    </DropdownButton>
+                </Col>
+            </Row>
             <Row>
-                {products.map(product => (
+                {filteredProducts.map(product => (
                     <Col key={product.id} md={4} className="mb-4">
                         <Card>
                             {/* Check if imageList exists and has at least one image */}
@@ -175,7 +246,8 @@ export default function AdminProducts() {
                                 />
                             )}
                             <Card.Body>
-                                <Card.Text><span style={{ fontWeight: "bold" }}>Naziv: </span>{product.name}</Card.Text>
+                                <Card.Text><span style={{ fontWeight: "bold" }}>ID: </span>{product.id}</Card.Text>
+                                <Card.Text><span style={{ fontWeight: "bold" }}>Naziv: </span>{product.name}</Card.Text>    
                                 <Card.Text><span style={{ fontWeight: "bold" }}>Opis: </span>{product.description}</Card.Text>
                                 <Card.Text><span style={{ fontWeight: "bold" }}>Kategorija: </span>{product.category.name}</Card.Text>
                                 <Card.Text><span style={{ fontWeight: "bold" }}>Cena: </span>{product.price}</Card.Text>
@@ -184,7 +256,7 @@ export default function AdminProducts() {
                             </Card.Body>
                             <Card.Footer className="text-center">
                                 <Button variant="secondary" onClick={() => handleEditProduct(product)}>Izmeni</Button>{' '}
-                                <Button variant="danger">Obriši</Button>
+                                <Button variant="danger" onClick={() => handleArchiveProduct(product)}>Arhiviraj</Button>
                             </Card.Footer>
                         </Card>
                     </Col>

@@ -16,6 +16,7 @@ import AdminProductsEdit from './components/admin-products-edit';
 import AdminCosts from './components/admin-costs';
 import Login from './components/login';
 import Checkout from './components/checkout';
+import CheckoutStatus from './components/checkout-status';
 import CartProvider from './components/cart-context';
 import ScrollToTop from './components/scroll-to-top';
 import AuthProvider from './components/auth-context';
@@ -112,6 +113,19 @@ function AnimatedRoutes() {
                   transition={{ duration: 0.5 }}
                 >
                   <Checkout />
+                </motion.div>
+              }
+            />
+            <Route
+              path="/checkout-status"
+              element={
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  <CheckoutStatus />
                 </motion.div>
               }
             />

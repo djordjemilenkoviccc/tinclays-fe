@@ -54,6 +54,13 @@ export default function AdminHeader() {
                         >
                             Realizovane
                         </NavDropdown.Item>
+                        <NavDropdown.Item
+                            as={NavLink}
+                            to="/admin-panel/failed"
+                            onClick={handleNavClick}
+                        >
+                            Neuspešne
+                        </NavDropdown.Item>
                     </NavDropdown>
 
                     {/* Single Links */}

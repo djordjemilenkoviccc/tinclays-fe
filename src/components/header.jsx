@@ -21,7 +21,7 @@ export default function Header() {
             <Navbar fixed="top" expand="lg" className="navbar-shadow">
                 <Container fluid>
                     {/* Large Screen Navigation */}
-                    <div className="d-none d-lg-flex ms-auto" style={{fontSize: "18px"}}>
+                    <div className="d-none d-lg-flex ms-auto" style={{ fontSize: "18px" }}>
                         <h3 className="header-title"><Nav.Link as={Link} to="/">Tinclays</Nav.Link></h3>
                         <Nav className="ms-auto">
                             <Nav.Link as={Link} to="/">Shop</Nav.Link>
@@ -51,8 +51,8 @@ export default function Header() {
 
                     {/* Small Screen Navigation */}
                     <div className="d-lg-none d-flex justify-content-between w-100 align-items-center position-relative header-mobile">
-                    <h3 className="header-title"><Nav.Link as={Link} to="/">Tinclays</Nav.Link></h3>
-                        <Button variant="link" onClick={handleShowCart} className="cart-icon-button">
+                        <h3 className="header-title"><Nav.Link as={Link} to="/">Tinclays</Nav.Link></h3>
+                        <Button variant="link" onClick={handleShowCart} className="cart-icon-button-small-screen">
                             <svg xmlns="http://www.w3.org/2000/svg" className="cart-icon-text" viewBox="0 0 197.7 166">
                                 <g transform="translate(0, -35)">
                                     <path d="M197.9 55.9L169.9 127.4 64.5 127.4 27.6 29.8 0 29.8 0.2 16.7 36.5 16.7 73.4 114.3 160.9 114.3 183 55.9" />
@@ -78,7 +78,7 @@ export default function Header() {
                 <button className="close-menu" onClick={closeMenu}>
                     &times;
                 </button>
-                <Nav className="flex-column text-center">
+                <Nav className="flex-column text-center" style={{ marginTop: "40%" }}>
                     <Nav.Link as={Link} to="/" onClick={closeMenu}>Shop</Nav.Link>
                     <Nav.Link as={Link} to="/about-me" onClick={closeMenu}>O meni</Nav.Link>
                     <Nav.Link as={Link} to="/contact" onClick={closeMenu}>Kontakt</Nav.Link>

@@ -45,12 +45,6 @@ export default function Home() {
     return (
         <div className='home-root'>
 
-            <Row>
-                <Col lg="12" md="12" sm="12">
-                    <p className="mt-3 mt-md-5" style={{ textAlign: "center", paddingBottom: "2%", fontSize: "18px" }}>Solje ce biti na stanju 12.12.2024.</p>
-                </Col>
-            </Row>
-
             <div className="overlay-container position-relative">
                 <img
                     src="https://static.wixstatic.com/media/d01231e46af34161be7ad101d281a441.jpg/v1/fill/w_1960,h_1478,al_c,q_90,usm_0.66_1.00_0.01,enc_auto/d01231e46af34161be7ad101d281a441.jpg"
@@ -64,7 +58,19 @@ export default function Home() {
                 </div>
             </div>
 
-            <Row id="id-collection" className='collection-paragraph'>
+            <br></br>
+            
+            <Row id="id-collection">
+                <Col lg="12" md="12" sm="12">
+                    <Card className="d-flex flex-column justify-content-between h-100">
+                        <Card.Body>
+                            <p className="mt-3 md-5" style={{ textAlign: "center", fontSize: "18px", lineHeight: "1.8" }}>Šolje ce biti na stanju 12.12.2024.</p>
+                        </Card.Body>
+                    </Card>
+                </Col>
+            </Row>
+
+            <Row className='collection-paragraph'>
                 <Col lg="12" md="12" sm="12">
                 </Col>
             </Row>

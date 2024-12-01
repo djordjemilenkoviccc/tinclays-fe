@@ -60,6 +60,7 @@
 .category-card {
     transition: transform 0.3s, filter 0.3s;
     cursor: pointer;
+    border-radius: 0;
 }
 
 .category-card:hover {

@@ -98,7 +98,12 @@ export default function AdminPanel() {
                         <Card className="border">
                             <div
                                 style={{
-                                    backgroundColor: order.status === "IN_PROGRESS" ? "#ffeb3b" : "#4caf50",
+                                    backgroundColor:
+                                        order.status === "IN_PROGRESS"
+                                            ? "#ffeb3b" // Yellow for IN_PROGRESS
+                                            : order.status === "FAILED"
+                                                ? "#f44336" // Red for FAILED
+                                                : "#4caf50", // Green for other statuses (e.g., COMPLETED)
                                     color: order.status === "IN_PROGRESS" ? "#000" : "#fff",
                                     padding: "10px",
                                     textAlign: "center",
@@ -106,7 +111,11 @@ export default function AdminPanel() {
                                     borderBottom: "1px solid #ddd",
                                 }}
                             >
-                                {order.status === "IN_PROGRESS" ? "U Toku" : "Završena"}
+                                {order.status === "IN_PROGRESS"
+                                    ? "U Toku"
+                                    : order.status === "FAILED"
+                                        ? "Neuspešna" // Label for FAILED
+                                        : "Završena"}
 
                                 <DropdownButton
                                     id={`status-dropdown-${order.id}`}
@@ -124,52 +133,71 @@ export default function AdminPanel() {
                                 >
                                     <Dropdown.Item eventKey="IN_PROGRESS">U toku</Dropdown.Item>
                                     <Dropdown.Item eventKey="COMPLETED">Završena</Dropdown.Item>
+                                    <Dropdown.Item eventKey="FAILED">Neuspešna</Dropdown.Item>
                                 </DropdownButton>
                             </div>
 
                             <Card.Body>
                                 {order.products.map((product, productIndex) =>
                                     product.images.map((image, imageIndex) => (
-                                        <div
-                                            key={`${productIndex}-${imageIndex}`}
-                                            style={{
-                                                display: "flex",
-                                                justifyContent: "space-between",
-                                                alignItems: "center",
-                                                marginBottom: "10px",
-                                                border: "1px solid #ddd",
-                                                borderRadius: "4px",
-                                                padding: "5px",
-                                            }}
-                                        >
-                                            {/* Product Image */}
-                                            <Card.Img
-                                                src={`data:${image.mimeType};base64,${image.imageData}`}
-                                                alt={product.productName}
-                                                style={{
-                                                    width: "90%",
-                                                    height: "90%",
-                                                    objectFit: "cover",
-                                                    borderRadius: "4px",
-                                                }}
-                                            />
+                                        <div key={`product-${productIndex}-image-${imageIndex}`}>
+                                            {/* Product ID */}
+                                            <div>
+                                                <h2>
+                                                    <span
+                                                        style={{
+                                                            fontWeight: "bold",
+                                                            fontSize: "16px",
+                                                            marginRight: "10px",
+                                                        }}
+                                                    >
+                                                        ID proizvoda: {product.productId}
+                                                    </span>
+                                                </h2>
+                                            </div>
 
-                                            {/* Quantity */}
-                                            <span
+                                            {/* Product Image and Quantity */}
+                                            <div
                                                 style={{
-                                                    fontWeight: "bold",
-                                                    fontSize: "18px",
-                                                    color: "#555",
+                                                    display: "flex",
+                                                    justifyContent: "space-between",
+                                                    alignItems: "center",
+                                                    marginBottom: "10px",
+                                                    border: "1px solid #ddd",
+                                                    borderRadius: "4px",
+                                                    padding: "5px",
                                                 }}
                                             >
-                                                x {product.quantity}
-                                            </span>
+                                                {/* Product Image */}
+                                                <Card.Img
+                                                    src={`data:${image.mimeType};base64,${image.imageData}`}
+                                                    alt={product.productName}
+                                                    style={{
+                                                        width: "90%",
+                                                        height: "90%",
+                                                        objectFit: "cover",
+                                                        borderRadius: "4px",
+                                                    }}
+                                                />
+
+                                                {/* Quantity */}
+                                                <span
+                                                    style={{
+                                                        fontWeight: "bold",
+                                                        fontSize: "18px",
+                                                        color: "#555",
+                                                    }}
+                                                >
+                                                    x {product.quantity}
+                                                </span>
+                                            </div>
                                         </div>
                                     ))
                                 )}
 
+
                                 {/* Order Details */}
-                                <Card.Text><span style={{ fontWeight: "bold" }}>Broj porudžbine: </span>{order.id} </Card.Text>
+                                <Card.Text><span style={{ fontWeight: "bold" }}>ID porudžbine: </span>{order.id} </Card.Text>
                                 <Card.Text><span style={{ fontWeight: "bold" }}>Vrednost: </span>{order.totalPrice} rsd </Card.Text>
                                 <Card.Text><span style={{ fontWeight: "bold" }}>Datum i vreme kreiranja: </span>{order.dateCreated} </Card.Text>
                                 <Card.Text><span style={{ fontWeight: "bold" }}>Ime i prezime: </span>{order.firstName} {order.lastName}</Card.Text>

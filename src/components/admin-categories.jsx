@@ -10,6 +10,7 @@ export default function AdminCategories() {
     const [selectedCategory, setSelectedCategory] = useState(null);
     const [updatedName, setUpdatedName] = useState("");
     const [updatedImage, setUpdatedImage] = useState(null);
+    const [updatedShowOnSite, setShowOnSite] = useState(null);
     const [imagePreview, setImagePreview] = useState(null);
     const [imageType, setImageType] = useState(null);
 
@@ -26,6 +27,7 @@ export default function AdminCategories() {
 
                 if (response.ok) {
                     const data = await response.json();
+                    console.log(data.categoryList);
                     setCategories(data.categoryList);
                 } else {
                     console.error('Failed to fetch categories');
@@ -42,6 +44,7 @@ export default function AdminCategories() {
         const formData = new FormData();
         formData.append('name', updatedName);
         formData.append('image', updatedImage);
+        formData.append('showOnSite', updatedShowOnSite);
 
         const token = localStorage.getItem('jwtToken');
 
@@ -71,6 +74,7 @@ export default function AdminCategories() {
         formData.append('id', selectedCategory.id);
         formData.append('name', updatedName);
         formData.append('image', updatedImage); // TODO: Set this only if image was changed
+        formData.append('showOnSite', updatedShowOnSite);
 
         const token = localStorage.getItem('jwtToken');
 
@@ -85,7 +89,7 @@ export default function AdminCategories() {
 
             if (response.ok) {
                 setCategories(categories.map(cat =>
-                    cat.id === selectedCategory.id ? { ...cat, name: updatedName, image: imagePreview } : cat
+                    cat.id === selectedCategory.id ? { ...cat, name: updatedName, image: imagePreview, showOnSite: updatedShowOnSite } : cat
                 ));
                 setShowSuccessBanner(true); // Show success banner
             } else {
@@ -100,12 +104,14 @@ export default function AdminCategories() {
         setShowEdit(false);
         setShowSuccessBanner(false);
         setUpdatedImage(null);
+        setShowOnSite(false);
         setImagePreview(null);
     };
 
     const handleEditShow = (category) => {
         setSelectedCategory(category);
         setUpdatedName(category.name);
+        setShowOnSite(category.showOnSite);
         setImagePreview(category.image);
         setShowEdit(true);
     };
@@ -113,12 +119,14 @@ export default function AdminCategories() {
     const handleAddShow = () => {
         setShowAdd(true);
         setUpdatedName('');
+        setShowOnSite(false);
         setImagePreview(null);
     };
 
     const handleAddClose = () => {
         setShowAdd(false);
         setShowSuccessBanner(false);
+        setShowOnSite(false);
         setUpdatedImage(null);
         setImagePreview(null);
     };
@@ -156,6 +164,7 @@ export default function AdminCategories() {
                             />
                             <Card.Body>
                                 <Card.Title className="text-center">{category.name}</Card.Title>
+                                <Card.Text className="text-center"><span style={{ fontWeight: "bold" }}>Prikaz na sajtu: </span>{category.showOnSite ? <span style={{ backgroundColor: "lightGreen" }}>Prikazan</span> : <span style={{ backgroundColor: "#FFCCCB" }}>Pauziran</span>}</Card.Text>
                             </Card.Body>
                             <Card.Footer className="text-center">
                                 <Button variant="secondary" onClick={() => handleEditShow(category)}>Izmeni</Button>{' '}
@@ -201,6 +210,15 @@ export default function AdminCategories() {
                                     style={{ height: '100%', objectFit: 'cover' }}
                                 />
                             )}
+                        </Form.Group>
+                        <Form.Group className='form-group' controlId="formShowOnSite">
+                            <Form.Check
+                                type="switch"
+                                label="Prikaži na sajtu"
+                                name="showOnSite"
+                                checked={updatedShowOnSite}
+                                onChange={(e) => setShowOnSite(e.target.checked)}
+                            />
                         </Form.Group>
                     </Form>
                 </Modal.Body>
@@ -250,6 +268,14 @@ export default function AdminCategories() {
                                     style={{ height: '100%', objectFit: 'cover' }}
                                 />
                             )}
+                        </Form.Group>
+                        <Form.Group className='form-group' controlId="formNewShowOnSite">
+                            <Form.Check
+                                type="switch"
+                                label="Prikaži na sajtu"
+                                checked={updatedShowOnSite}
+                                onChange={(e) => setShowOnSite(e.target.checked)}
+                            />
                         </Form.Group>
                     </Form>
                 </Modal.Body>
