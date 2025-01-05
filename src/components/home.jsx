@@ -7,6 +7,7 @@ import { useState, useEffect } from 'react';
 export default function Home() {
     const navigate = useNavigate();
     const [categories, setCategories] = useState([]);
+    const [mainMessage, setMainMessage] = useState(null);
 
     const handleCardClick = (id) => {
         sessionStorage.setItem('scrollPosition', window.scrollY);
@@ -20,6 +21,28 @@ export default function Home() {
             collectionElement.scrollIntoView({ behavior: 'smooth' });
         }
     };
+
+    useEffect(() => {
+        const fetchMainMessage = async () => {
+            try {
+                const response = await fetch('http://localhost:8080/api/v1/appsettings/getMainMessage', {
+                    method: 'GET'
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log(data);
+                    setMainMessage(data);
+                } else {
+                    console.error('Failed to fetch main message');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        };
+
+        fetchMainMessage();
+    }, []);
 
     useEffect(() => {
         const fetchCategories = async () => {
@@ -59,15 +82,18 @@ export default function Home() {
             </div>
 
             <br></br>
-            
+
             <Row id="id-collection">
-                <Col lg="12" md="12" sm="12">
-                    <Card className="d-flex flex-column justify-content-between h-100">
-                        <Card.Body>
-                            <p className="mt-3 md-5" style={{ textAlign: "center", fontSize: "18px", lineHeight: "1.8" }}>Šolje ce biti na stanju 12.12.2024.</p>
-                        </Card.Body>
-                    </Card>
-                </Col>
+                {mainMessage && mainMessage.showOnSite && (
+                    <Col lg="12" md="12" sm="12">
+                        <Card className="d-flex flex-column text-center justify-content-between">
+                            <Card.Body>
+                                <p className="mt-3 md-5" style={{fontSize: "18px", lineHeight: "1.8" }}>{mainMessage.value}</p>
+                            </Card.Body>
+                        </Card>
+                    </Col>
+                )}
+
             </Row>
 
             <Row className='collection-paragraph'>

@@ -26,7 +26,7 @@ export default function Login() {
             navigate('/admin-panel/in_progress');
         } catch (error) {
             if (error.response && error.response.status === 403) {
-                setError('Invalid username or password. Please try again.');
+                setError('Pogrešno korisničko ime ili lozinka.');
             } else {
                 setError('An error occurred. Please try again later.');
             }

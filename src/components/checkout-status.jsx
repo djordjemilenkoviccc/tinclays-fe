@@ -22,8 +22,7 @@ export default function CheckoutStatus() {
                 <div>
                     <h2 className='pt-3 pb-5' style={{ color: "green" }}>{message}</h2>
 
-                    <p>Hvala na porudžbini. Na Vaš email ćemo poslati detalje o porudžbini kao i uputstvo za plaćanje.</p>
-                    <p>Nakon što evidentiramo uplatu, šaljemo paket brzom poštom.</p>
+                    <p>Hvala na porudžbini. Molimo Vas proverite Vaš email na koji ćemo poslati detalje o porudžbini kao i uputstvo za plaćanje.</p>
                 </div>
             )}
             {status === "failed" && (

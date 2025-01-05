@@ -64,7 +64,7 @@ export default function Checkout() {
         const { firstName, lastName, address, city, houseNumber, postalCode, email, phoneNumber, status } = formData;
 
         const orderProductDtos = cartItems.map(item => ({
-            productId: item.id,  // Assuming 'id' from cartItems is mapped to 'productId' in OrderProductDto
+            productId: item.id,
             quantity: item.quantity
         }));
 
@@ -78,7 +78,8 @@ export default function Checkout() {
             email: email.trim(),
             phone: phoneNumber.trim(),
             status: status,
-            products: orderProductDtos
+            products: orderProductDtos,
+            totalAmount: cartItems.reduce((total, item) => total + item.quantity * item.price, 0)
         };
 
         console.log("Sanitized Form Data:", orderDtoRequest);
@@ -103,12 +104,17 @@ export default function Checkout() {
 
     };
 
+    const getImageUrl = (path) => {
+        const baseUrl = "http://localhost:8080/api/v1/images/getImage";
+        return `${baseUrl}?path=${encodeURIComponent(path)}`;
+    };
+
     return (
         <div className="justify-content-center align-items-center root-div">
             <Row>
                 {/* Left Column: Checkout Form */}
                 <Col md={12} lg={6} sm={12}>
-                    <Form className="p-3">
+                    <Form>
                         <Row className="mb-5">
                             <Form.Group as={Col} controlId="formFirstName">
                                 <Form.Control
@@ -174,12 +180,16 @@ export default function Checkout() {
 
                             <Form.Group className="mb-5" as={Col} controlId="formPostalCode">
                                 <Form.Control
-                                    type="number"
+                                    type="text"
                                     name="postalCode"
                                     placeholder="Poštanski broj"
+                                    maxLength="5"
                                     className={`custom-input ${formTouched && !formData.postalCode.trim() ? 'is-invalid' : ''}`}
                                     value={formData.postalCode}
                                     onChange={handleChange}
+                                    onInput={(e) => {
+                                        e.target.value = e.target.value.replace(/[^0-9]/g, ''); // Allow only numbers
+                                    }}
                                     required
                                 />
                                 {formTouched && !formData.postalCode.trim() && (
@@ -252,7 +262,7 @@ export default function Checkout() {
                             <ListGroup.Item key={index}>
                                 <p>{item.name} - {item.quantity} x {item.price} rsd</p>
                                 <img
-                                    src={`data:${item.imageList[0].mimeType};base64,${item.imageList[0].imageData}`}
+                                    src={getImageUrl(item.imageList[0].path)}
                                     alt={item.name}
                                     style={{ width: "70%", height: "auto", objectFit: "cover" }}
                                     className='product-image'

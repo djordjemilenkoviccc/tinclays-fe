@@ -19,6 +19,11 @@ export default function Cart({ show, handleClose, setCartItems }) {
         navigate(`/checkout`, { state: { cartItems } });
     };
 
+    const getImageUrl = (path) => {
+        const baseUrl = "http://localhost:8080/api/v1/images/getImage";
+        return `${baseUrl}?path=${encodeURIComponent(path)}`;
+    };
+
     return (
         <Offcanvas className="cart-root text-center" show={show} onHide={handleClose} placement="end">
             <Offcanvas.Header closeButton>
@@ -33,7 +38,7 @@ export default function Cart({ show, handleClose, setCartItems }) {
                             <div key={item.id} className="cart-item">
                                 <h5>{item.name}</h5>
                                 <img
-                                    src={`data:${item.imageList[0].mimeType};base64,${item.imageList[0].imageData}`}
+                                    src={getImageUrl(item.imageList[0].path)}
                                     alt={item.name}
                                     fetchpriority="high"
                                     className='image-in-cart'

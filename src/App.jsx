@@ -14,6 +14,7 @@ import AdminCategories from './components/admin-categories';
 import AdminProducts from './components/admin-products';
 import AdminProductsEdit from './components/admin-products-edit';
 import AdminCosts from './components/admin-costs';
+import AdminMainPage from './components/admin-main-page';
 import Login from './components/login';
 import Checkout from './components/checkout';
 import CheckoutStatus from './components/checkout-status';
@@ -201,6 +202,22 @@ function AnimatedRoutes() {
                     transition={{ duration: 0.5 }}
                   >
                     <AdminCosts />
+                  </motion.div>
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/admin-main-page"
+              element={
+                <ProtectedRoute>
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.5 }}
+                  >
+                    <AdminMainPage />
                   </motion.div>
                 </ProtectedRoute>
               }

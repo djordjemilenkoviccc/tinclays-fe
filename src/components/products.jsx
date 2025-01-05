@@ -37,9 +37,13 @@ export default function Products() {
         fetchProductsByCategoryId();
     }, [categoryId]);
 
+    const getImageUrl = (path) => {
+        const baseUrl = "http://localhost:8080/api/v1/images/getImage";
+        return `${baseUrl}?path=${encodeURIComponent(path)}`;
+    };
+
     return (
         <div style={{ paddingLeft: "5%", paddingRight: "5%", marginTop: "120px" }}>
-
             <Row>
                 {products.map(product => {
                     const cartQuantity = getCartItemQuantity(product.id);
@@ -48,16 +52,15 @@ export default function Products() {
                     return (
                         <Col lg="4" md="4" sm="12" className='text-center product-root' key={product.id}>
                             <img
-                                src={`data:${product.imageList[0].mimeType};base64,${product.imageList[0].imageData}`}
+                                src={getImageUrl(product.imageList[0].path)}
                                 alt={product.name}
                                 className='product-image'
                                 fetchpriority="high"
-                            /> 
+                            />
                             <p>{product.name}</p>
                             <h6>{product.price} RSD</h6>
                             <div className="mt-3 w-100">
                                 <Button
-
                                     className="btn btn-dark w-100 rounded-0 hidden-button"
                                     onClick={() => addToCart(product)}
                                     disabled={isMaxQuantityReached}

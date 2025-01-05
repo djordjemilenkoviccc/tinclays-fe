@@ -37,6 +37,9 @@ export default function AdminProductsEdit() {
                     const data = await response.json();
                     setCategories(data);
 
+                } else if (response.status === 403) {
+                    console.warn('Unauthorized: Redirecting to login.');
+                    navigate('/login');
                 } else {
                     console.error('Failed to fetch categories');
                 }
@@ -59,20 +62,23 @@ export default function AdminProductsEdit() {
                     }
                 });
 
-                if (!response.ok) {
+                if (response.ok) {
+                    const data = await response.json();
+                    const fetchedProduct = data.product;
+                    setProduct(fetchedProduct);
+                    setCategory(fetchedProduct.category.id);
+                    const image = fetchedProduct.imageList?.[0];
+                    if (image) {
+                        setImagePreview(image.imageData);
+                        setImageType(image.mimeType);
+                    }
+                } else if (response.status === 403) {
+                    console.warn('Unauthorized: Redirecting to login.');
+                    navigate('/login');
+                } else {
                     console.error('Failed to fetch product');
-                    return;
                 }
 
-                const data = await response.json();
-                const fetchedProduct = data.product;
-                setProduct(fetchedProduct);
-                setCategory(fetchedProduct.category.id);
-                const image = fetchedProduct.imageList?.[0];
-                if (image) {
-                    setImagePreview(image.imageData);
-                    setImageType(image.mimeType);
-                }
             } catch (error) {
                 console.error('Error fetching product:', error);
             }
@@ -117,6 +123,9 @@ export default function AdminProductsEdit() {
 
             if (response.ok) {
                 setShowSuccessBanner(true); // Show success banner
+            } else if (response.status === 403) {
+                console.warn('Unauthorized: Redirecting to login.');
+                navigate('/login');
             } else {
                 console.error('Failed to update product');
             }
@@ -146,6 +155,11 @@ export default function AdminProductsEdit() {
         }));
     };
 
+    const getImageUrl = (path) => {
+        const baseUrl = "http://localhost:8080/api/v1/images/getImage";
+        return `${baseUrl}?path=${encodeURIComponent(path)}`;
+    };
+
     return (
         product ? (
             <Row className="justify-content-center" style={{ marginTop: "140px", paddingRight: "10%", paddingLeft: "10%" }}>
@@ -154,7 +168,12 @@ export default function AdminProductsEdit() {
                         <Form.Group controlId="formProductImage">
                             {imagePreview ? (
                                 <Image
-                                    src={imagePreview.startsWith("data:image") ? imagePreview : `data:${imageType};base64,${imagePreview}`}
+                                    src={imagePreview}
+                                    alt="New Product" fluid style={{ marginBottom: "10px" }}
+                                />
+                            ) : product.imageList[0] ? (
+                                <Image
+                                    src={getImageUrl(product.imageList[0].path)}
                                     alt="Product" fluid style={{ marginBottom: "10px" }}
                                 />
                             ) : (

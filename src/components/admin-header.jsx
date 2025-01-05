@@ -70,9 +70,12 @@ export default function AdminHeader() {
                     <Nav.Link as={NavLink} to="/admin-categories" onClick={handleNavClick}>
                         Uređivanje kategorija
                     </Nav.Link>
-                    <Nav.Link as={NavLink} to="/admin-costs" onClick={handleNavClick}>
-                        Praćenje troškova
+                    <Nav.Link as={NavLink} to="/admin-main-page" onClick={handleNavClick}>
+                        Uređivanje početne strane
                     </Nav.Link>
+                    {/* <Nav.Link as={NavLink} to="/admin-costs" onClick={handleNavClick}>
+                        Praćenje troškova
+                    </Nav.Link> */}
                 </Nav>
 
                 {/* Logout Button */}

@@ -12,7 +12,7 @@ export default function AdminPanel() {
     const { isAuthenticated } = useContext(AuthContext);
     const navigate = useNavigate();
 
-    const [orders, setOrders] = useState([]);
+    const [orders, setOrders] = useState(null);
 
     useEffect(() => {
         if (!isAuthenticated) {
@@ -35,6 +35,9 @@ export default function AdminPanel() {
                     const data = await response.json();
                     console.log(data);
                     setOrders(data);
+                } else if (response.status === 403) {
+                    console.warn('Unauthorized: Redirecting to login.');
+                    navigate('/login');
                 } else {
                     console.error('Failed to fetch orders');
                 }
@@ -64,9 +67,12 @@ export default function AdminPanel() {
             });
 
             if (response.ok) {
-                const updatedOrders = orders.filter(order => order.id !== orderId);
+                const updatedOrders = orders.filter(order => order.orderId !== orderId);
                 setOrders(updatedOrders);
                 console.log("Changed");
+            } else if (response.status === 403) {
+                console.warn('Unauthorized: Redirecting to login.');
+                navigate('/login');
             } else {
                 console.error('Failed to update category');
             }
@@ -88,12 +94,17 @@ export default function AdminPanel() {
         }
     };
 
+    const getImageUrl = (path) => {
+        const baseUrl = "http://localhost:8080/api/v1/images/getImage";
+        return `${baseUrl}?path=${encodeURIComponent(path)}`;
+    };
+
     return (
         <div className="align-items-center" style={{ marginTop: "140px", paddingLeft: "5%", paddingRight: "5%" }}>
-            <h2 style={{ textAlign: "center" }}>{getMessage()}</h2>
+            <h2 style={{ textAlign: "center" }}>{orders ? getMessage() : ''}</h2>
             <hr></hr>
             <Row className="justify-content-center">
-                {orders.map((order) => (
+                {orders ? orders.map((order) => (
                     <Col key={order.id} lg={4} md={4} sm={12} className="mb-4">
                         <Card className="border">
                             <div
@@ -118,10 +129,10 @@ export default function AdminPanel() {
                                         : "Završena"}
 
                                 <DropdownButton
-                                    id={`status-dropdown-${order.id}`}
+                                    id={`status-dropdown-${order.orderId}`}
                                     title={<Pencil />}
                                     variant="secondar"
-                                    onSelect={(eventKey) => handleStatusChange(order.id, eventKey)}
+                                    onSelect={(eventKey) => handleStatusChange(order.orderId, eventKey)}
                                     align="end"
                                     style={{
                                         position: 'absolute',
@@ -151,7 +162,7 @@ export default function AdminPanel() {
                                                             marginRight: "10px",
                                                         }}
                                                     >
-                                                        ID proizvoda: {product.productId}
+                                                        ID proizvoda: {product.id}
                                                     </span>
                                                 </h2>
                                             </div>
@@ -170,7 +181,7 @@ export default function AdminPanel() {
                                             >
                                                 {/* Product Image */}
                                                 <Card.Img
-                                                    src={`data:${image.mimeType};base64,${image.imageData}`}
+                                                    src={getImageUrl(image.path)}
                                                     alt={product.productName}
                                                     style={{
                                                         width: "90%",
@@ -198,7 +209,7 @@ export default function AdminPanel() {
 
                                 {/* Order Details */}
                                 <Card.Text><span style={{ fontWeight: "bold" }}>ID porudžbine: </span>{order.id} </Card.Text>
-                                <Card.Text><span style={{ fontWeight: "bold" }}>Vrednost: </span>{order.totalPrice} rsd </Card.Text>
+                                <Card.Text><span style={{ fontWeight: "bold" }}>Vrednost: </span>{order.totalAmount} rsd </Card.Text>
                                 <Card.Text><span style={{ fontWeight: "bold" }}>Datum i vreme kreiranja: </span>{order.dateCreated} </Card.Text>
                                 <Card.Text><span style={{ fontWeight: "bold" }}>Ime i prezime: </span>{order.firstName} {order.lastName}</Card.Text>
                                 <Card.Text><span style={{ fontWeight: "bold" }}>Adresa: </span>{order.address} {order.houseNumber}</Card.Text>
@@ -209,7 +220,7 @@ export default function AdminPanel() {
                             </Card.Body>
                         </Card>
                     </Col>
-                ))}
+                )) : ''}
             </Row>
 
 

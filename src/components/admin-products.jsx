@@ -86,6 +86,9 @@ export default function AdminProducts() {
                 // TODO: Fix this (Image not loading in newProduct)
                 // const newProduct = await response.json();
                 // setProducts([...products, newProduct]);
+            } else if (response.status === 403) {
+                console.warn('Unauthorized: Redirecting to login.');
+                navigate('/login');
             } else {
                 console.error("Failed to add product");
             }
@@ -112,6 +115,9 @@ export default function AdminProducts() {
                     setProducts(data.products);
                     setFilteredProducts(data.products);
 
+                } else if (response.status === 403) {
+                    console.warn('Unauthorized: Redirecting to login.');
+                    navigate('/login');
                 } else {
                     console.error('Failed to fetch products');
                 }
@@ -139,6 +145,9 @@ export default function AdminProducts() {
                     const data = await response.json();
                     setCategories(data);
 
+                } else if (response.status === 403) {
+                    console.warn('Unauthorized: Redirecting to login.');
+                    navigate('/login');
                 } else {
                     console.error('Failed to fetch categories');
                 }
@@ -184,6 +193,9 @@ export default function AdminProducts() {
 
                     return updatedProducts;
                 });
+            } else if (response.status === 403) {
+                console.warn('Unauthorized: Redirecting to login.');
+                navigate('/login');
             } else {
                 const errorMessage = await response.text();
                 alert(`${errorMessage}`);
@@ -201,6 +213,11 @@ export default function AdminProducts() {
             const filtered = products.filter(product => product.category.id === categoryId);
             setFilteredProducts(filtered);
         }
+    };
+
+    const getImageUrl = (path) => {
+        const baseUrl = "http://localhost:8080/api/v1/images/getImage";
+        return `${baseUrl}?path=${encodeURIComponent(path)}`;
     };
 
     return (
@@ -235,7 +252,7 @@ export default function AdminProducts() {
                             {product.imageList && product.imageList.length > 0 ? (
                                 <Card.Img
                                     variant="top"
-                                    src={product.imageList[0].imageData.startsWith("data:image") ? product.imageList[0].imageData : `data:${product.imageList[0].mimeType};base64,${product.imageList[0].imageData}`}
+                                    src={getImageUrl(product.imageList[0].path)}
                                     alt="Product image"
                                 />
                             ) : (
@@ -247,7 +264,7 @@ export default function AdminProducts() {
                             )}
                             <Card.Body>
                                 <Card.Text><span style={{ fontWeight: "bold" }}>ID: </span>{product.id}</Card.Text>
-                                <Card.Text><span style={{ fontWeight: "bold" }}>Naziv: </span>{product.name}</Card.Text>    
+                                <Card.Text><span style={{ fontWeight: "bold" }}>Naziv: </span>{product.name}</Card.Text>
                                 <Card.Text><span style={{ fontWeight: "bold" }}>Opis: </span>{product.description}</Card.Text>
                                 <Card.Text><span style={{ fontWeight: "bold" }}>Kategorija: </span>{product.category.name}</Card.Text>
                                 <Card.Text><span style={{ fontWeight: "bold" }}>Cena: </span>{product.price}</Card.Text>

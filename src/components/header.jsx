@@ -79,10 +79,10 @@ export default function Header() {
                     &times;
                 </button>
                 <Nav className="flex-column text-center" style={{ marginTop: "40%" }}>
-                    <Nav.Link as={Link} to="/" onClick={closeMenu}>Shop</Nav.Link>
-                    <Nav.Link as={Link} to="/about-me" onClick={closeMenu}>O meni</Nav.Link>
-                    <Nav.Link as={Link} to="/contact" onClick={closeMenu}>Kontakt</Nav.Link>
-                    <Nav.Link as={Link} to="/faq" onClick={closeMenu}>FAQ</Nav.Link>
+                    <Nav.Link style={{ outline: "none", textDecoration: "none", color: "inherit" }} as={Link} to="/" onClick={closeMenu}>Shop</Nav.Link>
+                    <Nav.Link style={{ outline: "none", textDecoration: "none", color: "inherit" }} className='nav-link' as={Link} to="/about-me" onClick={closeMenu}>O meni</Nav.Link>
+                    <Nav.Link style={{ outline: "none", textDecoration: "none", color: "inherit" }} as={Link} to="/contact" onClick={closeMenu}>Kontakt</Nav.Link>
+                    <Nav.Link style={{ outline: "none", textDecoration: "none", color: "inherit" }} as={Link} to="/faq" onClick={closeMenu}>FAQ</Nav.Link>
                 </Nav>
             </div>
 

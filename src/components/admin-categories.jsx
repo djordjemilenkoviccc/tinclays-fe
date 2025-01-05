@@ -29,6 +29,9 @@ export default function AdminCategories() {
                     const data = await response.json();
                     console.log(data.categoryList);
                     setCategories(data.categoryList);
+                } else if (response.status === 403) {
+                    console.warn('Unauthorized: Redirecting to login.');
+                    navigate('/login');
                 } else {
                     console.error('Failed to fetch categories');
                 }
@@ -61,6 +64,9 @@ export default function AdminCategories() {
                 const newCategory = await response.json();
                 setCategories([...categories, newCategory]);
                 setShowSuccessBanner(true);
+            } else if (response.status === 403) {
+                console.warn('Unauthorized: Redirecting to login.');
+                navigate('/login');
             } else {
                 console.error('Failed to add category');
             }
@@ -92,6 +98,9 @@ export default function AdminCategories() {
                     cat.id === selectedCategory.id ? { ...cat, name: updatedName, image: imagePreview, showOnSite: updatedShowOnSite } : cat
                 ));
                 setShowSuccessBanner(true); // Show success banner
+            } else if (response.status === 403) {
+                console.warn('Unauthorized: Redirecting to login.');
+                navigate('/login');
             } else {
                 console.error('Failed to update category');
             }

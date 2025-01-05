@@ -10,6 +10,14 @@ export default function Faq() {
             answer: "Šoljice možete prati u mašini za pranje posuđa, ali se svakako uvek više preporučuje ručno pranje.",
         },
         {
+            question: "Koje veličine su šoljice?",
+            answer: "Odgovoriti"
+        },
+        {
+            question: "Kako funkcioniše prodaja?",
+            answer: "Prodaja trenutno funkcioniše na sledeći način. Nakon što izaberete proizvod koji želite i kreirate porudžbinu, na Vaš email ćemo poslati instrukcije za plaćanje. Plaćanje možete izvršiti u pošti ili preko mobilne aplikacije Vaše banke popunjavanjem uplatnice ili skeniranjem QR koda iz aplikacije banke. Nakon što evidentiramo uplatu, Vaš proizvod šaljemo brzom poštom."
+        },
+        {
             question: "Koliko traje proces pravljenja šolje?",
             answer: "Proces pravljenja šolje traje oko mesec dana. Najpre napravljene šoljice se suše 10-ak dana na sobnoj temperaturi. Potom se peku prvi put na temperaturi od 900 stepeni. Zatim se šolje oslikavaju bojama, glaziraju i ponovo peku na 1200 stepeni. Nakon toga se dodaje nadglazurno zlato, pa sledi dodatni krug pečenja na manjoj temperaturi.",
         },
