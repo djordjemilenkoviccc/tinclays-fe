@@ -4,7 +4,8 @@ import { useParams } from 'react-router-dom';
 import { AuthContext } from './auth-context';
 import { Card, Button, Row, Col, Dropdown, DropdownButton, Form } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-import { Pencil } from 'react-bootstrap-icons'; // Bootstrap icon for hamburger
+import { loadOrdersByStatus, changeOrderStatus } from '../api/order-api';
+import { Pencil } from 'react-bootstrap-icons';
 
 export default function AdminPanel() {
 
@@ -14,70 +15,42 @@ export default function AdminPanel() {
 
     const [orders, setOrders] = useState(null);
 
-    useEffect(() => {
-        if (!isAuthenticated) {
-            navigate('/login');
-        }
-    }, [isAuthenticated, navigate]);
-
-    useEffect(() => {
-        const fetchOrders = async () => {
-            try {
-                const token = localStorage.getItem('jwtToken');
-                const response = await fetch(`http://localhost:8080/api/v1/order/getAllByStatus/${status}`, {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-
-                if (response.ok) {
-                    const data = await response.json();
-                    console.log(data);
-                    setOrders(data);
-                } else if (response.status === 403) {
-                    console.warn('Unauthorized: Redirecting to login.');
-                    navigate('/login');
-                } else {
-                    console.error('Failed to fetch orders');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-            }
-        };
-
-        fetchOrders();
-    }, [status]);
-
-
-    const handleStatusChange = async (orderId, newStatus) => {
-
-        const formData = new FormData();
-        formData.append('status', newStatus);
-        formData.append('orderId', orderId);
-        const token = localStorage.getItem('jwtToken');
-
+    const fetchOrders = async () => {
         try {
-            const response = await fetch('http://localhost:8080/api/v1/order/updateOrderStatus', {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                },
-                body: formData
-            });
 
-            if (response.ok) {
-                const updatedOrders = orders.filter(order => order.orderId !== orderId);
-                setOrders(updatedOrders);
-                console.log("Changed");
-            } else if (response.status === 403) {
+            const data = await loadOrdersByStatus(status);
+            setOrders(data);
+
+        } catch (error) {
+            if (error.status === 403) {
                 console.warn('Unauthorized: Redirecting to login.');
                 navigate('/login');
             } else {
-                console.error('Failed to update category');
+                console.error('Failed to fetch orders by status: ', error.message);
+                // TODO: Show alert
+            }
+        }
+    };
+
+    const handleChangeOrderStatus = async (orderId, newStatus) => {
+
+        try {
+            const response = await changeOrderStatus(orderId, newStatus);
+
+            if (response) {
+                const updatedOrders = orders.filter(order => order.id !== orderId);
+                setOrders(updatedOrders);
+                console.log("Changed");
             }
         } catch (error) {
-            console.error('Error:', error);
+
+            if (error.status === 403) {
+                console.warn('Unauthorized: Redirecting to login.');
+                navigate('/login');
+            } else {
+                console.error('Failed to change status of order: ', error.message);
+                // TODO: Show alert
+            }
         }
     };
 
@@ -98,6 +71,17 @@ export default function AdminPanel() {
         const baseUrl = "http://localhost:8080/api/v1/images/getImage";
         return `${baseUrl}?path=${encodeURIComponent(path)}`;
     };
+
+    useEffect(() => {
+        if (!isAuthenticated) {
+            navigate('/login');
+        }
+    }, [isAuthenticated, navigate]);
+
+    useEffect(() => {
+
+        fetchOrders();
+    }, [status]);
 
     return (
         <div className="align-items-center" style={{ marginTop: "140px", paddingLeft: "5%", paddingRight: "5%" }}>
@@ -129,10 +113,10 @@ export default function AdminPanel() {
                                         : "Završena"}
 
                                 <DropdownButton
-                                    id={`status-dropdown-${order.orderId}`}
+                                    id={`status-dropdown-${order.id}`}
                                     title={<Pencil />}
                                     variant="secondar"
-                                    onSelect={(eventKey) => handleStatusChange(order.orderId, eventKey)}
+                                    onSelect={(eventKey) => handleChangeOrderStatus(order.id, eventKey)}
                                     align="end"
                                     style={{
                                         position: 'absolute',

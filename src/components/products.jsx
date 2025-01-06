@@ -3,6 +3,7 @@ import { Row, Col, Button } from 'react-bootstrap';
 import { CartContext } from './cart-context';
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
+import { fetchProductsByCategoryId } from '../api/product-api';
 import '../style/products.css';
 import '../style/home.css';
 
@@ -17,24 +18,18 @@ export default function Products() {
     };
 
     useEffect(() => {
-        const fetchProductsByCategoryId = async () => {
-            try {
-                const response = await fetch(`http://localhost:8080/api/v1/product/getAllProductsByCategory/${categoryId}`, {
-                    method: 'GET'
-                });
+        const loadProductsByCategoryId = async () => {
 
-                if (response.ok) {
-                    const data = await response.json();
-                    setProducts(data.products);
-                } else {
-                    console.error('Failed to fetch products');
-                }
+            try {
+                
+                const data = await fetchProductsByCategoryId(categoryId);
+                setProducts(data.products);
             } catch (error) {
                 console.error('Error:', error);
             }
         };
 
-        fetchProductsByCategoryId();
+        loadProductsByCategoryId();
     }, [categoryId]);
 
     const getImageUrl = (path) => {

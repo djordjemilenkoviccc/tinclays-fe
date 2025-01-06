@@ -1,4 +1,5 @@
 import { Card, Button, Row, Col, Modal, Form, Alert } from 'react-bootstrap';
+import { fetchAllCategories, addCategory, editCategory } from '../api/category-api';
 import { useState, useEffect } from 'react';
 
 export default function AdminCategories() {
@@ -14,98 +15,64 @@ export default function AdminCategories() {
     const [imagePreview, setImagePreview] = useState(null);
     const [imageType, setImageType] = useState(null);
 
-    useEffect(() => {
-        const fetchCategories = async () => {
-            try {
-                const token = localStorage.getItem('jwtToken');
-                const response = await fetch('http://localhost:8080/api/v1/category/getAllCategories', {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
 
-                if (response.ok) {
-                    const data = await response.json();
-                    console.log(data.categoryList);
-                    setCategories(data.categoryList);
-                } else if (response.status === 403) {
-                    console.warn('Unauthorized: Redirecting to login.');
-                    navigate('/login');
-                } else {
-                    console.error('Failed to fetch categories');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-            }
-        };
-
-        fetchCategories();
-    }, []);
-
-    const submitAddCategory = async () => {
-        const formData = new FormData();
-        formData.append('name', updatedName);
-        formData.append('image', updatedImage);
-        formData.append('showOnSite', updatedShowOnSite);
-
-        const token = localStorage.getItem('jwtToken');
+    const loadAllCategories = async () => {
 
         try {
-            const response = await fetch('http://localhost:8080/api/v1/category/addCategory', {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                },
-                body: formData
-            });
+            const data = await fetchAllCategories();
+            setCategories(data.categoryList);
 
-            if (response.ok) {
-                const newCategory = await response.json();
-                setCategories([...categories, newCategory]);
-                setShowSuccessBanner(true);
-            } else if (response.status === 403) {
-                console.warn('Unauthorized: Redirecting to login.');
+        } catch (error) {
+
+            if (error.status === 403) {
                 navigate('/login');
             } else {
-                console.error('Failed to add category');
+                console.error('Error fetching categories: ', error.message);
+                // TODO: Show alert
             }
-        } catch (error) {
-            console.error('Error:', error);
         }
     };
 
-    const submitEditCategory = async () => {
-        const formData = new FormData();
-        formData.append('id', selectedCategory.id);
-        formData.append('name', updatedName);
-        formData.append('image', updatedImage); // TODO: Set this only if image was changed
-        formData.append('showOnSite', updatedShowOnSite);
-
-        const token = localStorage.getItem('jwtToken');
+    const submitAddCategory = async () => {
 
         try {
-            const response = await fetch('http://localhost:8080/api/v1/category/updateCategory', {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                },
-                body: formData
-            });
+            const newCategory = await addCategory(updatedName, updatedImage, updatedShowOnSite);
+            setCategories([...categories, newCategory]);
+            setShowSuccessBanner(true);
 
-            if (response.ok) {
-                setCategories(categories.map(cat =>
-                    cat.id === selectedCategory.id ? { ...cat, name: updatedName, image: imagePreview, showOnSite: updatedShowOnSite } : cat
-                ));
-                setShowSuccessBanner(true); // Show success banner
-            } else if (response.status === 403) {
+        } catch (error) {
+
+            if (error.status === 403) {
                 console.warn('Unauthorized: Redirecting to login.');
                 navigate('/login');
             } else {
-                console.error('Failed to update category');
+                console.error('Failed to add category:', error.message);
+                // TODO: Show alert
+            }
+        }
+    };
+
+
+    const submitEditCategory = async () => {
+
+        try {
+            const response = await editCategory(selectedCategory.id, updatedName, updatedImage, updatedShowOnSite);
+            
+            if (response) {
+                setCategories(categories.map(cat =>
+                    cat.id === selectedCategory.id ? { ...cat, name: updatedName, image: imagePreview, showOnSite: updatedShowOnSite } : cat
+                ));
+                setShowSuccessBanner(true);
             }
         } catch (error) {
-            console.error('Error:', error);
+
+            if (error.status === 403) {
+                console.warn('Unauthorized: Redirecting to login.');
+                navigate('/login');
+            } else {
+                console.error('Failed to edit category:', error.message);
+                // TODO: Show alert
+            }
         }
     };
 
@@ -153,6 +120,10 @@ export default function AdminCategories() {
         }
     };
 
+    useEffect(() => {
+
+        loadAllCategories();
+    }, []);
 
 
     return (

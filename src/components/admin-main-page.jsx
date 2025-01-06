@@ -1,74 +1,63 @@
 import { Button, Row, Col, Form, Alert } from 'react-bootstrap';
-import { useState, useEffect } from 'react';
+import { AuthContext } from './auth-context';
+import { useNavigate } from 'react-router-dom';
+import { fetchMainMessage, editMainMessage } from '../api/main-api';
+import { useState, useEffect, useContext } from 'react';
 
 export default function AdminMainPage() {
     const [mainMessage, setMainMessage] = useState("");
-    const [showOnSite, setShowOnSite] = useState(true); // New state for the toggle
+    const [showOnSite, setShowOnSite] = useState(true);
     const [messageSaved, setMessageSaved] = useState(false);
     const [showSuccessBanner, setShowSuccessBanner] = useState(false);
+    const { isAuthenticated } = useContext(AuthContext);
+    const navigate = useNavigate();
 
-    // Fetch the main message and the "showOnSite" setting
-    useEffect(() => {
-        const fetchMainMessage = async () => {
-            try {
-                const token = localStorage.getItem('jwtToken');
-                const response = await fetch('http://localhost:8080/api/v1/appsettings/getMainMessage', {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
+    const loadMainMessage = async () => {
+        try {
 
-                if (response.ok) {
-                    const data = await response.json();
-                    setMainMessage(data.value);
-                    setShowOnSite(data.showOnSite);
-                } else if (response.status === 403) {
-                    console.warn('Unauthorized: Redirecting to login.');
-                    navigate('/login');
-                } else {
-                    console.error('Failed to fetch main message');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-            }
-        };
+            const data = await fetchMainMessage();
+            setMainMessage(data.value);
+            setShowOnSite(data.showOnSite);
+        } catch (error) {
 
-        fetchMainMessage();
-    }, []);
+            console.error('Error fetching categories: ', error.message);
+            // TODO: Show alert
+        }
+    };
 
-    // Save the main message and "showOnSite" toggle state
-    const handleSaveMainMessage = async () => {
+    const handleEditMainMessage = async () => {
         setMessageSaved(false);
 
-        const formData = new FormData();
-        formData.append('newMessage', mainMessage);
-        formData.append('showOnSite', showOnSite); // Include the "showOnSite" state
-        const token = localStorage.getItem('jwtToken');
-
         try {
-            const response = await fetch('http://localhost:8080/api/v1/appsettings/setMainMessage', {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                },
-                body: formData
-            });
+            const response = await editMainMessage(mainMessage, showOnSite);
 
-            if (response.ok) {
+            if (response) {
                 console.log('Main message updated successfully');
                 setMessageSaved(true);
                 setShowSuccessBanner(true);
-            } else if (response.status === 403) {
+            }
+        } catch (error) {
+
+            if (error.status === 403) {
                 console.warn('Unauthorized: Redirecting to login.');
                 navigate('/login');
             } else {
-                console.error('Failed to update main message');
+                console.error('Failed to edit main message:', error.message);
+                // TODO: Show alert
             }
-        } catch (error) {
-            console.error('Error:', error);
         }
     };
+
+    useEffect(() => {
+
+        loadMainMessage();
+    }, []);
+
+    useEffect(() => {
+        if (!isAuthenticated) {
+            navigate('/login');
+        }
+    }, [isAuthenticated, navigate]);
 
     return (
         <div className="align-items-center" style={{ marginTop: "140px", paddingLeft: "5%", paddingRight: "5%" }}>
@@ -108,7 +97,7 @@ export default function AdminMainPage() {
                                     </Alert>
                                 )}
                                 <div className="d-flex justify-content-center align-items-center">
-                                    <Button variant="dark" className="w-50 border-0 rounded-0" onClick={() => handleSaveMainMessage()}>
+                                    <Button variant="dark" className="w-50 border-0 rounded-0" onClick={() => handleEditMainMessage()}>
                                         Sačuvaj
                                     </Button>
                                 </div>
