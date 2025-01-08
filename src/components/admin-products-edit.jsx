@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { loadAllCategoriesWithIdAndNames } from '../api/category-api';
+import { fetchProductById, updateProduct } from '../api/product-api';
 import { Form, Button, Row, Col, Image, Alert } from 'react-bootstrap';
 import '../style/admin-products-edit.css';
 
@@ -22,70 +24,49 @@ export default function AdminProductsEdit() {
     const [categories, setCategories] = useState([]);
     const [category, setCategory] = useState('');
 
-    useEffect(() => {
-        const fetchCategories = async () => {
-            try {
-                const token = localStorage.getItem('jwtToken');
-                const response = await fetch('http://localhost:8080/api/v1/category/getAllCategoriesWithIdAndNames', {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
+    const fetchCategoriesWithIdAndNames = async () => {
+        try {
 
-                if (response.ok) {
-                    const data = await response.json();
-                    setCategories(data);
-
-                } else if (response.status === 403) {
-                    console.warn('Unauthorized: Redirecting to login.');
-                    navigate('/login');
-                } else {
-                    console.error('Failed to fetch categories');
-                }
-            } catch (error) {
-                console.error('Error:', error);
+            const data = await loadAllCategoriesWithIdAndNames();
+            setCategories(data);
+        } catch (error) {
+            console.error('Error:', error);
+            if (error.status === 403) {
+                console.warn('Unauthorized: Redirecting to login.');
+                navigate('/login');
+            } else {
+                console.error('Failed to fetch categories: ', error.message);
+                // TODO: Show alert
             }
-        };
+        }
+    };
 
-        fetchCategories();
-    }, []);
+    const fetchProduct = async () => {
+        try {
 
-    useEffect(() => {
-        const fetchProduct = async () => {
-            try {
-                const token = localStorage.getItem('jwtToken');
-                const response = await fetch(`http://localhost:8080/api/v1/product/${id}`, {
-                    method: "GET",
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-
-                if (response.ok) {
-                    const data = await response.json();
-                    const fetchedProduct = data.product;
-                    setProduct(fetchedProduct);
-                    setCategory(fetchedProduct.category.id);
-                    const image = fetchedProduct.imageList?.[0];
-                    if (image) {
-                        setImagePreview(image.imageData);
-                        setImageType(image.mimeType);
-                    }
-                } else if (response.status === 403) {
-                    console.warn('Unauthorized: Redirecting to login.');
-                    navigate('/login');
-                } else {
-                    console.error('Failed to fetch product');
-                }
-
-            } catch (error) {
-                console.error('Error fetching product:', error);
+            const data = await fetchProductById(id);
+            const fetchedProduct = data.product;
+            setProduct(fetchedProduct);
+            setCategory(fetchedProduct.category.id);
+            const image = fetchedProduct.imageList?.[0];
+            if (image) {
+                setImagePreview(image.imageData);
+                setImageType(image.mimeType);
             }
-        };
 
-        fetchProduct();
-    }, [id]);
+        } catch (error) {
+            console.error('Error fetching product:', error);
+            if (error.status === 403) {
+                console.warn('Unauthorized: Redirecting to login.');
+                navigate('/login');
+            } else {
+                console.error('Failed to fetch categories: ', error.message);
+                // TODO: Show alert
+            }
+        }
+    };
+
+
 
     const handleUpdateProduct = async () => {
         const formData = new FormData();
@@ -110,27 +91,20 @@ export default function AdminProductsEdit() {
             formData.append("images", selectedImage);
         }
 
-        const token = localStorage.getItem('jwtToken');
-
         try {
-            const response = await fetch('http://localhost:8080/api/v1/product/updateProduct', {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                },
-                body: formData
-            });
 
-            if (response.ok) {
-                setShowSuccessBanner(true); // Show success banner
-            } else if (response.status === 403) {
+            const response = await updateProduct(formData);
+            setShowSuccessBanner(true);
+
+        } catch (error) {
+            console.error('Error update product:', error);
+            if (error.status === 403) {
                 console.warn('Unauthorized: Redirecting to login.');
                 navigate('/login');
             } else {
-                console.error('Failed to update product');
+                console.error('Failed to fetch categories: ', error.message);
+                // TODO: Show alert
             }
-        } catch (error) {
-            console.error('Error:', error);
         }
     };
 
@@ -159,6 +133,12 @@ export default function AdminProductsEdit() {
         const baseUrl = "http://localhost:8080/api/v1/images/getImage";
         return `${baseUrl}?path=${encodeURIComponent(path)}`;
     };
+
+    useEffect(() => {
+
+        fetchProduct();
+        fetchCategoriesWithIdAndNames();
+    }, [id]);
 
     return (
         product ? (

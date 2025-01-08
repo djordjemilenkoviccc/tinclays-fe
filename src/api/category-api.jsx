@@ -71,6 +71,30 @@ export const editCategory = async (id, name, image, showOnSite) => {
         });
 
         if (!response.ok) {
+            const error = new Error('Failed edit category');
+            error.status = response.status;
+            throw error;
+        }
+
+        return await response.json();
+
+    } catch (error) {
+        console.error('Error:', error);
+        throw error;
+    }
+}
+
+export const loadAllCategoriesWithIdAndNames = async () => {
+
+    try {
+        const response = await fetch(`${BASE_URL}/category/getAllCategoriesWithIdAndNames`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${getToken()}`
+            }
+        });
+
+        if (!response.ok) {
             const error = new Error('Failed add new category');
             error.status = response.status;
             throw error;
@@ -82,6 +106,4 @@ export const editCategory = async (id, name, image, showOnSite) => {
         console.error('Error:', error);
         throw error;
     }
-
-
 }
