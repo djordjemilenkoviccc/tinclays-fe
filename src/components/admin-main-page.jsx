@@ -20,7 +20,7 @@ export default function AdminMainPage() {
             setShowOnSite(data.showOnSite);
         } catch (error) {
 
-            console.error('Error fetching categories: ', error.message);
+            console.error('Error fetching main message: ', error.message);
             // TODO: Show alert
         }
     };

@@ -6,6 +6,7 @@ import { Card, Button, Row, Col, Dropdown, DropdownButton, Form } from 'react-bo
 import { useNavigate } from 'react-router-dom';
 import { loadOrdersByStatus, changeOrderStatus } from '../api/order-api';
 import { Pencil } from 'react-bootstrap-icons';
+import { getImageUrl } from "../utils/image-utils";
 
 export default function AdminPanel() {
 
@@ -65,11 +66,6 @@ export default function AdminPanel() {
         } else if (status === "completed") {
             return "Lista svih porudžbina koje su realizovane";
         }
-    };
-
-    const getImageUrl = (path) => {
-        const baseUrl = "http://localhost:8080/api/v1/images/getImage";
-        return `${baseUrl}?path=${encodeURIComponent(path)}`;
     };
 
     useEffect(() => {

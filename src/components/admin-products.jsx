@@ -1,6 +1,9 @@
 import { Card, Button, Row, Col, Modal, Form, Alert, Dropdown, DropdownButton } from 'react-bootstrap';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { addProduct, loadAllProducts, archiveProduct } from '../api/product-api';
+import { loadAllCategoriesWithIdAndNames } from '../api/category-api';
+import { getImageUrl } from '../utils/image-utils';
 
 export default function AdminProducts() {
     const [filteredProducts, setFilteredProducts] = useState([]);
@@ -17,7 +20,6 @@ export default function AdminProducts() {
     const [imageType, setImageType] = useState(null);
 
     const [name, setName] = useState('');
-    const [image, setImage] = useState(null);
     const [category, setCategory] = useState('');
     const [description, setDescription] = useState('');
     const [price, setPrice] = useState('');
@@ -70,91 +72,57 @@ export default function AdminProducts() {
             formData.append("images", selectedImage);
         }
 
-        const token = localStorage.getItem("jwtToken");
-
         try {
-            const response = await fetch("http://localhost:8080/api/v1/product/addProduct", {
-                method: "POST",
-                headers: {
-                    "Authorization": `Bearer ${token}`
-                },
-                body: formData
-            });
+            const response = await addProduct(formData);
+            setShowSuccessBanner(true);
+            // TODO: Fix this (Image not loading in newProduct)
+            // const newProduct = await response.json();
+            // setProducts([...products, newProduct]);
 
-            if (response.ok) {
-                setShowSuccessBanner(true);
-                // TODO: Fix this (Image not loading in newProduct)
-                // const newProduct = await response.json();
-                // setProducts([...products, newProduct]);
-            } else if (response.status === 403) {
+        } catch (error) {
+            console.error('Error add product:', error);
+            if (error.status === 403) {
                 console.warn('Unauthorized: Redirecting to login.');
                 navigate('/login');
             } else {
-                console.error("Failed to add product");
+                console.error('Failed to fetch categories: ', error.message);
+                // TODO: Show alert
             }
-        } catch (error) {
-            console.error("Error:", error);
         }
     };
 
+    const fetchAllProducts = async () => {
+        try {
 
+            const data = await loadAllProducts();
 
-    useEffect(() => {
-        const fetchProducts = async () => {
-            try {
-                const token = localStorage.getItem('jwtToken');
-                const response = await fetch('http://localhost:8080/api/v1/product/getAllProducts', {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
+            setProducts(data.products);
+            setFilteredProducts(data.products);
 
-                if (response.ok) {
-                    const data = await response.json();
-                    setProducts(data.products);
-                    setFilteredProducts(data.products);
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    };
 
-                } else if (response.status === 403) {
-                    console.warn('Unauthorized: Redirecting to login.');
-                    navigate('/login');
-                } else {
-                    console.error('Failed to fetch products');
-                }
-            } catch (error) {
-                console.error('Error:', error);
+    const fetchCategories = async () => {
+        try {
+
+            const data = await loadAllCategoriesWithIdAndNames();
+            setCategories(data);
+        } catch (error) {
+            console.error('Error:', error);
+            if (error.status === 403) {
+                console.warn('Unauthorized: Redirecting to login.');
+                navigate('/login');
+            } else {
+                console.error('Failed to fetch categories: ', error.message);
+                // TODO: Show alert
             }
-        };
-
-        fetchProducts();
-    }, []);
+        }
+    };
 
     // This is because we Add new Product modal
     useEffect(() => {
-        const fetchCategories = async () => {
-            try {
-                const token = localStorage.getItem('jwtToken');
-                const response = await fetch('http://localhost:8080/api/v1/category/getAllCategoriesWithIdAndNames', {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-
-                if (response.ok) {
-                    const data = await response.json();
-                    setCategories(data);
-
-                } else if (response.status === 403) {
-                    console.warn('Unauthorized: Redirecting to login.');
-                    navigate('/login');
-                } else {
-                    console.error('Failed to fetch categories');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-            }
-        };
 
         fetchCategories();
     }, []);
@@ -168,40 +136,34 @@ export default function AdminProducts() {
         const formData = new FormData();
         formData.append('productId', product.id);
 
-        const token = localStorage.getItem('jwtToken');
-
         try {
-            const response = await fetch('http://localhost:8080/api/v1/product/archiveProduct', {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                },
-                body: formData
+            const response = await archiveProduct(formData);
+
+            alert('Proizvod uspesno arhiviran');
+            setProducts((prevProducts) => {
+                const updatedProducts = prevProducts.filter((p) => p.id !== product.id);
+                console.log("filtered: " + updatedProducts);
+                console.log("sel. cat: " + selectedCategory);
+                
+                if (selectedCategory === '' || selectedCategory === null) {
+                    setFilteredProducts(updatedProducts);
+                } else {
+                    setFilteredProducts(updatedProducts.filter((p) => p.category.id === selectedCategory));
+                }
+
+                return updatedProducts;
             });
 
-            if (response.ok) {
-                alert('Proizvod uspesno arhiviran');
-                setProducts((prevProducts) => {
-                    const updatedProducts = prevProducts.filter((p) => p.id !== product.id);
+        } catch (error) {
 
-                    // Update filteredProducts based on the selected category
-                    if (selectedCategory === '') {
-                        setFilteredProducts(updatedProducts); // Show all products
-                    } else {
-                        setFilteredProducts(updatedProducts.filter((p) => p.category.id === selectedCategory));
-                    }
-
-                    return updatedProducts;
-                });
-            } else if (response.status === 403) {
+            console.error('Error:', error);
+            if (error.status === 403) {
                 console.warn('Unauthorized: Redirecting to login.');
                 navigate('/login');
             } else {
-                const errorMessage = await response.text();
-                alert(`${errorMessage}`);
+                console.error('Failed to archive product: ', error);
+                alert(`${error.message}`);
             }
-        } catch (error) {
-            console.log(error);
         }
     };
 
@@ -215,10 +177,10 @@ export default function AdminProducts() {
         }
     };
 
-    const getImageUrl = (path) => {
-        const baseUrl = "http://localhost:8080/api/v1/images/getImage";
-        return `${baseUrl}?path=${encodeURIComponent(path)}`;
-    };
+    useEffect(() => {
+
+        fetchAllProducts();
+    }, []);
 
     return (
         <div className="align-items-center" style={{ marginTop: "140px", paddingLeft: "5%", paddingRight: "5%" }}>

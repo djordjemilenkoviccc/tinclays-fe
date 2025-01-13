@@ -2,14 +2,14 @@
     text-align: center;
     padding-top: 2%;
     padding-bottom: 2%;
-    background-color: #f2f1f0;
+    background-color: #a9c3e6;
     position: relative;
     bottom: 0;
     height: 100%;
 }
 
 .copyright {
-    color: rgb(65, 65, 65); 
+    color: #1c3d5a; 
     font-size: 18px;
     font-weight: 500;
 }

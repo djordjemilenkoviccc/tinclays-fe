@@ -62,3 +62,18 @@
     color: red;
     font-size: 0.875rem;
 }
+
+.checkout-btn {
+    background-color: #e8ddcf;
+    color: #2a3b59;
+    border-radius: 0;
+    position: relative;
+    font-family: Arial, Helvetica, sans-serif;
+    border: 0px;
+}
+
+.checkout-btn:active,
+.checkout-btn:hover {
+    background-color: #e8ddcf !important;
+    color: #2a3b59 !important;
+}

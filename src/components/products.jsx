@@ -4,6 +4,7 @@ import { CartContext } from './cart-context';
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { fetchProductsByCategoryId } from '../api/product-api';
+import { getImageUrl } from '../utils/image-utils';
 import '../style/products.css';
 import '../style/home.css';
 
@@ -32,11 +33,6 @@ export default function Products() {
         loadProductsByCategoryId();
     }, [categoryId]);
 
-    const getImageUrl = (path) => {
-        const baseUrl = "http://localhost:8080/api/v1/images/getImage";
-        return `${baseUrl}?path=${encodeURIComponent(path)}`;
-    };
-
     return (
         <div style={{ paddingLeft: "5%", paddingRight: "5%", marginTop: "120px" }}>
             <Row>
@@ -56,7 +52,7 @@ export default function Products() {
                             <h6>{product.price} RSD</h6>
                             <div className="mt-3 w-100">
                                 <Button
-                                    className="btn btn-dark w-100 rounded-0 hidden-button"
+                                    className="w-100 hidden-button add-to-cart-btn"
                                     onClick={() => addToCart(product)}
                                     disabled={isMaxQuantityReached}
                                 >

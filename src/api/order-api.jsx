@@ -1,4 +1,4 @@
-const BASE_URL = 'http://localhost:8080/api/v1';
+import {BASE_URL} from '../constants/base-url';
 
 const getToken = () => localStorage.getItem('jwtToken');
 
@@ -41,15 +41,41 @@ export const changeOrderStatus = async (orderId, status) => {
             body: formData
         });
 
-        if(!response.ok) {
-         
+        if (!response.ok) {
+
             const error = new Error('Failed fetch orders');
             error.status = response.status;
             throw error;
         }
 
         return await response.json();
-    } catch(error) {
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const createOrder = async (orderDtoRequest) => {
+
+    try {
+        const response = await fetch(`${BASE_URL}/order/add`, {
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(orderDtoRequest)
+        });
+
+        if (!response.ok) {
+            const error = new Error('Failed fetch orders');
+            error.status = response.status;
+            throw error;
+        }
+
+        return response;
+        
+
+    } catch (error) {
+        console.log(error);
         throw error;
     }
 };

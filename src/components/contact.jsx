@@ -3,6 +3,7 @@ import '../style/home.css';
 import '../style/checkout.css';
 import React from 'react';
 import { useContext, useState } from 'react';
+import { sendContactMessage } from '../api/main-api';
 import { Row, Col, Form, Button, Alert } from 'react-bootstrap';
 
 function Contact() {
@@ -55,29 +56,21 @@ function Contact() {
         }
 
         try {
-            const response = await fetch("http://localhost:8080/api/v1/appsettings/contactMe", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(formData),
+            const response = await sendContactMessage(formData)
+
+            setFormTouched(false);
+            setShowSuccessBanner(true);
+            setFormData({
+                firstName: "",
+                lastName: "",
+                email: "",
+                subject: "",
+                message: "",
             });
 
-            if (response.ok) {
-                setFormTouched(false);
-                setShowSuccessBanner(true);
-                setFormData({
-                    firstName: "",
-                    lastName: "",
-                    email: "",
-                    subject: "",
-                    message: "",
-                });
-            } else {
-                setShowFailedBanner(true);
-            }
         } catch (error) {
             console.error("Error sending the message:", error);
+            setShowFailedBanner(true);
         }
     }
 
@@ -87,7 +80,7 @@ function Contact() {
                 <Col lg="8" md="10" sm="12" className="d-flex justify-content-center align-items-center w-100">
                     <Form action="#" method="post" className="w-100">
                         <Form.Group as={Row} className="text-center">
-                            <h3>Pošaljite mi poruku</h3>
+                            <p style={{fontSize: "22px"}}>Pošaljite mi poruku</p>
                         </Form.Group>
 
                         <Form.Group as={Row} className="mt-5">
@@ -185,7 +178,7 @@ function Contact() {
 
                         {showFailedBanner && (
                             <div>
-                                <Alert variant="success" onClose={() => setShowFailedBanner(false)} dismissible>
+                                <Alert variant="danger" onClose={() => setShowFailedBanner(false)} dismissible>
                                     Greška prilikom slanja poruke. Pokušajte ponovo
                                 </Alert>
                             </div>
@@ -195,7 +188,7 @@ function Contact() {
                         <Form.Group as={Row} className="mt-4">
                             <Col lg={12}>
                                 <div className="d-flex justify-content-center align-items-center">
-                                    <Button variant="dark" className="w-50 border-0 rounded-0" onClick={() => handleSubmit()}>
+                                    <Button className="send-message-btn" onClick={() => handleSubmit()}>
                                         Pošalji
                                     </Button>
                                 </div>

@@ -1,4 +1,4 @@
-const BASE_URL = 'http://localhost:8080/api/v1';
+import {BASE_URL} from '../constants/base-url';
 
 const getToken = () => localStorage.getItem('jwtToken');
 
@@ -107,3 +107,24 @@ export const loadAllCategoriesWithIdAndNames = async () => {
         throw error;
     }
 }
+
+export const loadAllCategoriesWithProducts = async () => {
+
+    try {
+        const response = await fetch(`${BASE_URL}/category/getAllCategoriesWithProducts`, {
+            method: 'GET'
+        });
+
+        if (!response.ok) {
+            const error = new Error('Failed fetch categories');
+            error.status = response.status;
+            throw error;
+        }
+
+        return await response.json();
+
+    } catch (error) {
+        console.error('Error:', error);
+        throw error;
+    }
+};

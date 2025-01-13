@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { Form, Button, Container, Row, Col, Alert } from 'react-bootstrap';
-import axios from 'axios';
+import { authenticateUser } from '../api/auth-api';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from './auth-context';
 
@@ -15,17 +15,13 @@ export default function Login() {
     const handleLogin = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post('http://localhost:8080/api/v1/auth/authenticate', {
-                username,
-                password
-            });
-
-            const token = response.data.jwtToken;
+            const response = await authenticateUser(username, password);
+            const token = response.jwtToken;
             login(token);
 
             navigate('/admin-panel/in_progress');
         } catch (error) {
-            if (error.response && error.response.status === 403) {
+            if (error.status === 403) {
                 setError('Pogrešno korisničko ime ili lozinka.');
             } else {
                 setError('An error occurred. Please try again later.');

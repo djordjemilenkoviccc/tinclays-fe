@@ -1,4 +1,4 @@
-const BASE_URL = 'http://localhost:8080/api/v1';
+import {BASE_URL} from '../constants/base-url';
 
 const getToken = () => localStorage.getItem('jwtToken');
 
@@ -50,6 +50,30 @@ export const editMainMessage = async (mainMessage, showOnSite) => {
 
     } catch (error) {
         console.error('Error: ', error);
+        throw error;
+    }
+};
+
+export const sendContactMessage = async (formData) => {
+
+    try {
+        const response = await fetch(`${BASE_URL}/appsettings/contactMe`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(formData),
+        });
+
+        if (!response.ok) {
+            const error = new Error('Failed to edit main message');
+            error.status = response.status;
+            throw error;
+        }
+        return response;
+
+    } catch (error) {
+        console.error("Error sending the message:", error);
         throw error;
     }
 };

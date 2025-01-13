@@ -4,7 +4,7 @@ import React from 'react';
 
 import { useLocation } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
-import { Row, Col, Form, Button } from 'react-bootstrap';
+import { Button } from 'react-bootstrap';
 
 
 export default function CheckoutStatus() {

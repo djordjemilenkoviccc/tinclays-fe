@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { loadAllCategoriesWithIdAndNames } from '../api/category-api';
 import { fetchProductById, updateProduct } from '../api/product-api';
 import { Form, Button, Row, Col, Image, Alert } from 'react-bootstrap';
+import { getImageUrl } from '../utils/image-utils';
 import '../style/admin-products-edit.css';
 
 export default function AdminProductsEdit() {
@@ -127,11 +128,6 @@ export default function AdminProductsEdit() {
             ...prev,
             [name]: type === "checkbox" ? checked : value,
         }));
-    };
-
-    const getImageUrl = (path) => {
-        const baseUrl = "http://localhost:8080/api/v1/images/getImage";
-        return `${baseUrl}?path=${encodeURIComponent(path)}`;
     };
 
     useEffect(() => {

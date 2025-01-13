@@ -3,7 +3,7 @@ import '../style/cart.css';
 import React, { useContext } from 'react';
 import { Offcanvas, Button } from 'react-bootstrap';
 import { CartContext } from './cart-context';
-
+import { getImageUrl } from '../utils/image-utils';
 import { useNavigate } from 'react-router-dom';
 
 export default function Cart({ show, handleClose, setCartItems }) {
@@ -17,11 +17,6 @@ export default function Cart({ show, handleClose, setCartItems }) {
         handleClose();
         sessionStorage.setItem('scrollPosition', window.scrollY);
         navigate(`/checkout`, { state: { cartItems } });
-    };
-
-    const getImageUrl = (path) => {
-        const baseUrl = "http://localhost:8080/api/v1/images/getImage";
-        return `${baseUrl}?path=${encodeURIComponent(path)}`;
     };
 
     return (
@@ -63,7 +58,7 @@ export default function Cart({ show, handleClose, setCartItems }) {
                     </div>
                 )}
                 {cartItems.length !== 0 && (
-                    <Button className="btn btn-dark w-100 rounded-0 checkout-btn" onClick={() => goToCheckout(cartItems)}>Checkout</Button>
+                    <Button className="w-100 checkout-btn" onClick={() => goToCheckout(cartItems)}>Checkout</Button>
                 )}
 
             </Offcanvas.Body>

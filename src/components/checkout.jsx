@@ -3,7 +3,8 @@ import React, { useContext, useState } from 'react';
 import { Form, Button, Row, Col, ListGroup } from 'react-bootstrap';
 import { CartContext } from './cart-context';
 import { useNavigate } from 'react-router-dom';
-import axios from "axios";
+import {createOrder} from '../api/order-api';
+import { getImageUrl } from '../utils/image-utils';
 
 export default function Checkout() {
     const navigate = useNavigate();
@@ -85,12 +86,8 @@ export default function Checkout() {
         console.log("Sanitized Form Data:", orderDtoRequest);
 
         try {
-            const response = await axios.post("http://localhost:8080/api/v1/order/add", orderDtoRequest, {
-                headers: {
-                    "Content-Type": "application/json",
-                },
-            });
-            console.log("Order created successfully: ", response.data);
+            const response = await createOrder(orderDtoRequest);
+
             localStorage.removeItem('cartItems');
             setCartItems([]);
             navigate('/checkout-status', { state: { message: "Narudžbina je uspešno kreirana", status: "success" } });
@@ -102,11 +99,6 @@ export default function Checkout() {
             navigate('/checkout-status', { state: { message: "Neuspelo kreiranje porudžbine", description: error.response ? error.response.data : 'Greška pri obradi porudžbine, pokušajte ponovo', status: "failed" } });
         }
 
-    };
-
-    const getImageUrl = (path) => {
-        const baseUrl = "http://localhost:8080/api/v1/images/getImage";
-        return `${baseUrl}?path=${encodeURIComponent(path)}`;
     };
 
     return (
@@ -276,7 +268,7 @@ export default function Checkout() {
             </Row>
             <Row>
                 <Col md={12} lg={6} sm={12}>
-                    <Button className="btn btn-dark w-100 rounded-0 checkout-btn" onClick={() => handleSubmit()}>
+                    <Button className="w-100 checkout-btn" onClick={() => handleSubmit()}>
                         Naruči
                     </Button>
                 </Col>

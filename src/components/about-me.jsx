@@ -16,7 +16,7 @@ export default function AboutMe() {
             <Row className="justify-content-center align-items-center mt-4">
                 <Col lg="6" md="8" sm="10" className="d-flex justify-content-center">
                     <img
-                        src="/path-to-your-image.jpg"
+                        src="/about_me.jpg"
                         alt="About Me"
                         className="about-image"
                     />

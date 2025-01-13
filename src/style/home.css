@@ -1,22 +1,29 @@
+@import url('https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap');
+
 .home-root {
     margin-top: 120px;
     padding-left: 5%;
     padding-right: 5%;
 }
 
+.home-root-home {
+    margin-top: 120px;
+}
+
 .cover-img {
     width: 100%;
     height: 650px;
     object-fit: cover;
-    filter: brightness(60%)
+    filter: brightness(80%)
 }
 
 .btn-shop-now {
-    background-color: black;
-    color: white;
+    background-color: #e8ddcf;
+    color: #2a3b59;
     border-radius: 0;
     position: relative;
     font-family: Arial, Helvetica, sans-serif;
+    font-size: large;
     width: 200px;
     height: 50px;
     border: 0px;
@@ -24,15 +31,20 @@
 }
 
 .btn-shop-now:hover {
-    background-color: #bfb09c !important;
-    color: black;
+    background-color: #e8ddcf !important;
+    color: #2a3b59 !important;
 }
 
+.main-message {
+    background-color: #a9c3e6;
+    color: #1c3d5a;
+    border-radius: 0%;
+}
 
 .collection-paragraph {
     margin-top: 1%;
     margin-bottom: 1%;
-    height: auto; 
+    height: auto;
     padding-top: 2%;
     padding-left: 5%;
     padding-right: 5%;
@@ -41,12 +53,11 @@
     background-color: white;
 }
 
-
-
 .text-on-cover-image {
-    color: white;
+    color: #fee1be;
+    text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
     font-size: 36px;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: 'Raleway', serif !important;
 }
 
 
@@ -64,11 +75,41 @@
 }
 
 .category-card:hover {
-    
+
     transform: scale(1.05);
     filter: brightness(0.9);
 }
 
 .category-card p {
     font-size: 18px;
+}
+
+.message-slider {
+    position: fixed;
+    top: 99px;
+    width: 100%;
+    background-color: #a9c3e6;
+    color: #1c3d5a;
+    font-size: 18px;
+    overflow: hidden; /* Ensures text outside the slider is hidden */
+    z-index: 1000;
+    display: flex;
+    align-items: center; /* Vertically centers text */
+}
+
+.message-slider-text {
+    display: inline-block;
+    width: 100%;
+    white-space: nowrap; /* Prevents text from wrapping */
+    animation: slide linear infinite; /* Animation applied dynamically */
+}
+
+@keyframes slide {
+    0% {
+        transform: translateX(100%);
+    }
+
+    100% {
+        transform: translateX(-100%);
+    }
 }

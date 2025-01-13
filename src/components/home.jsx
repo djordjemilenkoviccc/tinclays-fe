@@ -2,8 +2,10 @@ import '../style/home.css';
 
 import { Button, Row, Col, Card } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-import { useState, useEffect } from 'react';
-
+import { fetchMainMessage } from '../api/main-api';
+import { loadAllCategoriesWithProducts } from '../api/category-api';
+import { useState, useEffect, useRef } from 'react';
+import Snowfall from 'react-snowfall';
 export default function Home() {
     const navigate = useNavigate();
     const [categories, setCategories] = useState([]);
@@ -22,73 +24,90 @@ export default function Home() {
         }
     };
 
+    const loadMainMessage = async () => {
+
+        try {
+
+            const data = await fetchMainMessage();
+            setMainMessage(data);
+        } catch (error) {
+            console.error('Error fetching main message: ', error.message);
+            // TODO: Show alert
+        }
+    };
+
+    const fetchCategories = async () => {
+        try {
+
+            const data = await loadAllCategoriesWithProducts();
+            setCategories(data.categoryList);
+
+        } catch (error) {
+            console.error('Error:', error);
+            // TODO: Show alert
+        }
+    };
+
     useEffect(() => {
-        const fetchMainMessage = async () => {
-            try {
-                const response = await fetch('http://localhost:8080/api/v1/appsettings/getMainMessage', {
-                    method: 'GET'
-                });
-
-                if (response.ok) {
-                    const data = await response.json();
-                    console.log(data);
-                    setMainMessage(data);
-                } else {
-                    console.error('Failed to fetch main message');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-            }
-        };
-
-        fetchMainMessage();
-    }, []);
-
-    useEffect(() => {
-        const fetchCategories = async () => {
-            try {
-                const response = await fetch('http://localhost:8080/api/v1/category/getAllCategoriesWithProducts', {
-                    method: 'GET'
-                });
-
-                if (response.ok) {
-                    const data = await response.json();
-                    setCategories(data.categoryList);
-                } else {
-                    console.error('Failed to fetch categories');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-            }
-        };
 
         fetchCategories();
+        loadMainMessage();
+    }, []);
+
+    const textRef = useRef(null);
+
+    useEffect(() => {
+        const textElement = textRef.current;
+
+        if (textElement) {
+            // Calculate the width of the message
+            const textWidth = textElement.offsetWidth;
+            const sliderWidth = textElement.parentElement.offsetWidth;
+            console.log("text width: " + textWidth);
+            console.log("slider width: " + sliderWidth);
+
+            // Calculate duration based on message width (e.g., 100px = 1 second)
+            const speed = 100; // Adjust this value for the desired speed (pixels per second)
+            const duration = (textWidth + sliderWidth) / speed;
+
+            // Set the animation duration dynamically
+            console.log(duration);
+            textElement.style.animationDuration = `${duration}s`;
+        }
     }, []);
 
     return (
-        <div className='home-root'>
+        <div style={{marginTop: "170px"}}>
+            <div className="message-slider">
 
-            <div className="overlay-container position-relative">
+                <div className="message-slider-text" ref={textRef}>
+                    <p>
+                        Nova kolekcija izlazi 11.01.2025. u 20h
+                    </p>
+                </div>
+            </div> 
+            <div className="overlay-container position-relative" style={{paddingLeft: "5%", paddingRight: "5%"}}>
                 <img
-                    src="https://static.wixstatic.com/media/d01231e46af34161be7ad101d281a441.jpg/v1/fill/w_1960,h_1478,al_c,q_90,usm_0.66_1.00_0.01,enc_auto/d01231e46af34161be7ad101d281a441.jpg"
+                    // src="https://static.wixstatic.com/media/d01231e46af34161be7ad101d281a441.jpg/v1/fill/w_1960,h_1478,al_c,q_90,usm_0.66_1.00_0.01,enc_auto/d01231e46af34161be7ad101d281a441.jpg"
+                    src="/home.jpg"
                     className='cover-img'
                     fetchpriority="high">
                 </img>
 
                 <div className="overlay-content position-absolute top-50 start-50 translate-middle text-center">
-                    <p className='text-on-cover-image'>Mugs and More</p>
+                    <p className='text-on-cover-image'>Mugs & More</p>
                     <button className="btn-shop-now" onClick={scrollToCollection}>Shop now</button>
                 </div>
             </div>
 
             <br></br>
 
-            <Row id="id-collection">
+            <Row id="id-collection" style={{paddingLeft: "5%", paddingRight: "5%"}}>
                 {mainMessage && mainMessage.showOnSite && (
                     <Col lg="12" md="12" sm="12">
-                        <Card className="d-flex flex-column text-center justify-content-between">
+                        <Card className="d-flex flex-column text-center justify-content-between main-message">
                             <Card.Body>
-                                <p className="mt-3 md-5" style={{fontSize: "18px", lineHeight: "1.8" }}>{mainMessage.value}</p>
+                                <p className="mt-3 md-5" style={{ fontSize: "18px", lineHeight: "1.8" }}>{mainMessage.value}</p>
                             </Card.Body>
                         </Card>
                     </Col>
@@ -101,7 +120,7 @@ export default function Home() {
                 </Col>
             </Row>
 
-            <Row className="justify-content-center">
+            <Row className="justify-content-center" style={{paddingLeft: "5%", paddingRight: "5%"}}>
                 {categories.map((category) => (
                     <Col lg={4} md={4} sm={12} className="mb-5" key={category.id} onClick={() => handleCardClick(category.id)}>
                         <Card className="d-flex flex-column justify-content-between h-100 category-card">
@@ -120,47 +139,6 @@ export default function Home() {
                 ))}
 
             </Row>
-
-            {/* <Row>
-                <Col lg="6" md="6" sm="12" className='text-center category-card' onClick={() => handleCardClick(1)}>
-                    <img src="https://static.wixstatic.com/media/697bc8_5b14db998c9f45379e50e7e7fb0ad18c~mv2_d_3000_1744_s_2.jpg/v1/fill/w_1036,h_690,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/697bc8_5b14db998c9f45379e50e7e7fb0ad18c~mv2_d_3000_1744_s_2.jpg"
-                        alt="I'm a product"
-                        className='product-image'
-                        fetchpriority="high">
-                    </img>
-                    <p>Rucno radjene solje sa spiralnom ruckom</p>
-                </Col>
-
-                <Col lg="6" md="6" sm="12" className='text-center category-card'>
-                    <img src="https://static.wixstatic.com/media/697bc8_5b14db998c9f45379e50e7e7fb0ad18c~mv2_d_3000_1744_s_2.jpg/v1/fill/w_1036,h_690,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/697bc8_5b14db998c9f45379e50e7e7fb0ad18c~mv2_d_3000_1744_s_2.jpg"
-                        alt="I'm a product"
-                        className='product-image'
-                        fetchpriority="high">
-                    </img>
-                    <p>Rucno radjene solje sa ravnom ruckom</p>
-                </Col>
-            </Row>
-            <br></br>
-            <Row>
-                <Col lg="6" md="6" sm="12" className='text-center category-card'>
-                    <img src="https://static.wixstatic.com/media/697bc8_5b14db998c9f45379e50e7e7fb0ad18c~mv2_d_3000_1744_s_2.jpg/v1/fill/w_1036,h_690,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/697bc8_5b14db998c9f45379e50e7e7fb0ad18c~mv2_d_3000_1744_s_2.jpg"
-                        alt="I'm a product"
-                        className='product-image'
-                        fetchpriority="high">
-                    </img>
-                    <p>TO-GO solje</p>
-                </Col>
-
-                <Col lg="6" md="6" sm="12" className='text-center category-card'>
-                    <img src="https://static.wixstatic.com/media/697bc8_5b14db998c9f45379e50e7e7fb0ad18c~mv2_d_3000_1744_s_2.jpg/v1/fill/w_1036,h_690,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/697bc8_5b14db998c9f45379e50e7e7fb0ad18c~mv2_d_3000_1744_s_2.jpg"
-                        alt="I'm a product"
-                        className='product-image'
-                        fetchpriority="high">
-                    </img>
-                    <p>Ostalo</p>
-                </Col>
-            </Row> */}
-
 
         </div>
     )
