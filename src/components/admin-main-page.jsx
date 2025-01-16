@@ -6,7 +6,10 @@ import { useState, useEffect, useContext } from 'react';
 
 export default function AdminMainPage() {
     const [mainMessage, setMainMessage] = useState("");
-    const [showOnSite, setShowOnSite] = useState(true);
+
+    const [collectionDate, setCollectionDate] = useState("");
+    const [showOnSiteMainMessage, setShowOnSiteMainMessage] = useState(true);
+    const [showOnSiteCollectionDate, setShowOnSiteCollectionDate] = useState(true);
     const [messageSaved, setMessageSaved] = useState(false);
     const [showSuccessBanner, setShowSuccessBanner] = useState(false);
     const { isAuthenticated } = useContext(AuthContext);
@@ -16,8 +19,11 @@ export default function AdminMainPage() {
         try {
 
             const data = await fetchMainMessage();
-            setMainMessage(data.value);
-            setShowOnSite(data.showOnSite);
+            setMainMessage(data[0].value);
+            setShowOnSiteMainMessage(data[0].showOnSite);
+            setCollectionDate(data[1].value);
+            setShowOnSiteCollectionDate(data[1].showOnSite);
+
         } catch (error) {
 
             console.error('Error fetching main message: ', error.message);
@@ -29,7 +35,7 @@ export default function AdminMainPage() {
         setMessageSaved(false);
 
         try {
-            const response = await editMainMessage(mainMessage, showOnSite);
+            const response = await editMainMessage(mainMessage, showOnSiteMainMessage, collectionDate, showOnSiteCollectionDate);
 
             if (response) {
                 console.log('Main message updated successfully');
@@ -85,15 +91,38 @@ export default function AdminMainPage() {
                                 type="switch"
                                 id="show-on-site-switch"
                                 label="Prikaži na početnoj stranici"
-                                checked={showOnSite}
-                                onChange={(e) => setShowOnSite(e.target.checked)}
+                                checked={showOnSiteMainMessage}
+                                onChange={(e) => setShowOnSiteMainMessage(e.target.checked)}
+                            />
+                        </Form.Group>
+                        <br></br>
+                        <Form.Group as={Row}>
+                            <h3>Upisi datum kad izlazi nova kolekcija</h3>
+                        </Form.Group>
+                        <Form.Group className="mt-4">
+                            <Form.Control
+                                type="text"
+                                name="collection_arrive"
+                                onChange={(e) => setCollectionDate(e.target.value)}
+                                value={collectionDate}
+                                required
+                            />
+                        </Form.Group>
+                        {/* Toggle for "Show on Site" */}
+                        <Form.Group className="mt-3 d-flex align-items-center">
+                            <Form.Check
+                                type="switch"
+                                id="show-on-site-switch"
+                                label="Prikaži na početnoj stranici"
+                                checked={showOnSiteCollectionDate}
+                                onChange={(e) => setShowOnSiteCollectionDate(e.target.checked)}
                             />
                         </Form.Group>
                         <Form.Group as={Row} className="mt-4">
                             <Col lg={12}>
                                 {messageSaved && (
                                     <Alert variant="success" onClose={() => setShowSuccessBanner(false)} dismissible>
-                                        Uspešno sačuvana poruka
+                                        Uspešno sačuvane promene
                                     </Alert>
                                 )}
                                 <div className="d-flex justify-content-center align-items-center">

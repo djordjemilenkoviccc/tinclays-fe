@@ -148,7 +148,7 @@ export default function AdminCategories() {
                             </Card.Body>
                             <Card.Footer className="text-center">
                                 <Button variant="secondary" onClick={() => handleEditShow(category)}>Izmeni</Button>{' '}
-                                <Button variant="danger">Obriši</Button>
+                                {/* <Button variant="danger">Obriši</Button> */}
                             </Card.Footer>
                         </Card>
                     </Col>

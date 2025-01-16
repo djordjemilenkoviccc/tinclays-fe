@@ -25,11 +25,14 @@ export const fetchMainMessage = async () => {
     }
 };
 
-export const editMainMessage = async (mainMessage, showOnSite) => {
+export const editMainMessage = async (mainMessage, showOnSiteMainMessage, collectionDate, showOnSiteCollectionDate) => {
 
     const formData = new FormData();
-    formData.append('newMessage', mainMessage);
-    formData.append('showOnSite', showOnSite);
+    formData.append('newMainMessage', mainMessage);
+    formData.append('showOnSiteMainMessage', showOnSiteMainMessage);
+    formData.append('newCollectionDataMessage', collectionDate);
+    formData.append('showOnSiteCollectionDate', showOnSiteCollectionDate);
+
 
     try {
         const response = await fetch(`${BASE_URL}/appsettings/setMainMessage`, {
