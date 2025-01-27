@@ -1,18 +1,23 @@
-import React, { useState, useContext } from 'react';
-import '../style/header.css';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import React, { useState, useContext } from "react";
+import "../style/header.css";
+import "bootstrap/dist/css/bootstrap.min.css";
 
-import { Navbar, Nav, Container, Button } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
-import Cart from './cart';
-import { CartContext } from './cart-context';
-import Snowfall from 'react-snowfall';
+import { Navbar, Nav, Container } from "react-bootstrap";
+import { Link } from "react-router-dom";
+import Cart from "./cart";
+import { CartContext } from "./cart-context";
+import { Sling as Hamburger } from "hamburger-react";
+import { FiShoppingCart } from "react-icons/fi";
 
 export default function Header() {
-    const { cartItems, showCart, handleCloseCart, handleShowCart } = useContext(CartContext);
+    const { cartItems, showCart, handleCloseCart, handleShowCart } =
+        useContext(CartContext);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-    const totalItemsInCart = cartItems.reduce((total, item) => total + item.quantity, 0);
+    const totalItemsInCart = cartItems.reduce(
+        (total, item) => total + item.quantity,
+        0
+    );
 
     const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
     const closeMenu = () => setIsMenuOpen(false);
@@ -20,65 +25,78 @@ export default function Header() {
     return (
         <>
             <Navbar fixed="top" expand="lg" className="navbar-shadow">
-                <Container fluid>
-                    {/* <Snowfall
-                        color="white" // Snow color
-                        snowflakeCount={20} // Number of snowflakes
-                    /> */}
-                    {/* Large Screen Navigation */}
-                    <div className="d-none d-lg-flex ms-auto" style={{ fontSize: "18px" }}>
-                        <h3 className="header-title"><Nav.Link as={Link} to="/">TINCLAYS</Nav.Link></h3>
-                        <Nav className="ms-auto">
+                <Container fluid className="d-flex align-items-center">
+                    {/* Large Screen Header */}
+                    <div className="d-none d-lg-flex w-100 align-items-center">
+                        <Navbar.Brand className="position-absolute start-50 translate-middle-x">
+                            <h3 className="header-title mb-0">
+                                <Nav.Link as={Link} to="/" style={{ textDecoration: "none", color: "inherit" }}>
+                                    TINCLAYS
+                                </Nav.Link>
+                            </h3>
+                        </Navbar.Brand>
+
+
+                        {/* Right Links */}
+                        <Nav className="ms-auto align-items-center">
                             <Nav.Link as={Link} to="/">Shop</Nav.Link>
-                        </Nav>
-                        <Nav className="ms-auto">
                             <Nav.Link as={Link} to="/about-me">O meni</Nav.Link>
-                        </Nav>
-                        <Nav className="ms-auto">
                             <Nav.Link as={Link} to="/contact">Kontakt</Nav.Link>
-                        </Nav>
-                        <Nav className="ms-auto">
                             <Nav.Link as={Link} to="/faq">FAQ</Nav.Link>
+                            <div onClick={handleShowCart} style={{cursor: "pointer"}}>
+                                <FiShoppingCart
+                                    size={25}
+                                    style={{ marginLeft: "20px" }}
+                                    
+                                />
+                                <span
+                                    style={{
+                                        position: "relative",
+                                        bottom: "16px",
+                                        right: "21px",
+                                        color: "#1c3d5a",
+                                        borderRadius: "50%",
+                                        padding: "2px 6px",
+                                        fontSize: "16px",
+                                    }}
+                                >
+                                    {totalItemsInCart}
+                                </span>
+                            </div>
+
                         </Nav>
-                        <Button variant="link" onClick={handleShowCart}>
-                            <svg xmlns="http://www.w3.org/2000/svg" className="cart-icon-text" viewBox="0 0 197.7 166">
-                                <g transform="translate(0, -35)">
-                                    <path d="M197.9 55.9L169.9 127.4 64.5 127.4 27.6 29.8 0 29.8 0.2 16.7 36.5 16.7 73.4 114.3 160.9 114.3 183 55.9" />
-                                    <circle cx="143.8" cy="153" r="13"></circle>
-                                    <circle cx="90.8" cy="153" r="13"></circle>
-                                    <text style={{ fill: "black", fontSize: "90px", color: '#fee1be' }} textAnchor="middle" x="116" y="45" dy=".48em">
-                                        {totalItemsInCart}
-                                    </text>
-                                </g>
-                            </svg>
-                        </Button>
                     </div>
 
-                    {/* Small Screen Navigation */}
-                    <div className="d-lg-none d-flex justify-content-between w-100 align-items-center position-relative header-mobile">
-                        {/* <Snowfall
-                            color="white" // Snow color
-                            snowflakeCount={5} // Number of snowflakes
-                        /> */}
-                        <h3 className="header-title"><Nav.Link as={Link} to="/">TINCLAYS</Nav.Link></h3>
-                        <Button variant="link" onClick={handleShowCart} className="cart-icon-button-small-screen">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="cart-icon-text" viewBox="0 0 197.7 166">
-                                <g transform="translate(0, -35)">
-                                    <path d="M197.9 55.9L169.9 127.4 64.5 127.4 27.6 29.8 0 29.8 0.2 16.7 36.5 16.7 73.4 114.3 160.9 114.3 183 55.9" />
-                                    <circle cx="143.8" cy="153" r="13"></circle>
-                                    <circle cx="90.8" cy="153" r="13"></circle>
-                                    <text style={{ fill: "black", fontSize: "90px", backgroundColor: '#fee1be' }} textAnchor="middle" x="116" y="45" dy=".48em">
-                                        {totalItemsInCart}
-                                    </text>
-                                </g>
-                            </svg>
-                        </Button>
-                        <button className="hamburger-menu" onClick={toggleMenu}>
-                            <span className="hamburger-icon">&#9776;</span>
-                        </button>
-                    </div>
+                    {/* Small Screen Header */}
 
-
+                    <Navbar.Text className="d-block d-lg-none justify-content-start">
+                        <FiShoppingCart
+                            size={28}
+                            style={{ cursor: "pointer", marginBottom: "5px" }}
+                            onClick={handleShowCart}
+                        />
+                        <span
+                            style={{
+                                position: "relative",
+                                bottom: "20px",
+                                right: "22px",
+                                color: "#1c3d5a",
+                                borderRadius: "50%",
+                                padding: "2px 6px",
+                                fontSize: "16px",
+                            }}
+                        >
+                            {totalItemsInCart}
+                        </span>
+                    </Navbar.Text>
+                    <Navbar.Brand className="d-block d-lg-none justify-content-center">
+                        <h3 className="header-title">
+                            <Nav.Link as={Link} to="/">TINCLAYS</Nav.Link>
+                        </h3>
+                    </Navbar.Brand>
+                    <Navbar.Text className="d-block d-lg-none justify-content-end">
+                        <Hamburger toggled={isMenuOpen} toggle={toggleMenu} size={28} />
+                    </Navbar.Text>
                 </Container>
             </Navbar>
 
@@ -88,10 +106,10 @@ export default function Header() {
                     &times;
                 </button>
                 <Nav className="flex-column text-center" style={{ marginTop: "40%" }}>
-                    <Nav.Link style={{ outline: "none", textDecoration: "none", color: "inherit" }} as={Link} to="/" onClick={closeMenu}>Shop</Nav.Link>
-                    <Nav.Link style={{ outline: "none", textDecoration: "none", color: "inherit" }} className='nav-link' as={Link} to="/about-me" onClick={closeMenu}>O meni</Nav.Link>
-                    <Nav.Link style={{ outline: "none", textDecoration: "none", color: "inherit" }} as={Link} to="/contact" onClick={closeMenu}>Kontakt</Nav.Link>
-                    <Nav.Link style={{ outline: "none", textDecoration: "none", color: "inherit" }} as={Link} to="/faq" onClick={closeMenu}>FAQ</Nav.Link>
+                    <Nav.Link as={Link} to="/" onClick={closeMenu}>Shop</Nav.Link>
+                    <Nav.Link as={Link} to="/about-me" onClick={closeMenu}>O meni</Nav.Link>
+                    <Nav.Link as={Link} to="/contact" onClick={closeMenu}>Kontakt</Nav.Link>
+                    <Nav.Link as={Link} to="/faq" onClick={closeMenu}>FAQ</Nav.Link>
                 </Nav>
             </div>
 

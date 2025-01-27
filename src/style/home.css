@@ -91,17 +91,19 @@
     background-color: #a9c3e6;
     color: #1c3d5a;
     font-size: 18px;
-    overflow: hidden; /* Ensures text outside the slider is hidden */
+    overflow: hidden;
+    /* Ensures text outside the slider is hidden */
     z-index: 1000;
     display: flex;
-    align-items: center; /* Vertically centers text */
+    align-items: center;
+    /* Vertically centers text */
 }
 
 .message-slider-text {
     display: inline-block;
     width: 100%;
-    white-space: nowrap; /* Prevents text from wrapping */
-    animation: slide linear infinite; /* Animation applied dynamically */
+    white-space: nowrap;
+    animation: slide 7s linear infinite;
 }
 
 @keyframes slide {
@@ -111,5 +113,47 @@
 
     100% {
         transform: translateX(-100%);
+    }
+}
+
+@media (min-width: 100px) and (max-width: 400px) {
+    .message-slider-text {
+        animation: slide 8s linear infinite;
+    }
+}
+
+@media (min-width: 400px) and (max-width: 600px) {
+    .message-slider-text {
+        animation: slide 10s linear infinite;
+    }
+}
+
+@media (min-width: 601px) and (max-width: 700px) {
+    .message-slider-text {
+        animation: slide 11s linear infinite;
+    }
+}
+
+@media (min-width: 701px) and (max-width: 800px) {
+    .message-slider-text {
+        animation: slide 13s linear infinite;
+    }
+}
+
+@media (min-width: 801px) and (max-width: 900px) {
+    .message-slider-text {
+        animation: slide 14s linear infinite;
+    }
+}
+
+@media (min-width: 901px) and (max-width: 1000px) {
+    .message-slider-text {
+        animation: slide 19s linear infinite;
+    }
+}
+
+@media (min-width: 1001px) and (max-width: 3500px) {
+    .message-slider-text {
+        animation: slide 16s linear infinite;
     }
 }

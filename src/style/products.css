@@ -55,3 +55,13 @@
     background-color: #e8ddcf !important;
     color: #2a3b59 !important;
 }
+
+.add-to-cart-btn:disabled {
+    background-color: #909090;
+    /* Light gray background */
+    color: #ffffff;
+    /* Darker text color */
+    cursor: not-allowed;
+    /* Shows a "not-allowed" cursor */
+    transition: opacity 0.3s;   
+}

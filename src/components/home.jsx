@@ -59,28 +59,13 @@ export default function Home() {
 
     const textRef = useRef(null);
 
-    useEffect(() => {
-        const textElement = textRef.current;
-
-        if (textElement) {
-
-            const textWidth = textElement.offsetWidth;
-            const sliderWidth = textElement.parentElement.offsetWidth;
-
-            const speed = 120; // Adjust this value for the desired speed (pixels per second)
-            const duration = (textWidth + sliderWidth) / speed;
-
-
-            textElement.style.animationDuration = `${duration}s`;
-        }
-    }, [collectionData]);
 
     return (
         <div style={{ marginTop: collectionData && collectionData.showOnSite ? "170px" : "120px" }}>
 
             {collectionData && collectionData.showOnSite && (
                 <div className="message-slider">
-                    <div className="message-slider-text" ref={textRef}>
+                    <div className="message-slider-text">
                         <p>
                             Nova kolekcija izlazi {collectionData.value}
                         </p>
