@@ -23,50 +23,9 @@
   overflow-y: auto;
 }
 
-.side-menu.open {
-  right: 0;
-  /* Slide-in effect */
-}
-
-.side-menu .close-menu {
-  position: absolute;
-  top: 5%;
-  right: 5%;
-  font-size: 44px;
-  background: none;
-  border: none;
-  cursor: pointer;
-}
-
-.side-menu .nav-link {
-  font-size: 24px;
-  margin: 15px 0;
-  color: #333;
-  text-decoration: none;
-  transition: color 0.2s;
-}
-
-.side-menu .nav-link:hover {
-  color: #a9c3e6;
-}
-
-.cart-icon-text {
-  width: 30px;
-  height: 30px;
-  color: #fee1be;
-}
 
 
-/* Responsive Behavior */
-@media (max-width: 991px) {
 
-  .cart-icon-button-small-screen {
-    position: absolute;
-    left: 0%;
-    color: #fee1be;
-    font-size: 24px;
-  }
-}
 
 /* Header Mobile Container */
 .header-mobile {
@@ -81,18 +40,34 @@
   align-items: center;
 }
 
-/* Cart Icon */
-.cart-icon-button-small-screen {
-  position: absolute;
-  left: 0%;
-  color: #fee1be;
-  font-size: 24px;
-}
-
 .header-title {
   font-size: 26px;
   font-weight: 500;
   font-family: 'Raleway', serif !important;
   color: #fee1be;
   margin: 0;
+}
+
+
+.offcanvas.side-menu {
+  transform: translateX(100%); /* Start off-screen to the right */
+  transition: transform 0.5s ease-in-out; /* Smooth transition */
+}
+
+/* When Offcanvas is shown */
+.offcanvas.side-menu.show {
+  transform: translateX(0); /* Slide into view */
+}
+
+/* Optional: Add custom styles for the overlay */
+.offcanvas-backdrop {
+  transition: opacity 0.5s ease-in-out;
+}
+
+.side-menu .nav-link {
+  font-size: 24px;
+  margin: 15px 0;
+  color: #333;
+  text-decoration: none;
+  transition: color 0.2s;
 }

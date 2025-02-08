@@ -2,7 +2,7 @@ import React, { useState, useContext } from "react";
 import "../style/header.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 
-import { Navbar, Nav, Container } from "react-bootstrap";
+import { Navbar, Nav, Container, Offcanvas } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import Cart from "./cart";
 import { CartContext } from "./cart-context";
@@ -43,11 +43,11 @@ export default function Header() {
                             <Nav.Link as={Link} to="/about-me">O meni</Nav.Link>
                             <Nav.Link as={Link} to="/contact">Kontakt</Nav.Link>
                             <Nav.Link as={Link} to="/faq">FAQ</Nav.Link>
-                            <div onClick={handleShowCart} style={{cursor: "pointer"}}>
+                            <div onClick={handleShowCart} style={{ cursor: "pointer" }}>
                                 <FiShoppingCart
                                     size={25}
                                     style={{ marginLeft: "20px" }}
-                                    
+
                                 />
                                 <span
                                     style={{
@@ -72,7 +72,7 @@ export default function Header() {
                     <Navbar.Text className="d-block d-lg-none justify-content-start">
                         <FiShoppingCart
                             size={28}
-                            style={{ cursor: "pointer", marginBottom: "5px" }}
+                            style={{ cursor: "pointer" }}
                             onClick={handleShowCart}
                         />
                         <span
@@ -95,24 +95,23 @@ export default function Header() {
                         </h3>
                     </Navbar.Brand>
                     <Navbar.Text className="d-block d-lg-none justify-content-end">
-                        <Hamburger toggled={isMenuOpen} toggle={toggleMenu} size={28} />
+                        <Hamburger toggled={false} toggle={toggleMenu} size={28} />
                     </Navbar.Text>
                 </Container>
             </Navbar>
 
-            {/* Sliding Menu */}
-            <div className={`side-menu ${isMenuOpen ? "open" : ""}`}>
-                <button className="close-menu" onClick={closeMenu}>
-                    &times;
-                </button>
-                <Nav className="flex-column text-center" style={{ marginTop: "40%" }}>
-                    <Nav.Link as={Link} to="/" onClick={closeMenu}>Shop</Nav.Link>
-                    <Nav.Link as={Link} to="/about-me" onClick={closeMenu}>O meni</Nav.Link>
-                    <Nav.Link as={Link} to="/contact" onClick={closeMenu}>Kontakt</Nav.Link>
-                    <Nav.Link as={Link} to="/faq" onClick={closeMenu}>FAQ</Nav.Link>
-                </Nav>
-            </div>
-
+            <Offcanvas className="side-menu" show={isMenuOpen} onHide={closeMenu} placement="end">
+                <Offcanvas.Header closeButton>
+                </Offcanvas.Header>
+                <Offcanvas.Body>
+                    <Nav className="flex-column text-center" style={{ marginTop: "20%" }}>
+                        <Nav.Link as={Link} to="/" onClick={closeMenu}>Shop</Nav.Link>
+                        <Nav.Link as={Link} to="/about-me" onClick={closeMenu}>O meni</Nav.Link>
+                        <Nav.Link as={Link} to="/contact" onClick={closeMenu}>Kontakt</Nav.Link>
+                        <Nav.Link as={Link} to="/faq" onClick={closeMenu}>FAQ</Nav.Link>
+                    </Nav>
+                </Offcanvas.Body>
+            </Offcanvas>
             <Cart show={showCart} handleClose={handleCloseCart} cartItems={cartItems} />
         </>
     );
