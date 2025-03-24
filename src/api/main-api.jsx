@@ -11,12 +11,12 @@ export const fetchMainMessage = async () => {
         });
 
         if (!response.ok) {
-
             const error = new Error('Failed fetch main message');
             error.status = response.status;
             throw error;
         }
 
+        console.log("BASE URL: " + BASE_URL);
         return await response.json();
 
     } catch (error) {
