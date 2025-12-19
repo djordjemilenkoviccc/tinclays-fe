@@ -4,9 +4,21 @@
     cursor: pointer;
 }
 
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 .product-root {
-    opacity: 1;
+    opacity: 0;
     margin-bottom: 40px;
+    animation: fadeInUp 0.6s ease-out forwards;
 }
 
 .product-root:hover .hidden-button {

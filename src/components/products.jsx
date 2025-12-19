@@ -36,12 +36,19 @@ export default function Products() {
     return (
         <div style={{ paddingLeft: "5%", paddingRight: "5%", marginTop: "120px" }}>
             <Row>
-                {products.map(product => {
+                {products.map((product, index) => {
                     const cartQuantity = getCartItemQuantity(product.id);
                     const isMaxQuantityReached = cartQuantity >= product.stock;
 
                     return (
-                        <Col lg="4" md="4" sm="12" className='text-center product-root' key={product.id}>
+                        <Col
+                            lg="4"
+                            md="4"
+                            sm="12"
+                            className='text-center product-root'
+                            key={product.id}
+                            style={{ animationDelay: `${index * 0.1}s` }}
+                        >
                             <img
                                 src={getImageUrl(product.imageList[0].path)}
                                 alt={product.name}

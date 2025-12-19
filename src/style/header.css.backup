@@ -5,7 +5,6 @@
   background-color: #a9c3e6;
   padding: 0 5%;
   height: 100px;
-  width: 100%;
 }
 
 /* Sliding Menu */
@@ -71,13 +70,4 @@
   color: #333;
   text-decoration: none;
   transition: color 0.2s;
-}
-
-/* Main navbar links styling */
-.navbar-shadow .nav-link {
-  transition: all 0.3s ease;
-}
-
-.navbar-shadow .nav-link:hover {
-  transform: translateY(-2px);
 }

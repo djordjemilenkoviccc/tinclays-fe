@@ -1,6 +1,7 @@
 import { Card, Button, Row, Col, Modal, Form, Alert } from 'react-bootstrap';
 import { fetchAllCategories, addCategory, editCategory } from '../api/category-api';
 import { useState, useEffect } from 'react';
+import { getImageUrl } from '../utils/image-utils';
 
 export default function AdminCategories() {
 
@@ -88,7 +89,7 @@ export default function AdminCategories() {
         setSelectedCategory(category);
         setUpdatedName(category.name);
         setShowOnSite(category.showOnSite);
-        setImagePreview(category.image);
+        setImagePreview(category.image ? getImageUrl(category.image.path) : null);
         setShowEdit(true);
     };
 
@@ -139,7 +140,7 @@ export default function AdminCategories() {
                         <Card className="d-flex flex-column justify-content-between h-100" style={{ border: "1px solid black" }}>
                             <Card.Img
                                 variant="top"
-                                src={category.image.startsWith("data:image") ? category.image : `data:${category.mimeType};base64,${category.image}`}
+                                src={category.image ? getImageUrl(category.image.path) : '/path/to/default-category-image.jpg'}
                                 style={{ height: '100%', objectFit: 'cover' }}
                             />
                             <Card.Body>

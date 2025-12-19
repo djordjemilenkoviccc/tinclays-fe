@@ -6,6 +6,7 @@ import { fetchMainMessage } from '../api/main-api';
 import { loadAllCategoriesWithProducts } from '../api/category-api';
 import { useState, useEffect, useRef } from 'react';
 import Snowfall from 'react-snowfall';
+import { getImageUrl } from '../utils/image-utils';
 export default function Home() {
     const navigate = useNavigate();
     const [categories, setCategories] = useState([]);
@@ -114,7 +115,7 @@ export default function Home() {
                                 <Card.Img
                                     className='product-image'
                                     variant="top"
-                                    src={category.image.startsWith("data:image") ? category.image : `data:${category.mimeType};base64,${category.image}`}
+                                    src={category.image ? getImageUrl(category.image.path) : '/path/to/default-category-image.jpg'}
                                 />
                             </div>
                             <Card.Body>

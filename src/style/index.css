@@ -1,11 +1,33 @@
 :root {
     font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
     line-height: 1.5;
-  
+
     font-synthesis: none;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overflow-x: hidden;
   }
+
+html {
+    overflow-y: scroll;
+}
+
+body {
+    padding-right: 0 !important;
+}
+
+body.modal-open,
+body.offcanvas-open {
+    padding-right: 0 !important;
+}
+
+.navbar-shadow {
+    padding-right: 5% !important;
+}
+
+body.modal-open .navbar-shadow,
+body.offcanvas-open .navbar-shadow {
+    padding-right: 5% !important;
+}
   
