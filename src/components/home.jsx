@@ -4,6 +4,7 @@ import { Button, Row, Col, Card } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { fetchMainMessage } from '../api/main-api';
 import { loadAllCategoriesWithProducts } from '../api/category-api';
+import { fetchImageByType } from '../api/image-api';
 import { useState, useEffect, useRef } from 'react';
 import Snowfall from 'react-snowfall';
 import { getImageUrl } from '../utils/image-utils';
@@ -12,6 +13,7 @@ export default function Home() {
     const [categories, setCategories] = useState([]);
     const [mainMessage, setMainMessage] = useState(null);
     const [collectionData, setCollectionData] = useState(null);
+    const [bannerImage, setBannerImage] = useState(null);
 
     const handleCardClick = (id) => {
         sessionStorage.setItem('scrollPosition', window.scrollY);
@@ -52,10 +54,21 @@ export default function Home() {
         }
     };
 
+    const fetchBannerImage = async () => {
+        try {
+            const image = await fetchImageByType('home_banner');
+            setBannerImage(image);
+        } catch (error) {
+            console.error('Error fetching banner image:', error);
+            // If fetch fails, component will fall back to showing nothing or a placeholder
+        }
+    };
+
     useEffect(() => {
 
         fetchCategories();
         loadMainMessage();
+        fetchBannerImage();
     }, []);
 
     const textRef = useRef(null);
@@ -75,11 +88,14 @@ export default function Home() {
             )}
 
             <div className="overlay-container position-relative" style={{ paddingLeft: "5%", paddingRight: "5%" }}>
-                <img
-                    src="/home.jpg"
-                    className='cover-img'
-                    fetchpriority="high">
-                </img>
+                {bannerImage && bannerImage.path && (
+                    <img
+                        src={getImageUrl(bannerImage.path)}
+                        className='cover-img'
+                        alt="Home banner"
+                        fetchpriority="high">
+                    </img>
+                )}
 
                 <div className="overlay-content position-absolute top-50 start-50 translate-middle text-center">
                     <p className='text-on-cover-image'>Mugs & More</p>

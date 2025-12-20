@@ -9,10 +9,10 @@ export default function Faq() {
             question: "Kako se šoljice održavaju?",
             answer: "Šoljice možete prati u mašini za pranje posuđa, ali se svakako uvek više preporučuje ručno pranje.",
         },
-        {
-            question: "Koje veličine su šoljice?",
-            answer: "Odgovoriti"
-        },
+        // {
+        //     question: "Koje veličine su šoljice?",
+        //     answer: "Odgovoriti"
+        // },
         {
             question: "Kako funkcioniše prodaja?",
             answer: "Prodaja trenutno funkcioniše na sledeći način. Nakon što izaberete proizvod koji želite i kreirate porudžbinu, na Vaš email ćemo poslati instrukcije za plaćanje. Plaćanje možete izvršiti u pošti ili preko mobilne aplikacije Vaše banke popunjavanjem uplatnice ili skeniranjem QR koda iz aplikacije banke. Nakon što evidentiramo uplatu, Vaš proizvod šaljemo brzom poštom."
@@ -27,7 +27,7 @@ export default function Faq() {
         },
         {
             question: "Koja je cena poštarine?",
-            answer: "Poštarinu plaća kupac i cena iznosi oko 350 din.",
+            answer: "Poštarinu plaća kupac i cena iznosi oko 500 din.",
         },
         {
             question: "Kada poručim šolju, kada ona stiže na adresu?",

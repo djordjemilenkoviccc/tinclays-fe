@@ -22,7 +22,7 @@ export default function Cart({ show, handleClose, setCartItems }) {
     return (
         <Offcanvas className="cart-root text-center" show={show} onHide={handleClose} placement="end">
             <Offcanvas.Header closeButton>
-                <Offcanvas.Title>Pregled korpe</Offcanvas.Title>
+                <Offcanvas.Title></Offcanvas.Title>
             </Offcanvas.Header>
             <Offcanvas.Body>
                 {cartItems.length === 0 ? (
