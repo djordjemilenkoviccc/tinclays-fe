@@ -14,6 +14,7 @@ export default function Home() {
     const [mainMessage, setMainMessage] = useState(null);
     const [collectionData, setCollectionData] = useState(null);
     const [bannerImage, setBannerImage] = useState(null);
+    const [bannerLoaded, setBannerLoaded] = useState(false);
 
     const handleCardClick = (id) => {
         sessionStorage.setItem('scrollPosition', window.scrollY);
@@ -91,13 +92,14 @@ export default function Home() {
                 {bannerImage && bannerImage.path && (
                     <img
                         src={getImageUrl(bannerImage.path)}
-                        className='cover-img'
+                        className={`cover-img ${bannerLoaded ? 'banner-fade-in' : ''}`}
                         alt="Home banner"
-                        fetchpriority="high">
+                        fetchpriority="high"
+                        onLoad={() => setBannerLoaded(true)}>
                     </img>
                 )}
 
-                <div className="overlay-content position-absolute top-50 start-50 translate-middle text-center">
+                <div className={`overlay-content position-absolute top-50 start-50 translate-middle text-center ${bannerLoaded ? 'banner-content-fade-in' : ''}`}>
                     <p className='text-on-cover-image'>Mugs & More</p>
                     <button className="btn-shop-now" onClick={scrollToCollection}>Shop now</button>
                 </div>
