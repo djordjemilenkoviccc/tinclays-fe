@@ -15,6 +15,7 @@ export default function Home() {
     const [collectionData, setCollectionData] = useState(null);
     const [bannerImage, setBannerImage] = useState(null);
     const [bannerLoaded, setBannerLoaded] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
 
     const handleCardClick = (id) => {
         sessionStorage.setItem('scrollPosition', window.scrollY);
@@ -66,14 +67,48 @@ export default function Home() {
     };
 
     useEffect(() => {
+        const loadAllData = async () => {
+            setIsLoading(true);
+            try {
+                // Load all data in parallel
+                await Promise.all([
+                    fetchCategories(),
+                    loadMainMessage(),
+                    fetchBannerImage()
+                ]);
+            } catch (error) {
+                console.error('Error loading page data:', error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
 
-        fetchCategories();
-        loadMainMessage();
-        fetchBannerImage();
+        loadAllData();
     }, []);
 
     const textRef = useRef(null);
 
+
+    if (isLoading) {
+        return (
+            <div style={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                minHeight: '60vh',
+                marginTop: '120px'
+            }}>
+                <div style={{
+                    border: '4px solid #f3f3f3',
+                    borderTop: '4px solid #2a3b59',
+                    borderRadius: '50%',
+                    width: '50px',
+                    height: '50px',
+                    animation: 'spin 1s linear infinite'
+                }}></div>
+            </div>
+        );
+    }
 
     return (
         <div style={{ marginTop: collectionData && collectionData.showOnSite ? "170px" : "120px" }}>
