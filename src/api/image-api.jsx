@@ -1,5 +1,6 @@
 import {BASE_URL} from '../constants/base-url';
 import {handleResponse} from '../utils/error-handler';
+import {authenticatedFetch} from '../utils/api-client';
 
 /**
  * Fetch a single image by type
@@ -28,6 +29,27 @@ export const fetchImageByType = async (type) => {
 export const fetchImagesByType = async (type) => {
     const response = await fetch(`${BASE_URL}/images/getImagesByType?type=${encodeURIComponent(type)}`, {
         method: 'GET'
+    });
+
+    await handleResponse(response);
+    return await response.json();
+};
+
+/**
+ * Upload an image with a specific type
+ * If an image with the same type exists, it will be replaced
+ * @param {File} imageFile - The image file to upload
+ * @param {string} type - The image type (e.g., "BANNER", "ABOUT_ME")
+ * @returns {Promise} Upload response
+ */
+export const uploadImage = async (imageFile, type) => {
+    const formData = new FormData();
+    formData.append('image', imageFile);
+    formData.append('type', type);
+
+    const response = await authenticatedFetch(`${BASE_URL}/images/uploadImage`, {
+        method: 'POST',
+        body: formData,
     });
 
     await handleResponse(response);
