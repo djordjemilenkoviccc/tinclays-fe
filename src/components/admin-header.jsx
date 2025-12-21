@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { AuthContext } from './auth-context';
 import { useNavigate } from 'react-router-dom';
 import { Navbar, Nav, Button, NavDropdown } from 'react-bootstrap';
@@ -7,9 +7,15 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import '../style/admin-header.css'
 
 export default function AdminHeader() {
-    const { logout } = useContext(AuthContext);  // Access the logout function from AuthContext
+    const { isAuthenticated, logout } = useContext(AuthContext);  // Access the logout function from AuthContext
     const navigate = useNavigate();
     const [expanded, setExpanded] = useState(false);  // Track if navbar is expanded
+
+    useEffect(() => {
+        if (!isAuthenticated) {
+            navigate('/login');
+        }
+    }, [isAuthenticated, navigate]);
 
     const handleLogout = () => {
         logout();  // Call the logout function from AuthContext

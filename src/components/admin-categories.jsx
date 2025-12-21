@@ -1,14 +1,20 @@
 import { Card, Button, Row, Col, Modal, Form, Alert } from 'react-bootstrap';
 import { fetchAllCategories, addCategory, editCategory } from '../api/category-api';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { AuthContext } from './auth-context';
 import { getImageUrl } from '../utils/image-utils';
+import { getErrorMessage } from '../utils/error-handler';
 
 export default function AdminCategories() {
+    const { isAuthenticated } = useContext(AuthContext);
+    const navigate = useNavigate();
 
     const [categories, setCategories] = useState([]);
     const [showEdit, setShowEdit] = useState(false);
     const [showAdd, setShowAdd] = useState(false);
     const [showSuccessBanner, setShowSuccessBanner] = useState(false);
+    const [errorMessage, setErrorMessage] = useState(null);
     const [selectedCategory, setSelectedCategory] = useState(null);
     const [updatedName, setUpdatedName] = useState("");
     const [updatedImage, setUpdatedImage] = useState(null);
@@ -18,61 +24,59 @@ export default function AdminCategories() {
 
 
     const loadAllCategories = async () => {
-
         try {
             const data = await fetchAllCategories();
             setCategories(data.categoryList);
 
         } catch (error) {
-
-            if (error.status === 403) {
+            console.error('Error fetching categories: ', error.message);
+            if (error.status === 401 || error.status === 403) {
                 navigate('/login');
-            } else {
-                console.error('Error fetching categories: ', error.message);
-                // TODO: Show alert
             }
         }
     };
 
     const submitAddCategory = async () => {
+        // Clear previous messages
+        setShowSuccessBanner(false);
+        setErrorMessage(null);
 
         try {
             const newCategory = await addCategory(updatedName, updatedImage, updatedShowOnSite);
-            setCategories([...categories, newCategory]);
+            // Reload categories from server to get updated data with correct structure
+            await loadAllCategories();
             setShowSuccessBanner(true);
 
         } catch (error) {
-
-            if (error.status === 403) {
-                console.warn('Unauthorized: Redirecting to login.');
+            console.error('Failed to add category:', error.message);
+            if (error.status === 401 || error.status === 403) {
                 navigate('/login');
             } else {
-                console.error('Failed to add category:', error.message);
-                // TODO: Show alert
+                setErrorMessage(getErrorMessage(error));
             }
         }
     };
 
 
     const submitEditCategory = async () => {
+        // Clear previous messages
+        setShowSuccessBanner(false);
+        setErrorMessage(null);
 
         try {
             const response = await editCategory(selectedCategory.id, updatedName, updatedImage, updatedShowOnSite);
-            
+
             if (response) {
-                setCategories(categories.map(cat =>
-                    cat.id === selectedCategory.id ? { ...cat, name: updatedName, image: imagePreview, showOnSite: updatedShowOnSite } : cat
-                ));
+                // Reload categories from server to get updated data with correct structure
+                await loadAllCategories();
                 setShowSuccessBanner(true);
             }
         } catch (error) {
-
-            if (error.status === 403) {
-                console.warn('Unauthorized: Redirecting to login.');
+            console.error('Failed to edit category:', error.message);
+            if (error.status === 401 || error.status === 403) {
                 navigate('/login');
             } else {
-                console.error('Failed to edit category:', error.message);
-                // TODO: Show alert
+                setErrorMessage(getErrorMessage(error));
             }
         }
     };
@@ -80,6 +84,7 @@ export default function AdminCategories() {
     const handleEditClose = () => {
         setShowEdit(false);
         setShowSuccessBanner(false);
+        setErrorMessage(null);
         setUpdatedImage(null);
         setShowOnSite(false);
         setImagePreview(null);
@@ -103,6 +108,7 @@ export default function AdminCategories() {
     const handleAddClose = () => {
         setShowAdd(false);
         setShowSuccessBanner(false);
+        setErrorMessage(null);
         setShowOnSite(false);
         setUpdatedImage(null);
         setImagePreview(null);
@@ -122,10 +128,14 @@ export default function AdminCategories() {
     };
 
     useEffect(() => {
-
         loadAllCategories();
     }, []);
 
+    useEffect(() => {
+        if (!isAuthenticated) {
+            navigate('/login');
+        }
+    }, [isAuthenticated, navigate]);
 
     return (
         <div className="align-items-center" style={{ marginTop: "140px", paddingLeft: "5%", paddingRight: "5%" }}>
@@ -167,6 +177,11 @@ export default function AdminCategories() {
                             Kategorija uspešno izmenjena!
                         </Alert>
                     )}
+                    {errorMessage && (
+                        <Alert variant="danger" onClose={() => setErrorMessage(null)} dismissible>
+                            {errorMessage}
+                        </Alert>
+                    )}
                     <Form>
                         <Form.Group className="mb-3" controlId="formCategoryName">
                             <Form.Label>Ime</Form.Label>
@@ -174,6 +189,7 @@ export default function AdminCategories() {
                                 type="text"
                                 value={updatedName}
                                 onChange={(e) => setUpdatedName(e.target.value)}
+                                required
                             />
                         </Form.Group>
 
@@ -187,7 +203,7 @@ export default function AdminCategories() {
                             {imagePreview && (
                                 <Card.Img
                                     variant="top"
-                                    src={imagePreview.startsWith("data:image") ? imagePreview : `data:${imageType};base64,${imagePreview}`}
+                                    src={imagePreview}
                                     style={{ height: '100%', objectFit: 'cover' }}
                                 />
                             )}
@@ -225,6 +241,11 @@ export default function AdminCategories() {
                             Kategorija uspešno dodata!
                         </Alert>
                     )}
+                    {errorMessage && (
+                        <Alert variant="danger" onClose={() => setErrorMessage(null)} dismissible>
+                            {errorMessage}
+                        </Alert>
+                    )}
                     <Form>
                         <Form.Group className="mb-3" controlId="formNewCategoryName">
                             <Form.Label>Ime nove kategorije</Form.Label>
@@ -232,6 +253,7 @@ export default function AdminCategories() {
                                 type="text"
                                 value={updatedName}
                                 onChange={(e) => setUpdatedName(e.target.value)}
+                                required
                             />
                         </Form.Group>
 
@@ -245,7 +267,7 @@ export default function AdminCategories() {
                             {imagePreview && (
                                 <Card.Img
                                     variant="top"
-                                    src={imagePreview.startsWith("data:image") ? imagePreview : `data:${imageType};base64,${imagePreview}`}
+                                    src={imagePreview}
                                     style={{ height: '100%', objectFit: 'cover' }}
                                 />
                             )}

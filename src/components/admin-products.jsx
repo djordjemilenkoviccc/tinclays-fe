@@ -1,21 +1,26 @@
 import { Card, Button, Row, Col, Modal, Form, Alert, Dropdown, DropdownButton } from 'react-bootstrap';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { AuthContext } from './auth-context';
 import { addProduct, loadAllProducts, archiveProduct } from '../api/product-api';
 import { loadAllCategoriesWithIdAndNames } from '../api/category-api';
 import { getImageUrl } from '../utils/image-utils';
+import { getErrorMessage } from '../utils/error-handler';
 
 export default function AdminProducts() {
+    const { isAuthenticated } = useContext(AuthContext);
+    const navigate = useNavigate();
+
     const [filteredProducts, setFilteredProducts] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState(null);
     const [products, setProducts] = useState([]);
     const [categories, setCategories] = useState([]);
     const [selectedImage, setSelectedImage] = useState(null);
-    const navigate = useNavigate();
 
 
     const [showAdd, setShowAdd] = useState(false);
     const [showSuccessBanner, setShowSuccessBanner] = useState(false);
+    const [errorMessage, setErrorMessage] = useState(null);
     const [imagePreview, setImagePreview] = useState(null);
     const [imageType, setImageType] = useState(null);
 
@@ -42,6 +47,7 @@ export default function AdminProducts() {
     const handleAddClose = () => {
         setShowAdd(false);
         setShowSuccessBanner(false);
+        setErrorMessage(null);
         setImagePreview(null);
     };
 
@@ -51,6 +57,10 @@ export default function AdminProducts() {
     };
 
     const submitAddProduct = async () => {
+        // Clear previous messages
+        setShowSuccessBanner(false);
+        setErrorMessage(null);
+
         const formData = new FormData();
 
         const productDtoRequestBlob = new Blob(
@@ -74,49 +84,42 @@ export default function AdminProducts() {
 
         try {
             const response = await addProduct(formData);
+            // Reload products from server to get updated data with correct structure
+            await fetchAllProducts();
             setShowSuccessBanner(true);
-            // TODO: Fix this (Image not loading in newProduct)
-            // const newProduct = await response.json();
-            // setProducts([...products, newProduct]);
 
         } catch (error) {
             console.error('Error add product:', error);
-            if (error.status === 403) {
-                console.warn('Unauthorized: Redirecting to login.');
+            if (error.status === 401 || error.status === 403) {
                 navigate('/login');
             } else {
-                console.error('Failed to fetch categories: ', error.message);
-                // TODO: Show alert
+                setErrorMessage(getErrorMessage(error));
             }
         }
     };
 
     const fetchAllProducts = async () => {
         try {
-
             const data = await loadAllProducts();
-
             setProducts(data.products);
             setFilteredProducts(data.products);
 
         } catch (error) {
             console.error('Error:', error);
+            if (error.status === 401 || error.status === 403) {
+                navigate('/login');
+            }
         }
     };
 
     const fetchCategories = async () => {
         try {
-
             const data = await loadAllCategoriesWithIdAndNames();
             setCategories(data);
         } catch (error) {
             console.error('Error:', error);
-            if (error.status === 403) {
-                console.warn('Unauthorized: Redirecting to login.');
+            if (error.status === 401 || error.status === 403) {
                 navigate('/login');
-            } else {
-                console.error('Failed to fetch categories: ', error.message);
-                // TODO: Show alert
             }
         }
     };
@@ -144,7 +147,7 @@ export default function AdminProducts() {
                 const updatedProducts = prevProducts.filter((p) => p.id !== product.id);
                 console.log("filtered: " + updatedProducts);
                 console.log("sel. cat: " + selectedCategory);
-                
+
                 if (selectedCategory === '' || selectedCategory === null) {
                     setFilteredProducts(updatedProducts);
                 } else {
@@ -155,14 +158,11 @@ export default function AdminProducts() {
             });
 
         } catch (error) {
-
-            console.error('Error:', error);
-            if (error.status === 403) {
-                console.warn('Unauthorized: Redirecting to login.');
+            console.error('Failed to archive product: ', error);
+            if (error.status === 401 || error.status === 403) {
                 navigate('/login');
             } else {
-                console.error('Failed to archive product: ', error);
-                alert(`${error.message}`);
+                alert(getErrorMessage(error));
             }
         }
     };
@@ -181,6 +181,12 @@ export default function AdminProducts() {
 
         fetchAllProducts();
     }, []);
+
+    useEffect(() => {
+        if (!isAuthenticated) {
+            navigate('/login');
+        }
+    }, [isAuthenticated, navigate]);
 
     return (
         <div className="align-items-center" style={{ marginTop: "140px", paddingLeft: "5%", paddingRight: "5%" }}>
@@ -328,6 +334,11 @@ export default function AdminProducts() {
                         {showSuccessBanner && (
                             <Alert variant="success" onClose={() => setShowSuccessBanner(false)} dismissible>
                                 Proizvod uspešn dodat!
+                            </Alert>
+                        )}
+                        {errorMessage && (
+                            <Alert variant="danger" onClose={() => setErrorMessage(null)} dismissible>
+                                {errorMessage}
                             </Alert>
                         )}
 

@@ -1,147 +1,60 @@
 import {BASE_URL} from '../constants/base-url';
-
-const getToken = () => localStorage.getItem('jwtToken');
+import {handleResponse} from '../utils/error-handler';
+import {authenticatedFetch} from '../utils/api-client';
 
 export const loadAllProducts = async () => {
+    const response = await authenticatedFetch(`${BASE_URL}/product/getAllProducts`, {
+        method: 'GET'
+    });
 
-    try {
-
-        const response = await fetch(`${BASE_URL}/product/getAllProducts`, {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${getToken()}`
-            }
-        });
-
-        if (!response.ok) {
-            const error = new Error('Failed fetch products');
-            error.status = response.status;
-            throw error;
-        }
-
-        return await response.json();
-    } catch (error) {
-        console.log(error);
-        throw error;
-    }
+    await handleResponse(response);
+    return await response.json();
 };
 
 export const fetchProductsByCategoryId = async (categoryId) => {
-    try {
-        const response = await fetch(`${BASE_URL}/product/getAllProductsByCategory/${categoryId}`, {
-            method: 'GET'
-        });
+    const response = await fetch(`${BASE_URL}/product/getAllProductsByCategory/${categoryId}`, {
+        method: 'GET'
+    });
 
-        if (!response.ok) {
-            const error = new Error('Failed fetch products');
-            error.status = response.status;
-            throw error;
-        }
-        return await response.json();
-
-    } catch (error) {
-        throw error;
-    }
+    await handleResponse(response);
+    return await response.json();
 };
 
 export const fetchProductById = async (id) => {
+    const response = await authenticatedFetch(`${BASE_URL}/product/${id}`, {
+        method: "GET"
+    });
 
-    try {
-
-        const response = await fetch(`${BASE_URL}/product/${id}`, {
-            method: "GET",
-            headers: {
-                'Authorization': `Bearer ${getToken()}`
-            }
-        });
-
-        if (!response.ok) {
-            const error = new Error('Failed fetch product');
-            error.status = response.status;
-            throw error;
-        }
-
-        return await response.json();
-
-    } catch (error) {
-        console.log(error);
-        throw error;
-    }
+    await handleResponse(response);
+    return await response.json();
 };
 
 export const updateProduct = async (formData) => {
+    const response = await authenticatedFetch(`${BASE_URL}/product/updateProduct`, {
+        method: "POST",
+        body: formData
+    });
 
-    try {
-
-        const response = await fetch(`${BASE_URL}/product/updateProduct`, {
-            method: "POST",
-            headers: {
-                'Authorization': `Bearer ${getToken()}`
-            },
-            body: formData
-        });
-
-        if (!response.ok) {
-            const error = new Error('Failed update product');
-            error.status = response.status;
-            throw error;
-        }
-
-        return await response.json();
-
-    } catch (error) {
-        console.log(error);
-        throw error;
-    }
-
+    await handleResponse(response);
+    return await response.json();
 };
 
 export const addProduct = async (formData) => {
+    const response = await authenticatedFetch(`${BASE_URL}/product/addProduct`, {
+        method: "POST",
+        body: formData
+    });
 
-    try {
-        const response = await fetch(`${BASE_URL}/product/addProduct`, {
-            method: "POST",
-            headers: {
-                "Authorization": `Bearer ${getToken()}`
-            },
-            body: formData
-        });
-
-        if (!response.ok) {
-            const error = new Error('Failed add product');
-            error.status = response.status;
-            throw error;
-        }
-
-        return response;
-
-    } catch (error) {
-        console.error("Error:", error);
-        throw error;
-    }
+    await handleResponse(response);
+    return response;
 };
 
 export const archiveProduct = async (formData) => {
+    const response = await authenticatedFetch(`${BASE_URL}/product/archiveProduct`, {
+        method: 'POST',
+        body: formData
+    });
 
-    try {
-        const response = await fetch(`${BASE_URL}/product/archiveProduct`, {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${getToken()}`
-            },
-            body: formData
-        });
-
-        if (!response.ok) {
-            const error = new Error(await response.text());
-            error.status = response.status;
-            throw error;    
-        }
-
-        return response;
-
-    } catch (error) {
-        console.log(error);
-        throw error;
-    }
+    await handleResponse(response);
+    return response;
 };

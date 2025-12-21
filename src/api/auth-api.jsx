@@ -1,29 +1,28 @@
 import {BASE_URL} from '../constants/base-url';
+import {handleResponse} from '../utils/error-handler';
 
 export const authenticateUser = async (username, password) => {
+    const response = await fetch(`${BASE_URL}/auth/authenticate`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password })
+    });
 
-    const formData = new FormData();
-    formData.append('username', username);
-    formData.append('password', password);
+    await handleResponse(response);
+    return await response.json();
+};
 
-    try {
-        const response = await fetch(`${BASE_URL}/auth/authenticate`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ username, password })
-        });
+export const refreshAccessToken = async (refreshToken) => {
+    const response = await fetch(`${BASE_URL}/auth/refresh`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ refreshToken })
+    });
 
-        if (!response.ok) {
-            const error = new Error('Failed to authenticate user');
-            error.status = response.status;
-            throw error;
-        }
-
-        return await response.json();
-
-    } catch (error) {
-        throw error;
-    }
-}
+    await handleResponse(response);
+    return await response.json();
+};

@@ -16,8 +16,9 @@ export default function Login() {
         e.preventDefault();
         try {
             const response = await authenticateUser(username, password);
-            const token = response.jwtToken;
-            login(token);
+            const accessToken = response.jwtToken;
+            const refreshToken = response.refreshToken;
+            login(accessToken, refreshToken);
 
             navigate('/admin-panel/in_progress');
         } catch (error) {

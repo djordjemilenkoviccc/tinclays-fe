@@ -3,6 +3,7 @@ import { AuthContext } from './auth-context';
 import { useNavigate } from 'react-router-dom';
 import { fetchMainMessage, editMainMessage } from '../api/main-api';
 import { useState, useEffect, useContext } from 'react';
+import { getErrorMessage } from '../utils/error-handler';
 
 export default function AdminMainPage() {
     const [mainMessage, setMainMessage] = useState("");
@@ -12,6 +13,7 @@ export default function AdminMainPage() {
     const [showOnSiteCollectionDate, setShowOnSiteCollectionDate] = useState(true);
     const [messageSaved, setMessageSaved] = useState(false);
     const [showSuccessBanner, setShowSuccessBanner] = useState(false);
+    const [errorMessage, setErrorMessage] = useState(null);
     const { isAuthenticated } = useContext(AuthContext);
     const navigate = useNavigate();
 
@@ -27,12 +29,18 @@ export default function AdminMainPage() {
         } catch (error) {
 
             console.error('Error fetching main message: ', error.message);
+            if (error.status === 401 || error.status === 403) {
+                navigate('/login');
+            }
             // TODO: Show alert
         }
     };
 
     const handleEditMainMessage = async () => {
+        // Clear previous messages
         setMessageSaved(false);
+        setShowSuccessBanner(false);
+        setErrorMessage(null);
 
         try {
             const response = await editMainMessage(mainMessage, showOnSiteMainMessage, collectionDate, showOnSiteCollectionDate);
@@ -43,13 +51,11 @@ export default function AdminMainPage() {
                 setShowSuccessBanner(true);
             }
         } catch (error) {
-
-            if (error.status === 403) {
-                console.warn('Unauthorized: Redirecting to login.');
+            console.error('Failed to edit main message:', error.message);
+            if (error.status === 401 || error.status === 403) {
                 navigate('/login');
             } else {
-                console.error('Failed to edit main message:', error.message);
-                // TODO: Show alert
+                setErrorMessage(getErrorMessage(error));
             }
         }
     };
@@ -123,6 +129,11 @@ export default function AdminMainPage() {
                                 {messageSaved && (
                                     <Alert variant="success" onClose={() => setShowSuccessBanner(false)} dismissible>
                                         Uspešno sačuvane promene
+                                    </Alert>
+                                )}
+                                {errorMessage && (
+                                    <Alert variant="danger" onClose={() => setErrorMessage(null)} dismissible>
+                                        {errorMessage}
                                     </Alert>
                                 )}
                                 <div className="d-flex justify-content-center align-items-center">

@@ -1,13 +1,17 @@
-import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useEffect, useState, useContext } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { AuthContext } from './auth-context';
 import { loadAllCategoriesWithIdAndNames } from '../api/category-api';
 import { fetchProductById, updateProduct } from '../api/product-api';
 import { Form, Button, Row, Col, Image, Alert } from 'react-bootstrap';
 import { getImageUrl } from '../utils/image-utils';
+import { getErrorMessage } from '../utils/error-handler';
 import '../style/admin-products-edit.css';
 
 export default function AdminProductsEdit() {
     const { id } = useParams();
+    const { isAuthenticated } = useContext(AuthContext);
+    const navigate = useNavigate();
     const [product, setProduct] = useState({
         name: '',
         description: '',
@@ -20,6 +24,7 @@ export default function AdminProductsEdit() {
 
     const [selectedImage, setSelectedImage] = useState(null);
     const [showSuccessBanner, setShowSuccessBanner] = useState(false);
+    const [errorMessage, setErrorMessage] = useState(null);
     const [imagePreview, setImagePreview] = useState(null);
     const [imageType, setImageType] = useState(null);
     const [categories, setCategories] = useState([]);
@@ -27,24 +32,18 @@ export default function AdminProductsEdit() {
 
     const fetchCategoriesWithIdAndNames = async () => {
         try {
-
             const data = await loadAllCategoriesWithIdAndNames();
             setCategories(data);
         } catch (error) {
             console.error('Error:', error);
-            if (error.status === 403) {
-                console.warn('Unauthorized: Redirecting to login.');
+            if (error.status === 401 || error.status === 403) {
                 navigate('/login');
-            } else {
-                console.error('Failed to fetch categories: ', error.message);
-                // TODO: Show alert
             }
         }
     };
 
     const fetchProduct = async () => {
         try {
-
             const data = await fetchProductById(id);
             const fetchedProduct = data.product;
             setProduct(fetchedProduct);
@@ -57,12 +56,8 @@ export default function AdminProductsEdit() {
 
         } catch (error) {
             console.error('Error fetching product:', error);
-            if (error.status === 403) {
-                console.warn('Unauthorized: Redirecting to login.');
+            if (error.status === 401 || error.status === 403) {
                 navigate('/login');
-            } else {
-                console.error('Failed to fetch categories: ', error.message);
-                // TODO: Show alert
             }
         }
     };
@@ -70,6 +65,10 @@ export default function AdminProductsEdit() {
 
 
     const handleUpdateProduct = async () => {
+        // Clear previous messages
+        setShowSuccessBanner(false);
+        setErrorMessage(null);
+
         const formData = new FormData();
 
         const productDtoRequestBlob = new Blob(
@@ -93,18 +92,19 @@ export default function AdminProductsEdit() {
         }
 
         try {
-
             const response = await updateProduct(formData);
+            // Reload product from server to get updated data with correct structure
+            await fetchProduct();
             setShowSuccessBanner(true);
+            // Clear the selected image after successful update
+            setSelectedImage(null);
 
         } catch (error) {
             console.error('Error update product:', error);
-            if (error.status === 403) {
-                console.warn('Unauthorized: Redirecting to login.');
+            if (error.status === 401 || error.status === 403) {
                 navigate('/login');
             } else {
-                console.error('Failed to fetch categories: ', error.message);
-                // TODO: Show alert
+                setErrorMessage(getErrorMessage(error));
             }
         }
     };
@@ -131,10 +131,15 @@ export default function AdminProductsEdit() {
     };
 
     useEffect(() => {
-
         fetchProduct();
         fetchCategoriesWithIdAndNames();
     }, [id]);
+
+    useEffect(() => {
+        if (!isAuthenticated) {
+            navigate('/login');
+        }
+    }, [isAuthenticated, navigate]);
 
     return (
         product ? (
@@ -230,6 +235,11 @@ export default function AdminProductsEdit() {
                         {showSuccessBanner && (
                             <Alert variant="success" onClose={() => setShowSuccessBanner(false)} dismissible>
                                 Proizvod uspešno izmenjen!
+                            </Alert>
+                        )}
+                        {errorMessage && (
+                            <Alert variant="danger" onClose={() => setErrorMessage(null)} dismissible>
+                                {errorMessage}
                             </Alert>
                         )}
 

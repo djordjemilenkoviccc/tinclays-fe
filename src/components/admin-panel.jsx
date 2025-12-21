@@ -23,7 +23,7 @@ export default function AdminPanel() {
             setOrders(data);
 
         } catch (error) {
-            if (error.status === 403) {
+            if (error.status === 401 || error.status === 403) {
                 console.warn('Unauthorized: Redirecting to login.');
                 navigate('/login');
             } else {
@@ -45,7 +45,7 @@ export default function AdminPanel() {
             }
         } catch (error) {
 
-            if (error.status === 403) {
+            if (error.status === 401 || error.status === 403) {
                 console.warn('Unauthorized: Redirecting to login.');
                 navigate('/login');
             } else {
