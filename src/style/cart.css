@@ -84,6 +84,18 @@
 .checkout-btn {
     margin-bottom: 10%;
     margin-top: 3%;
+    background-color: #e8ddcf !important;
+    color: #2a3b59 !important;
+    border-radius: 0 !important;
+    border: 0px !important;
+}
+
+.checkout-btn:hover,
+.checkout-btn:active,
+.checkout-btn:focus {
+    background-color: #e8ddcf !important;
+    color: #2a3b59 !important;
+    box-shadow: none !important;
 }
 
 .cart-empty-text {
