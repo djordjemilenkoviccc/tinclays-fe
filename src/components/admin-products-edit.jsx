@@ -100,6 +100,7 @@ export default function AdminProductsEdit() {
             setShowSuccessBanner(true);
             // Clear the selected image after successful update
             setSelectedImage(null);
+            // Keep button disabled on success
 
         } catch (error) {
             console.error('Error update product:', error);
@@ -107,9 +108,8 @@ export default function AdminProductsEdit() {
                 navigate('/login');
             } else {
                 setErrorMessage(getErrorMessage(error));
+                setIsSubmitting(false); // Re-enable button only on error
             }
-        } finally {
-            setIsSubmitting(false);
         }
     };
 
@@ -137,6 +137,7 @@ export default function AdminProductsEdit() {
     useEffect(() => {
         fetchProduct();
         fetchCategoriesWithIdAndNames();
+        setIsSubmitting(false); // Reset button state when loading/navigating to product
     }, [id]);
 
     useEffect(() => {

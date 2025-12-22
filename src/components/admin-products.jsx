@@ -56,6 +56,7 @@ export default function AdminProducts() {
     const handleAddShow = () => {
         setShowAdd(true);
         setImagePreview(null);
+        setIsSubmitting(false);
     };
 
     const submitAddProduct = async () => {
@@ -90,6 +91,7 @@ export default function AdminProducts() {
             // Reload products from server to get updated data with correct structure
             await fetchAllProducts();
             setShowSuccessBanner(true);
+            // Keep button disabled on success - will be re-enabled when modal is closed
 
         } catch (error) {
             console.error('Error add product:', error);
@@ -97,9 +99,8 @@ export default function AdminProducts() {
                 navigate('/login');
             } else {
                 setErrorMessage(getErrorMessage(error));
+                setIsSubmitting(false); // Re-enable button only on error
             }
-        } finally {
-            setIsSubmitting(false);
         }
     };
 

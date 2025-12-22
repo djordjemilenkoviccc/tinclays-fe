@@ -49,6 +49,7 @@ export default function AdminCategories() {
             // Reload categories from server to get updated data with correct structure
             await loadAllCategories();
             setShowSuccessBanner(true);
+            // Keep button disabled on success - will be re-enabled when modal is closed
 
         } catch (error) {
             console.error('Failed to add category:', error.message);
@@ -56,9 +57,8 @@ export default function AdminCategories() {
                 navigate('/login');
             } else {
                 setErrorMessage(getErrorMessage(error));
+                setIsSubmittingAdd(false); // Re-enable button only on error
             }
-        } finally {
-            setIsSubmittingAdd(false);
         }
     };
 
@@ -76,6 +76,7 @@ export default function AdminCategories() {
                 // Reload categories from server to get updated data with correct structure
                 await loadAllCategories();
                 setShowSuccessBanner(true);
+                // Keep button disabled on success - will be re-enabled when modal is closed
             }
         } catch (error) {
             console.error('Failed to edit category:', error.message);
@@ -83,9 +84,8 @@ export default function AdminCategories() {
                 navigate('/login');
             } else {
                 setErrorMessage(getErrorMessage(error));
+                setIsSubmittingEdit(false); // Re-enable button only on error
             }
-        } finally {
-            setIsSubmittingEdit(false);
         }
     };
 
@@ -105,6 +105,7 @@ export default function AdminCategories() {
         setShowOnSite(category.showOnSite);
         setImagePreview(category.image ? getImageUrl(category.image.path) : null);
         setShowEdit(true);
+        setIsSubmittingEdit(false);
     };
 
     const handleAddShow = () => {
@@ -112,6 +113,7 @@ export default function AdminCategories() {
         setUpdatedName('');
         setShowOnSite(false);
         setImagePreview(null);
+        setIsSubmittingAdd(false);
     };
 
     const handleAddClose = () => {
