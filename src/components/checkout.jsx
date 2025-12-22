@@ -252,7 +252,7 @@ export default function Checkout() {
                     <ListGroup variant="flush" style={{ textAlign: "center", backgroundColor: "white" }}>
                         {cartItems.map((item, index) => (
                             <ListGroup.Item key={index}>
-                                <p>{item.name} - {item.quantity} x {item.price} rsd</p>
+                                <p>{item.quantity} x {item.price} rsd</p>
                                 <img
                                     src={getImageUrl(item.imageList[0].path)}
                                     alt={item.name}
