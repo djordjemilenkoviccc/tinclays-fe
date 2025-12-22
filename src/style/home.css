@@ -192,3 +192,52 @@
         animation: slide 16s linear infinite;
     }
 }
+
+.email-notification-card {
+    border: none;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    padding: 30px;
+    background-color: #f9f9f9;
+}
+
+.email-notification-card h3 {
+    color: #2a3b59;
+    font-weight: bold;
+}
+
+.email-notification-form .form-control {
+    border-radius: 5px;
+    padding: 12px;
+    font-size: 16px;
+    border: 2px solid #e0e0e0;
+}
+
+.email-notification-form .form-control:focus {
+    border-color: #2a3b59;
+    box-shadow: 0 0 0 0.2rem rgba(42, 59, 89, 0.25);
+}
+
+.notify-btn {
+    background-color: #e8ddcf !important;
+    color: #2a3b59 !important;
+    border-radius: 5px !important;
+    border: none !important;
+    padding: 12px 40px;
+    font-size: 16px;
+    font-weight: bold;
+    transition: transform 0.3s ease;
+}
+
+.notify-btn:hover {
+    background-color: #e8ddcf !important;
+    color: #2a3b59 !important;
+    transform: scale(1.05);
+}
+
+.notify-btn:focus,
+.notify-btn:active {
+    background-color: #e8ddcf !important;
+    color: #2a3b59 !important;
+    box-shadow: none !important;
+}

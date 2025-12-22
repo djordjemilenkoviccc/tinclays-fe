@@ -15,6 +15,7 @@ import ProtectedRoute from './components/protected-route';
 
 // Lazy load all page components (code splitting)
 const Home = lazy(() => import('./components/home'));
+const Categories = lazy(() => import('./components/categories'));
 const AboutMe = lazy(() => import('./components/about-me'));
 const Contact = lazy(() => import('./components/contact'));
 const FAQ = lazy(() => import('./components/faq'));
@@ -74,6 +75,19 @@ function AnimatedRoutes() {
                   transition={{ duration: 0.5 }}
                 >
                   <Home />
+                </motion.div>
+              }
+            />
+            <Route
+              path="/categories"
+              element={
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  <Categories />
                 </motion.div>
               }
             />

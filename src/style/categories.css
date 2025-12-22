@@ -1,0 +1,39 @@
+.categories-page {
+    margin-top: 120px;
+    padding-left: 5%;
+    padding-right: 5%;
+    min-height: 60vh;
+}
+
+.categories-header {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.categories-header h1 {
+    font-size: 36px;
+    color: #2a3b59;
+    font-weight: bold;
+}
+
+.categories-grid {
+    padding-left: 5%;
+    padding-right: 5%;
+}
+
+.category-card {
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: none;
+}
+
+.category-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.category-card .product-image {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+}
