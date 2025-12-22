@@ -13,6 +13,9 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://tinclays.rs">
 
+  <!-- Preload critical banner image (loads immediately, in parallel with JS) -->
+  <link rel="preload" href="/home_banner_optimized.webp" as="image" type="image/webp" fetchpriority="high">
+
   <!-- Load fonts asynchronously -->
   <link href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 
@@ -33,7 +36,9 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: white;
+      background: white url('/home_banner_optimized.webp') no-repeat center top;
+      background-size: cover;
+      filter: brightness(80%);
       z-index: 9999;
     }
 
