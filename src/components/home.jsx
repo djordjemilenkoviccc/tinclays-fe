@@ -4,7 +4,6 @@ import { Button, Row, Col, Card } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { fetchMainMessage } from '../api/main-api';
 import { loadAllCategoriesWithProducts } from '../api/category-api';
-import { fetchImageByType } from '../api/image-api';
 import { useState, useEffect, useRef } from 'react';
 import Snowfall from 'react-snowfall';
 import { getImageUrl } from '../utils/image-utils';
@@ -13,9 +12,7 @@ export default function Home() {
     const [categories, setCategories] = useState([]);
     const [mainMessage, setMainMessage] = useState(null);
     const [collectionData, setCollectionData] = useState(null);
-    const [bannerImage, setBannerImage] = useState(null);
     const [bannerLoaded, setBannerLoaded] = useState(false);
-    const [isLoading, setIsLoading] = useState(true);
 
     const handleCardClick = (id) => {
         sessionStorage.setItem('scrollPosition', window.scrollY);
@@ -56,59 +53,14 @@ export default function Home() {
         }
     };
 
-    const fetchBannerImage = async () => {
-        try {
-            const image = await fetchImageByType('home_banner');
-            setBannerImage(image);
-        } catch (error) {
-            console.error('Error fetching banner image:', error);
-            // If fetch fails, component will fall back to showing nothing or a placeholder
-        }
-    };
-
     useEffect(() => {
-        const loadAllData = async () => {
-            setIsLoading(true);
-            try {
-                // Load all data in parallel
-                await Promise.all([
-                    fetchCategories(),
-                    loadMainMessage(),
-                    fetchBannerImage()
-                ]);
-            } catch (error) {
-                console.error('Error loading page data:', error);
-            } finally {
-                setIsLoading(false);
-            }
-        };
 
-        loadAllData();
+        fetchCategories();
+        loadMainMessage();
     }, []);
 
     const textRef = useRef(null);
 
-
-    if (isLoading) {
-        return (
-            <div style={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                minHeight: '60vh',
-                marginTop: '120px'
-            }}>
-                <div style={{
-                    border: '4px solid #f3f3f3',
-                    borderTop: '4px solid #2a3b59',
-                    borderRadius: '50%',
-                    width: '50px',
-                    height: '50px',
-                    animation: 'spin 1s linear infinite'
-                }}></div>
-            </div>
-        );
-    }
 
     return (
         <div style={{ marginTop: collectionData && collectionData.showOnSite ? "170px" : "120px" }}>
@@ -124,15 +76,13 @@ export default function Home() {
             )}
 
             <div className="overlay-container position-relative" style={{ paddingLeft: "5%", paddingRight: "5%" }}>
-                {bannerImage && bannerImage.path && (
-                    <img
-                        src={getImageUrl(bannerImage.path)}
-                        className={`cover-img ${bannerLoaded ? 'banner-fade-in' : ''}`}
-                        alt="Home banner"
-                        fetchpriority="high"
-                        onLoad={() => setBannerLoaded(true)}>
-                    </img>
-                )}
+                <img
+                    src="/home_banner_optimized.webp"
+                    className={`cover-img ${bannerLoaded ? 'banner-fade-in' : ''}`}
+                    alt="Home banner"
+                    fetchpriority="high"
+                    onLoad={() => setBannerLoaded(true)}>
+                </img>
 
                 <div className={`overlay-content position-absolute top-50 start-50 translate-middle text-center ${bannerLoaded ? 'banner-content-fade-in' : ''}`}>
                     <p className='text-on-cover-image'>Mugs & More</p>
