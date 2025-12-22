@@ -1,26 +1,10 @@
 import '../style/about-me.css';
 import '../style/home.css';
 import { Button, Row, Col, Card } from 'react-bootstrap';
-import { useState, useEffect } from 'react';
-import { fetchImageByType } from '../api/image-api';
-import { getImageUrl } from '../utils/image-utils';
+import { useState } from 'react';
 
 export default function AboutMe() {
-    const [aboutImage, setAboutImage] = useState(null);
     const [imageLoaded, setImageLoaded] = useState(false);
-
-    const fetchAboutImage = async () => {
-        try {
-            const image = await fetchImageByType('about_me');
-            setAboutImage(image);
-        } catch (error) {
-            console.error('Error fetching about image:', error);
-        }
-    };
-
-    useEffect(() => {
-        fetchAboutImage();
-    }, []);
 
     const handleImageLoad = () => {
         setImageLoaded(true);
@@ -38,14 +22,12 @@ export default function AboutMe() {
             </Row>
             <Row className="justify-content-center align-items-center mt-4">
                 <Col lg="6" md="8" sm="10" className="d-flex justify-content-center">
-                    {aboutImage && aboutImage.path && (
-                        <img
-                            src={getImageUrl(aboutImage.path)}
-                            alt="About Me"
-                            className={`about-image ${imageLoaded ? 'about-image-visible' : ''}`}
-                            onLoad={handleImageLoad}
-                        />
-                    )}
+                    <img
+                        src="/about_me_optimized.webp"
+                        alt="About Me"
+                        className={`about-image ${imageLoaded ? 'about-image-visible' : ''}`}
+                        onLoad={handleImageLoad}
+                    />
                 </Col>
             </Row>
 
