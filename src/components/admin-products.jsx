@@ -23,6 +23,7 @@ export default function AdminProducts() {
     const [errorMessage, setErrorMessage] = useState(null);
     const [imagePreview, setImagePreview] = useState(null);
     const [imageType, setImageType] = useState(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const [name, setName] = useState('');
     const [category, setCategory] = useState('');
@@ -49,6 +50,7 @@ export default function AdminProducts() {
         setShowSuccessBanner(false);
         setErrorMessage(null);
         setImagePreview(null);
+        setIsSubmitting(false);
     };
 
     const handleAddShow = () => {
@@ -60,6 +62,7 @@ export default function AdminProducts() {
         // Clear previous messages
         setShowSuccessBanner(false);
         setErrorMessage(null);
+        setIsSubmitting(true);
 
         const formData = new FormData();
 
@@ -95,6 +98,8 @@ export default function AdminProducts() {
             } else {
                 setErrorMessage(getErrorMessage(error));
             }
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -331,26 +336,29 @@ export default function AdminProducts() {
                             />
                         </Form.Group>
 
+                    </Form>
+                </Modal.Body>
+                <Modal.Footer>
+                    <div className="d-flex flex-column w-100">
+                        <div className="d-flex justify-content-end mb-2">
+                            <Button variant="secondary" onClick={handleAddClose} className="me-2">
+                                Zatvori
+                            </Button>
+                            <Button variant="primary" onClick={submitAddProduct} disabled={isSubmitting}>
+                                {isSubmitting ? 'Dodavanje...' : 'Dodaj'}
+                            </Button>
+                        </div>
                         {showSuccessBanner && (
-                            <Alert variant="success" onClose={() => setShowSuccessBanner(false)} dismissible>
+                            <Alert variant="success" onClose={() => setShowSuccessBanner(false)} dismissible className="mb-0">
                                 Proizvod uspešn dodat!
                             </Alert>
                         )}
                         {errorMessage && (
-                            <Alert variant="danger" onClose={() => setErrorMessage(null)} dismissible>
+                            <Alert variant="danger" onClose={() => setErrorMessage(null)} dismissible className="mb-0">
                                 {errorMessage}
                             </Alert>
                         )}
-
-                    </Form>
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={handleAddClose}>
-                        Zatvori
-                    </Button>
-                    <Button variant="primary" onClick={submitAddProduct}>
-                        Dodaj
-                    </Button>
+                    </div>
                 </Modal.Footer>
             </Modal>
         </div>

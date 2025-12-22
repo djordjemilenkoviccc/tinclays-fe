@@ -29,6 +29,7 @@ export default function AdminProductsEdit() {
     const [imageType, setImageType] = useState(null);
     const [categories, setCategories] = useState([]);
     const [category, setCategory] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const fetchCategoriesWithIdAndNames = async () => {
         try {
@@ -68,6 +69,7 @@ export default function AdminProductsEdit() {
         // Clear previous messages
         setShowSuccessBanner(false);
         setErrorMessage(null);
+        setIsSubmitting(true);
 
         const formData = new FormData();
 
@@ -106,6 +108,8 @@ export default function AdminProductsEdit() {
             } else {
                 setErrorMessage(getErrorMessage(error));
             }
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -232,20 +236,20 @@ export default function AdminProductsEdit() {
                             />
                         </Form.Group>
 
+                        <Button style={{ marginTop: "20px" }} variant="primary" className="w-100" onClick={handleUpdateProduct} disabled={isSubmitting}>
+                            {isSubmitting ? 'Ažuriranje...' : 'Ažuriraj proizvod'}
+                        </Button>
+
                         {showSuccessBanner && (
-                            <Alert variant="success" onClose={() => setShowSuccessBanner(false)} dismissible>
+                            <Alert variant="success" onClose={() => setShowSuccessBanner(false)} dismissible style={{ marginTop: "20px" }}>
                                 Proizvod uspešno izmenjen!
                             </Alert>
                         )}
                         {errorMessage && (
-                            <Alert variant="danger" onClose={() => setErrorMessage(null)} dismissible>
+                            <Alert variant="danger" onClose={() => setErrorMessage(null)} dismissible style={{ marginTop: "20px" }}>
                                 {errorMessage}
                             </Alert>
                         )}
-
-                        <Button style={{ marginTop: "20px" }} variant="primary" className="w-100" onClick={handleUpdateProduct}>
-                            Ažuriraj proizvod
-                        </Button>
                     </Form>
                 </Col>
             </Row>

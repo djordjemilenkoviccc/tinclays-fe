@@ -21,6 +21,8 @@ export default function AdminCategories() {
     const [updatedShowOnSite, setShowOnSite] = useState(null);
     const [imagePreview, setImagePreview] = useState(null);
     const [imageType, setImageType] = useState(null);
+    const [isSubmittingAdd, setIsSubmittingAdd] = useState(false);
+    const [isSubmittingEdit, setIsSubmittingEdit] = useState(false);
 
 
     const loadAllCategories = async () => {
@@ -40,6 +42,7 @@ export default function AdminCategories() {
         // Clear previous messages
         setShowSuccessBanner(false);
         setErrorMessage(null);
+        setIsSubmittingAdd(true);
 
         try {
             const newCategory = await addCategory(updatedName, updatedImage, updatedShowOnSite);
@@ -54,6 +57,8 @@ export default function AdminCategories() {
             } else {
                 setErrorMessage(getErrorMessage(error));
             }
+        } finally {
+            setIsSubmittingAdd(false);
         }
     };
 
@@ -62,6 +67,7 @@ export default function AdminCategories() {
         // Clear previous messages
         setShowSuccessBanner(false);
         setErrorMessage(null);
+        setIsSubmittingEdit(true);
 
         try {
             const response = await editCategory(selectedCategory.id, updatedName, updatedImage, updatedShowOnSite);
@@ -78,6 +84,8 @@ export default function AdminCategories() {
             } else {
                 setErrorMessage(getErrorMessage(error));
             }
+        } finally {
+            setIsSubmittingEdit(false);
         }
     };
 
@@ -88,6 +96,7 @@ export default function AdminCategories() {
         setUpdatedImage(null);
         setShowOnSite(false);
         setImagePreview(null);
+        setIsSubmittingEdit(false);
     };
 
     const handleEditShow = (category) => {
@@ -112,6 +121,7 @@ export default function AdminCategories() {
         setShowOnSite(false);
         setUpdatedImage(null);
         setImagePreview(null);
+        setIsSubmittingAdd(false);
     };
 
     const handleImageChange = (e) => {
@@ -172,16 +182,6 @@ export default function AdminCategories() {
                     <Modal.Title>Izmeni kategoriju</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    {showSuccessBanner && (
-                        <Alert variant="success" onClose={() => setShowSuccessBanner(false)} dismissible>
-                            Kategorija uspešno izmenjena!
-                        </Alert>
-                    )}
-                    {errorMessage && (
-                        <Alert variant="danger" onClose={() => setErrorMessage(null)} dismissible>
-                            {errorMessage}
-                        </Alert>
-                    )}
                     <Form>
                         <Form.Group className="mb-3" controlId="formCategoryName">
                             <Form.Label>Ime</Form.Label>
@@ -220,12 +220,26 @@ export default function AdminCategories() {
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={handleEditClose}>
-                        Zatvori
-                    </Button>
-                    <Button variant="primary" onClick={submitEditCategory}>
-                        Sačuvaj
-                    </Button>
+                    <div className="d-flex flex-column w-100">
+                        <div className="d-flex justify-content-end mb-2">
+                            <Button variant="secondary" onClick={handleEditClose} className="me-2">
+                                Zatvori
+                            </Button>
+                            <Button variant="primary" onClick={submitEditCategory} disabled={isSubmittingEdit}>
+                                {isSubmittingEdit ? 'Čuvanje...' : 'Sačuvaj'}
+                            </Button>
+                        </div>
+                        {showSuccessBanner && (
+                            <Alert variant="success" onClose={() => setShowSuccessBanner(false)} dismissible className="mb-0">
+                                Kategorija uspešno izmenjena!
+                            </Alert>
+                        )}
+                        {errorMessage && (
+                            <Alert variant="danger" onClose={() => setErrorMessage(null)} dismissible className="mb-0">
+                                {errorMessage}
+                            </Alert>
+                        )}
+                    </div>
                 </Modal.Footer>
             </Modal>
 
@@ -236,16 +250,6 @@ export default function AdminCategories() {
                     <Modal.Title>Dodaj novu kategoriju</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    {showSuccessBanner && (
-                        <Alert variant="success" onClose={() => setShowSuccessBanner(false)} dismissible>
-                            Kategorija uspešno dodata!
-                        </Alert>
-                    )}
-                    {errorMessage && (
-                        <Alert variant="danger" onClose={() => setErrorMessage(null)} dismissible>
-                            {errorMessage}
-                        </Alert>
-                    )}
                     <Form>
                         <Form.Group className="mb-3" controlId="formNewCategoryName">
                             <Form.Label>Ime nove kategorije</Form.Label>
@@ -283,12 +287,26 @@ export default function AdminCategories() {
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={handleAddClose}>
-                        Zatvori
-                    </Button>
-                    <Button variant="primary" onClick={submitAddCategory}>
-                        Dodaj
-                    </Button>
+                    <div className="d-flex flex-column w-100">
+                        <div className="d-flex justify-content-end mb-2">
+                            <Button variant="secondary" onClick={handleAddClose} className="me-2">
+                                Zatvori
+                            </Button>
+                            <Button variant="primary" onClick={submitAddCategory} disabled={isSubmittingAdd}>
+                                {isSubmittingAdd ? 'Dodavanje...' : 'Dodaj'}
+                            </Button>
+                        </div>
+                        {showSuccessBanner && (
+                            <Alert variant="success" onClose={() => setShowSuccessBanner(false)} dismissible className="mb-0">
+                                Kategorija uspešno dodata!
+                            </Alert>
+                        )}
+                        {errorMessage && (
+                            <Alert variant="danger" onClose={() => setErrorMessage(null)} dismissible className="mb-0">
+                                {errorMessage}
+                            </Alert>
+                        )}
+                    </div>
                 </Modal.Footer>
             </Modal>
         </div>
