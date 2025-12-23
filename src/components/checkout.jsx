@@ -12,6 +12,7 @@ export default function Checkout() {
     const [formTouched, setFormTouched] = useState(false);
     const [emailError, setEmailError] = useState();
     const [phoneNumberError, setPhoneNumberError] = useState();
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const [formData, setFormData] = useState({
         firstName: '',
@@ -85,6 +86,8 @@ export default function Checkout() {
 
         console.log("Sanitized Form Data:", orderDtoRequest);
 
+        setIsSubmitting(true);
+
         try {
             const response = await createOrder(orderDtoRequest);
 
@@ -97,6 +100,8 @@ export default function Checkout() {
             console.error("Error creating order:", error.response ? error.response.data : error.message);
             setCartItems([]);
             navigate('/checkout-status', { state: { message: "Neuspelo kreiranje porudžbine", description: error.response ? error.response.data : 'Greška pri obradi porudžbine, pokušajte ponovo', status: "failed" } });
+        } finally {
+            setIsSubmitting(false);
         }
 
     };
@@ -268,8 +273,8 @@ export default function Checkout() {
             </Row>
             <Row>
                 <Col md={12} lg={6} sm={12}>
-                    <Button className="w-100 checkout-btn" onClick={() => handleSubmit()}>
-                        Naruči
+                    <Button className="w-100 checkout-btn" onClick={() => handleSubmit()} disabled={isSubmitting}>
+                        {isSubmitting ? 'Naručivanje...' : 'Naruči'}
                     </Button>
                 </Col>
             </Row>

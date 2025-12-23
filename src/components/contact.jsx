@@ -12,6 +12,7 @@ function Contact() {
     const [formTouched, setFormTouched] = useState(false);
     const [showSuccessBanner, setShowSuccessBanner] = useState(false);
     const [showFailedBanner, setShowFailedBanner] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const [formData, setFormData] = useState({
         firstName: '',
@@ -55,6 +56,8 @@ function Contact() {
             return;
         }
 
+        setIsSubmitting(true);
+
         try {
             const response = await sendContactMessage(formData)
 
@@ -71,6 +74,8 @@ function Contact() {
         } catch (error) {
             console.error("Error sending the message:", error);
             setShowFailedBanner(true);
+        } finally {
+            setIsSubmitting(false);
         }
     }
 
@@ -169,7 +174,7 @@ function Contact() {
 
                         {showSuccessBanner && (
                             <div>
-                                <Alert variant="success" onClose={() => setShowSuccessBanner(false)} dismissible>
+                                <Alert style={{textAlign: "center"}} variant="success" onClose={() => setShowSuccessBanner(false)} dismissible>
                                     Poruka je uspešno poslata. Potrudićemo se da Vam odgovorimo u najkraćem mogućem roku.
                                 </Alert>
                             </div>
@@ -178,7 +183,7 @@ function Contact() {
 
                         {showFailedBanner && (
                             <div>
-                                <Alert variant="danger" onClose={() => setShowFailedBanner(false)} dismissible>
+                                <Alert style={{textAlign:"center"}} variant="danger" onClose={() => setShowFailedBanner(false)} dismissible>
                                     Greška prilikom slanja poruke. Pokušajte ponovo
                                 </Alert>
                             </div>
@@ -188,8 +193,8 @@ function Contact() {
                         <Form.Group as={Row} className="mt-4">
                             <Col lg={12}>
                                 <div className="d-flex justify-content-center align-items-center">
-                                    <Button className="send-message-btn" onClick={() => handleSubmit()}>
-                                        Pošalji
+                                    <Button className="send-message-btn" onClick={() => handleSubmit()} disabled={isSubmitting}>
+                                        {isSubmitting ? 'Šalje se...' : 'Pošalji'}
                                     </Button>
                                 </div>
                             </Col>
