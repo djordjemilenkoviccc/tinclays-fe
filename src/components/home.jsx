@@ -125,7 +125,7 @@ export default function Home() {
                 </img>
 
                 <div className={`overlay-content position-absolute top-50 start-50 translate-middle text-center ${bannerLoaded ? 'banner-content-fade-in' : ''}`}>
-                    <p className='text-on-cover-image'>Mugs & More</p>
+                    <p className='text-on-cover-image'>Mugs<br></br>&<br></br>More</p>
                     <button className="btn-shop-now" onClick={goToCategories}>Shop now</button>
                 </div>
             </div>
