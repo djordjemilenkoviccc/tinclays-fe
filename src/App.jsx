@@ -31,6 +31,7 @@ const AdminProducts = lazy(() => import('./components/admin-products'));
 const AdminProductsEdit = lazy(() => import('./components/admin-products-edit'));
 const AdminCosts = lazy(() => import('./components/admin-costs'));
 const AdminMainPage = lazy(() => import('./components/admin-main-page'));
+const AdminEmailSubscriptions = lazy(() => import('./components/admin-email-subscriptions'));
 
 // Loading spinner component
 const LoadingSpinner = () => (
@@ -257,6 +258,22 @@ function AnimatedRoutes() {
                     transition={{ duration: 0.5 }}
                   >
                     <AdminMainPage />
+                  </motion.div>
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/admin-email-subscriptions"
+              element={
+                <ProtectedRoute>
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.5 }}
+                  >
+                    <AdminEmailSubscriptions />
                   </motion.div>
                 </ProtectedRoute>
               }
