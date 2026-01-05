@@ -6,6 +6,7 @@ import { addProduct, loadAllProducts, archiveProduct } from '../api/product-api'
 import { loadAllCategoriesWithIdAndNames } from '../api/category-api';
 import { getImageUrl } from '../utils/image-utils';
 import { getErrorMessage } from '../utils/error-handler';
+import { compressProductImage } from '../utils/image-compression';
 
 export default function AdminProducts() {
     const { isAuthenticated } = useContext(AuthContext);
@@ -32,16 +33,24 @@ export default function AdminProducts() {
     const [stock, setStock] = useState('');
     const [showOnSite, setShowOnSite] = useState(false);
 
-    const handleImageChange = (e) => {
+    const handleImageChange = async (e) => {
         const file = e.target.files[0];
         if (file) {
-            setSelectedImage(file);
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setImageType(file.type.split("/")[1]);
-                setImagePreview(reader.result);
-            };
-            reader.readAsDataURL(file);
+            try {
+                // Compress the image to ~100KB for excellent quality
+                const compressedFile = await compressProductImage(file, 100);
+
+                setSelectedImage(compressedFile);
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    setImageType(compressedFile.type.split("/")[1]);
+                    setImagePreview(reader.result);
+                };
+                reader.readAsDataURL(compressedFile);
+            } catch (error) {
+                console.error('Error processing image:', error);
+                setErrorMessage('Failed to process image. Please try a different image.');
+            }
         }
     };
 
