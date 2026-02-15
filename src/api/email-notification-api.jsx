@@ -23,3 +23,12 @@ export const getAllEmailSubscriptions = async () => {
     await handleResponse(response);
     return await response.json();
 };
+
+export const sendNewCollectionAnnouncement = async () => {
+    const response = await authenticatedFetch(`${BASE_URL}/email-notifications/send-new-collection-announcement`, {
+        method: 'POST'
+    });
+
+    await handleResponse(response);
+    return await response.json();
+};

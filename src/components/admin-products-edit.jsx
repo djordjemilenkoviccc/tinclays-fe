@@ -6,7 +6,6 @@ import { fetchProductById, updateProduct } from '../api/product-api';
 import { Form, Button, Row, Col, Image, Alert } from 'react-bootstrap';
 import { getImageUrl } from '../utils/image-utils';
 import { getErrorMessage } from '../utils/error-handler';
-import { compressProductImage } from '../utils/image-compression';
 import '../style/admin-products-edit.css';
 
 export default function AdminProductsEdit() {
@@ -99,9 +98,8 @@ export default function AdminProductsEdit() {
             // Reload product from server to get updated data with correct structure
             await fetchProduct();
             setShowSuccessBanner(true);
-            // Clear the selected image after successful update
             setSelectedImage(null);
-            // Keep button disabled on success
+            setIsSubmitting(false);
 
         } catch (error) {
             console.error('Error update product:', error);
@@ -114,24 +112,16 @@ export default function AdminProductsEdit() {
         }
     };
 
-    const handleImageChange = async (e) => {
+    const handleImageChange = (e) => {
         const file = e.target.files[0];
         if (file) {
-            try {
-                // Compress the image to ~100KB for excellent quality
-                const compressedFile = await compressProductImage(file, 100);
-
-                setSelectedImage(compressedFile);
-                const reader = new FileReader();
-                reader.onloadend = () => {
-                    setImageType(compressedFile.type.split("/")[1]);
-                    setImagePreview(reader.result);
-                };
-                reader.readAsDataURL(compressedFile);
-            } catch (error) {
-                console.error('Error processing image:', error);
-                setErrorMessage('Failed to process image. Please try a different image.');
-            }
+            setSelectedImage(file);
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setImageType(file.type.split("/")[1]);
+                setImagePreview(reader.result);
+            };
+            reader.readAsDataURL(file);
         }
     };
 

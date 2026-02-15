@@ -1,8 +1,9 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { AuthContext } from './auth-context';
 import { useNavigate } from 'react-router-dom';
-import { Table, Alert } from 'react-bootstrap';
-import { getAllEmailSubscriptions } from '../api/email-notification-api';
+import { Table, Alert, Button } from 'react-bootstrap';
+import { getAllEmailSubscriptions, sendNewCollectionAnnouncement } from '../api/email-notification-api';
+import { getErrorMessage } from '../utils/error-handler';
 import '../style/admin-panel.css';
 
 export default function AdminEmailSubscriptions() {
@@ -12,6 +13,9 @@ export default function AdminEmailSubscriptions() {
     const [subscriptions, setSubscriptions] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [sending, setSending] = useState(false);
+    const [sendSuccess, setSendSuccess] = useState(null);
+    const [sendError, setSendError] = useState(null);
 
     const formatDateTime = (dateTime) => {
         if (!dateTime) return '-';
@@ -50,6 +54,37 @@ export default function AdminEmailSubscriptions() {
         }
     };
 
+    const handleSendNewCollectionAnnouncement = async () => {
+        // Confirm action
+        const confirmed = window.confirm(
+            `Da li ste sigurni da želite da pošaljete obaveštenje o novoj kolekciji svim pretplatnicima (${subscriptions.length} email-ova)?`
+        );
+
+        if (!confirmed) {
+            return;
+        }
+
+        try {
+            setSending(true);
+            setSendSuccess(null);
+            setSendError(null);
+
+            const response = await sendNewCollectionAnnouncement();
+            setSendSuccess(response.message);
+            console.log('Bulk email sent successfully:', response.message);
+        } catch (error) {
+            if (error.status === 401 || error.status === 403) {
+                console.warn('Unauthorized: Redirecting to login.');
+                navigate('/login');
+            } else {
+                console.error('Failed to send new collection announcement:', error);
+                setSendError(getErrorMessage(error));
+            }
+        } finally {
+            setSending(false);
+        }
+    };
+
     useEffect(() => {
         if (!isAuthenticated) {
             navigate('/login');
@@ -67,6 +102,32 @@ export default function AdminEmailSubscriptions() {
                 Lista svih korisnika koji su se pretplatili na obaveštenja
             </p>
             <hr />
+
+            {/* Button to send new collection announcement */}
+            {!loading && !error && subscriptions.length > 0 && (
+                <div style={{ textAlign: "center", marginBottom: "20px" }}>
+                    <Button
+                        variant="primary"
+                        onClick={handleSendNewCollectionAnnouncement}
+                        disabled={sending}
+                        style={{ padding: "10px 30px", fontSize: "16px" }}
+                    >
+                        {sending ? 'Šaljem...' : 'Pošalji obaveštenje o novoj kolekciji'}
+                    </Button>
+                </div>
+            )}
+
+            {/* Success/Error messages for sending */}
+            {sendSuccess && (
+                <Alert variant="success" onClose={() => setSendSuccess(null)} dismissible style={{ marginBottom: "20px" }}>
+                    {sendSuccess}
+                </Alert>
+            )}
+            {sendError && (
+                <Alert variant="danger" onClose={() => setSendError(null)} dismissible style={{ marginBottom: "20px" }}>
+                    {sendError}
+                </Alert>
+            )}
 
             {loading && (
                 <div style={{ textAlign: "center", marginTop: "50px" }}>

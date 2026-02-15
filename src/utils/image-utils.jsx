@@ -3,13 +3,14 @@ import {BASE_URL} from '../constants/base-url';
 export const getImageUrl = (path) => {
     const baseUrl = `${BASE_URL}/images/getImage`;
 
-    // If path is a full path (e.g., /app/images/filename.jpg), extract just the filename
-    // Otherwise, use the path as-is
-    let filename = path;
-    if (path && path.includes('/')) {
-        const parts = path.split('/');
-        filename = parts[parts.length - 1]; // Get last part (filename)
+    // Strip the upload directory prefix so the path is relative to the backend's uploadDir
+    // e.g. "images/products/thumbnail/uuid.jpg" -> "products/thumbnail/uuid.jpg"
+    // e.g. "images/uuid.jpg" -> "uuid.jpg"
+    let relativePath = path;
+    if (path && path.startsWith('images/')) {
+        relativePath = path.substring('images/'.length);
     }
 
-    return `${baseUrl}?path=${encodeURIComponent(filename)}`;
+    console.log('getImageUrl - relativePath:', relativePath);
+    return `${baseUrl}?path=${encodeURIComponent(relativePath)}`;
 };

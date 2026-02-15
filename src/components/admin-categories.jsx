@@ -49,7 +49,7 @@ export default function AdminCategories() {
             // Reload categories from server to get updated data with correct structure
             await loadAllCategories();
             setShowSuccessBanner(true);
-            // Keep button disabled on success - will be re-enabled when modal is closed
+            setIsSubmittingAdd(false);
 
         } catch (error) {
             console.error('Failed to add category:', error.message);
@@ -76,7 +76,7 @@ export default function AdminCategories() {
                 // Reload categories from server to get updated data with correct structure
                 await loadAllCategories();
                 setShowSuccessBanner(true);
-                // Keep button disabled on success - will be re-enabled when modal is closed
+                setIsSubmittingEdit(false);
             }
         } catch (error) {
             console.error('Failed to edit category:', error.message);

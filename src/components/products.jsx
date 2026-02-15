@@ -50,7 +50,7 @@ export default function Products() {
                             style={{ animationDelay: `${index * 0.1}s` }}
                         >
                             <img
-                                src={getImageUrl(product.imageList[0].path)}
+                                src={getImageUrl(product.imageList[0].detailsPath)}
                                 alt={product.name}
                                 className='product-image'
                                 fetchpriority="high"
