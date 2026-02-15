@@ -20,10 +20,11 @@ export default function AdminEmailSubscriptions() {
     const formatDateTime = (dateTime) => {
         if (!dateTime) return '-';
 
-        // Parse the date string (handles both ISO format and standard format)
-        const date = new Date(dateTime);
+        // force UTC
+        const isoUtc = dateTime.replace(' ', 'T') + 'Z';
 
-        // Extract date components
+        const date = new Date(isoUtc);
+
         const day = String(date.getDate()).padStart(2, '0');
         const month = String(date.getMonth() + 1).padStart(2, '0');
         const year = date.getFullYear();
@@ -31,7 +32,6 @@ export default function AdminEmailSubscriptions() {
         const minutes = String(date.getMinutes()).padStart(2, '0');
         const seconds = String(date.getSeconds()).padStart(2, '0');
 
-        // Format as DD.MM.YYYY HH:mm:ss
         return `${day}.${month}.${year} ${hours}:${minutes}:${seconds}`;
     };
 
