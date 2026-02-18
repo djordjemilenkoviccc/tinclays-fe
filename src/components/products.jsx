@@ -12,7 +12,6 @@ export default function Products() {
     const { cartItems, addToCart } = useContext(CartContext);
     const { categoryId } = useParams();
     const [products, setProducts] = useState([]);
-
     const getCartItemQuantity = (productId) => {
         const cartItem = cartItems.find(item => item.id === productId);
         return cartItem ? cartItem.quantity : 0;
@@ -22,7 +21,7 @@ export default function Products() {
         const loadProductsByCategoryId = async () => {
 
             try {
-                
+
                 const data = await fetchProductsByCategoryId(categoryId);
                 setProducts(data.products);
             } catch (error) {

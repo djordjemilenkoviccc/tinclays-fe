@@ -8,6 +8,22 @@ import { loadOrdersByStatus, changeOrderStatus } from '../api/order-api';
 import { Pencil } from 'react-bootstrap-icons';
 import { getImageUrl } from "../utils/image-utils";
 
+const formatDateTime = (dateTime) => {
+    if (!dateTime) return '-';
+
+    const isoUtc = dateTime.endsWith('Z') ? dateTime : dateTime + 'Z';
+    const date = new Date(isoUtc);
+
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const seconds = String(date.getSeconds()).padStart(2, '0');
+
+    return `${day}.${month}.${year} ${hours}:${minutes}:${seconds}`;
+};
+
 export default function AdminPanel() {
 
     const { status } = useParams();
@@ -190,7 +206,7 @@ export default function AdminPanel() {
                                 {/* Order Details */}
                                 <Card.Text><span style={{ fontWeight: "bold" }}>ID porudžbine: </span>{order.id} </Card.Text>
                                 <Card.Text><span style={{ fontWeight: "bold" }}>Vrednost: </span>{order.totalAmount} rsd </Card.Text>
-                                <Card.Text><span style={{ fontWeight: "bold" }}>Datum i vreme kreiranja: </span>{order.dateCreated} </Card.Text>
+                                <Card.Text><span style={{ fontWeight: "bold" }}>Datum i vreme kreiranja: </span>{formatDateTime(order.dateCreated)} </Card.Text>
                                 <Card.Text><span style={{ fontWeight: "bold" }}>Ime i prezime: </span>{order.firstName} {order.lastName}</Card.Text>
                                 <Card.Text><span style={{ fontWeight: "bold" }}>Adresa: </span>{order.address} {order.houseNumber}</Card.Text>
                                 <Card.Text><span style={{ fontWeight: "bold" }}>Poštanski broj: </span>{order.postalCode}</Card.Text>

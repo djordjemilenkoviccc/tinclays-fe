@@ -88,18 +88,66 @@ export default function Checkout() {
 
         setIsSubmitting(true);
 
+        const orderItems = cartItems.map(item => ({
+            name: item.name,
+            price: item.price,
+            quantity: item.quantity,
+            image: item.imageList[0]?.path
+        }));
+        const totalAmount = cartItems.reduce((total, item) => total + item.quantity * item.price, 0);
+
         try {
             const response = await createOrder(orderDtoRequest);
 
-            localStorage.removeItem('cartItems');
-            setCartItems([]);
-            navigate('/checkout-status', { state: { message: "Narudžbina je uspešno kreirana", status: "success" } });
+            if (response.ok) {
+                localStorage.removeItem('cartItems');
+                setCartItems([]);
+                navigate('/checkout-status', {
+                    state: {
+                        message: "Narudžbina je uspešno kreirana",
+                        status: "success",
+                        orderItems,
+                        totalAmount,
+                        customerName: `${formData.firstName} ${formData.lastName}`,
+                        customerEmail: formData.email
+                    }
+                });
+            } else {
+                const contentType = response.headers.get('content-type');
+                let errorMessage = 'Greška pri obradi porudžbine, pokušajte ponovo';
+                let unavailableProducts = [];
 
+                if (contentType && contentType.includes('application/json')) {
+                    const errorData = await response.json();
+                    errorMessage = errorData.message || errorMessage;
+                    unavailableProducts = (errorData.unavailableProducts || []).map(product => {
+                        const cartItem = cartItems.find(item => item.name === product.name);
+                        return { ...product, image: cartItem?.imageList?.[0]?.path };
+                    });
+                }
+
+                navigate('/checkout-status', {
+                    state: {
+                        message: "Neuspelo kreiranje porudžbine",
+                        description: errorMessage,
+                        unavailableProducts,
+                        status: "failed",
+                        orderItems,
+                        totalAmount
+                    }
+                });
+            }
         } catch (error) {
-
-            console.error("Error creating order:", error.response ? error.response.data : error.message);
-            setCartItems([]);
-            navigate('/checkout-status', { state: { message: "Neuspelo kreiranje porudžbine", description: error.response ? error.response.data : 'Greška pri obradi porudžbine, pokušajte ponovo', status: "failed" } });
+            console.error("Error creating order:", error);
+            navigate('/checkout-status', {
+                state: {
+                    message: "Neuspelo kreiranje porudžbine",
+                    description: 'Greška pri obradi porudžbine, pokušajte ponovo',
+                    status: "failed",
+                    orderItems,
+                    totalAmount
+                }
+            });
         } finally {
             setIsSubmitting(false);
         }

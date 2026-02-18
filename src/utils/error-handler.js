@@ -38,6 +38,7 @@ export const parseErrorResponse = async (response) => {
                         .join(', ');
                     error.message = `${data.message}: ${errorMessages}`;
                 }
+
             }
             // Case 3: Map.of("error", message) format
             else if (data.error) {

@@ -26,14 +26,11 @@ export const changeOrderStatus = async (orderId, status) => {
 };
 
 export const createOrder = async (orderDtoRequest) => {
-    const response = await fetch(`${BASE_URL}/order/add`, {
+    return await fetch(`${BASE_URL}/order/add`, {
         method: 'POST',
         headers: {
             "Content-Type": "application/json"
         },
         body: JSON.stringify(orderDtoRequest)
     });
-
-    await handleResponse(response);
-    return response;
 };
