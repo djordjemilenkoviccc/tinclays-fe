@@ -115,142 +115,140 @@ export default function AdminPanel() {
         fetchOrders();
     }, [status]);
 
-    return (
-        <div className="align-items-center" style={{ marginTop: "140px", paddingLeft: "5%", paddingRight: "5%" }}>
-            <h2 style={{ textAlign: "center" }}>{orders ? getMessage() : ''}</h2>
-            <hr></hr>
-            <Row className="justify-content-center">
-                {orders ? orders.map((order) => (
-                    <Col key={order.id} lg={4} md={4} sm={12} className="mb-4">
-                        <Card className="border">
-                            <div
-                                style={{
-                                    backgroundColor:
-                                        order.status === "IN_PROGRESS"
-                                            ? "#ffeb3b" // Yellow for IN_PROGRESS
-                                            : order.status === "FAILED"
-                                                ? "#f44336" // Red for FAILED
-                                                : "#4caf50", // Green for other statuses (e.g., COMPLETED)
-                                    color: order.status === "IN_PROGRESS" ? "#000" : "#fff",
-                                    padding: "10px",
-                                    textAlign: "center",
-                                    fontWeight: "bold",
-                                    borderBottom: "1px solid #ddd",
-                                }}
-                            >
-                                {order.status === "IN_PROGRESS"
-                                    ? "U Toku"
-                                    : order.status === "FAILED"
-                                        ? "Neuspešna" // Label for FAILED
-                                        : "Završena"}
+    const getStatusStyle = (orderStatus) => {
+        switch (orderStatus) {
+            case "IN_PROGRESS":
+                return { bg: "#fff8e1", color: "#f9a825", label: "U toku" };
+            case "FAILED":
+                return { bg: "#fdecea", color: "#d32f2f", label: "Neuspešna" };
+            default:
+                return { bg: "#e8f5e9", color: "#388e3c", label: "Završena" };
+        }
+    };
 
-                                <DropdownButton
-                                    id={`status-dropdown-${order.id}`}
-                                    title={<Pencil />}
-                                    variant="secondar"
-                                    onSelect={(eventKey) => handleChangeOrderStatus(order.id, eventKey)}
-                                    align="end"
-                                    style={{
-                                        position: 'absolute',
-                                        top: 2,
-                                        right: 0,
-                                        zIndex: 1
-                                    }}
-                                    className="custom-dropdown-btn"
-                                >
-                                    <Dropdown.Item eventKey="IN_PROGRESS">U toku</Dropdown.Item>
-                                    <Dropdown.Item eventKey="COMPLETED">Završena</Dropdown.Item>
-                                    <Dropdown.Item eventKey="FAILED">Neuspešna</Dropdown.Item>
-                                </DropdownButton>
+    return (
+        <div style={{ marginTop: "140px", paddingLeft: "5%", paddingRight: "5%", paddingBottom: "40px" }}>
+            {orders && (
+                <>
+                    <p className="order-page-title">{getMessage()}</p>
+                    {orders.length > 0 && (
+                        <p className="order-page-subtitle">{orders.length} {orders.length === 1 ? 'porudžbina' : 'porudžbina'}</p>
+                    )}
+                </>
+            )}
+            <Row className="justify-content-center">
+                {orders ? orders.map((order) => {
+                    const statusStyle = getStatusStyle(order.status);
+                    return (
+                    <Col key={order.id} lg={4} md={6} sm={12} className="mb-4">
+                        <Card className="order-card">
+                            {/* Header */}
+                            <div className="order-card-header" style={{ backgroundColor: statusStyle.bg }}>
+                                <div>
+                                    <span style={{ fontSize: "13px", color: "#888" }}>#{order.id}</span>
+                                    <span style={{ fontSize: "12px", color: "#aaa", marginLeft: "10px" }}>{formatDateTime(order.dateCreated)}</span>
+                                </div>
+                                <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                                    <span className="order-status-badge" style={{ backgroundColor: statusStyle.color, color: "#fff" }}>
+                                        {statusStyle.label}
+                                    </span>
+                                    {order.slipSent && <span className="slip-sent-badge">Uplatnica poslata</span>}
+                                    <DropdownButton
+                                        id={`status-dropdown-${order.id}`}
+                                        title={<Pencil size={14} />}
+                                        variant="secondary"
+                                        onSelect={(eventKey) => handleChangeOrderStatus(order.id, eventKey)}
+                                        align="end"
+                                        className="custom-dropdown-btn"
+                                    >
+                                        <Dropdown.Item eventKey="IN_PROGRESS">U toku</Dropdown.Item>
+                                        <Dropdown.Item eventKey="COMPLETED">Završena</Dropdown.Item>
+                                        <Dropdown.Item eventKey="FAILED">Neuspešna</Dropdown.Item>
+                                    </DropdownButton>
+                                </div>
                             </div>
 
                             <Card.Body>
-                                {order.products.map((product, productIndex) =>
-                                    product.images.map((image, imageIndex) => (
-                                        <div key={`product-${productIndex}-image-${imageIndex}`}>
-                                            {/* Product ID */}
-                                            <div>
-                                                <h2>
-                                                    <span
-                                                        style={{
-                                                            fontWeight: "bold",
-                                                            fontSize: "16px",
-                                                            marginRight: "10px",
-                                                        }}
-                                                    >
-                                                        ID proizvoda: {product.id}
-                                                    </span>
-                                                </h2>
-                                            </div>
-
-                                            {/* Product Image and Quantity */}
-                                            <div
-                                                style={{
-                                                    display: "flex",
-                                                    justifyContent: "space-between",
-                                                    alignItems: "center",
-                                                    marginBottom: "10px",
-                                                    border: "1px solid #ddd",
-                                                    borderRadius: "4px",
-                                                    padding: "5px",
-                                                }}
-                                            >
-                                                {/* Product Image */}
-                                                <Card.Img
+                                {/* Products */}
+                                <div className="order-section">
+                                    <div className="order-section-title">Proizvodi</div>
+                                    {order.products.map((product, productIndex) =>
+                                        product.images.map((image, imageIndex) => (
+                                            <div className="order-product-row" key={`product-${productIndex}-image-${imageIndex}`}>
+                                                <img
                                                     src={getImageUrl(image.path)}
                                                     alt={product.productName}
-                                                    style={{
-                                                        width: "90%",
-                                                        height: "90%",
-                                                        objectFit: "cover",
-                                                        borderRadius: "4px",
-                                                    }}
+                                                    className="order-product-img"
                                                 />
-
-                                                {/* Quantity */}
-                                                <span
-                                                    style={{
-                                                        fontWeight: "bold",
-                                                        fontSize: "18px",
-                                                        color: "#555",
-                                                    }}
-                                                >
-                                                    x {product.quantity}
-                                                </span>
+                                                <div className="order-product-info">
+                                                    <p className="order-product-name">{product.productName}</p>
+                                                    <p className="order-product-qty">x {product.quantity}</p>
+                                                </div>
+                                                <span className="order-product-price">{product.price * product.quantity} rsd</span>
                                             </div>
-                                        </div>
-                                    ))
-                                )}
+                                        ))
+                                    )}
+                                </div>
 
+                                {/* Total */}
+                                <div className="order-total-row">
+                                    <span className="order-total-label">Ukupno</span>
+                                    <span className="order-total-value">{order.totalAmount} rsd</span>
+                                </div>
 
-                                {/* Order Details */}
-                                <Card.Text><span style={{ fontWeight: "bold" }}>ID porudžbine: </span>{order.id} </Card.Text>
-                                <Card.Text><span style={{ fontWeight: "bold" }}>Vrednost: </span>{order.totalAmount} rsd </Card.Text>
-                                <Card.Text><span style={{ fontWeight: "bold" }}>Datum i vreme kreiranja: </span>{formatDateTime(order.dateCreated)} </Card.Text>
-                                <Card.Text><span style={{ fontWeight: "bold" }}>Ime i prezime: </span>{order.firstName} {order.lastName}</Card.Text>
-                                <Card.Text><span style={{ fontWeight: "bold" }}>Adresa: </span>{order.address} {order.houseNumber}</Card.Text>
-                                <Card.Text><span style={{ fontWeight: "bold" }}>Poštanski broj: </span>{order.postalCode}</Card.Text>
-                                <Card.Text><span style={{ fontWeight: "bold" }}>Grad: </span>{order.city}</Card.Text>
-                                <Card.Text><span style={{ fontWeight: "bold" }}>Telefon: </span>{order.phoneNumber}</Card.Text>
-                                <Card.Text><span style={{ fontWeight: "bold" }}>Email: </span>{order.email}</Card.Text>
+                                <div className="order-section-divider"></div>
+
+                                {/* Customer details */}
+                                <div className="order-section">
+                                    <div className="order-section-title">Kupac</div>
+                                    <div className="order-detail-row">
+                                        <span className="order-detail-label">Ime i prezime</span>
+                                        <span className="order-detail-value">{order.firstName} {order.lastName}</span>
+                                    </div>
+                                    <div className="order-detail-row">
+                                        <span className="order-detail-label">Telefon</span>
+                                        <span className="order-detail-value">{order.phoneNumber}</span>
+                                    </div>
+                                    <div className="order-detail-row">
+                                        <span className="order-detail-label">Email</span>
+                                        <span className="order-detail-value">{order.email}</span>
+                                    </div>
+                                </div>
+
+                                <div className="order-section-divider"></div>
+
+                                {/* Delivery details */}
+                                <div className="order-section">
+                                    <div className="order-section-title">Dostava</div>
+                                    <div className="order-detail-row">
+                                        <span className="order-detail-label">Adresa</span>
+                                        <span className="order-detail-value">{order.address} {order.houseNumber}</span>
+                                    </div>
+                                    <div className="order-detail-row">
+                                        <span className="order-detail-label">Grad</span>
+                                        <span className="order-detail-value">{order.postalCode}, {order.city}</span>
+                                    </div>
+                                </div>
+
+                                {/* Action button */}
                                 {order.status === "IN_PROGRESS" && !order.slipSent && (
-                                    <Button
-                                        className="w-100 mt-3"
-                                        style={{ backgroundColor: '#6f42c1', borderColor: '#6f42c1' }}
-                                        onClick={() => handleSendPaymentSlip(order.id)}
-                                        disabled={sendingSlipOrderId === order.id}
-                                    >
-                                        {sendingSlipOrderId === order.id ? 'Slanje...' : 'Pošalji uplatnicu'}
-                                    </Button>
+                                    <div className="order-section" style={{ paddingTop: "0" }}>
+                                        <Button
+                                            className="w-100"
+                                            style={{ backgroundColor: '#6f42c1', borderColor: '#6f42c1', borderRadius: '8px', padding: '10px' }}
+                                            onClick={() => handleSendPaymentSlip(order.id)}
+                                            disabled={sendingSlipOrderId === order.id}
+                                        >
+                                            {sendingSlipOrderId === order.id ? 'Slanje...' : 'Pošalji uplatnicu'}
+                                        </Button>
+                                    </div>
                                 )}
                             </Card.Body>
                         </Card>
                     </Col>
-                )) : ''}
+                    );
+                }) : ''}
             </Row>
-
-
-
         </div>
     );
 }
