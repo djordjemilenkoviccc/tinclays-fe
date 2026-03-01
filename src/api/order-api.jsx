@@ -25,6 +25,19 @@ export const changeOrderStatus = async (orderId, status) => {
     return await response.json();
 };
 
+export const sendPaymentSlip = async (orderId) => {
+    const formData = new FormData();
+    formData.append('orderId', orderId);
+
+    const response = await authenticatedFetch(`${BASE_URL}/order/send-slip`, {
+        method: 'POST',
+        body: formData
+    });
+
+    await handleResponse(response);
+    return response;
+};
+
 export const createOrder = async (orderDtoRequest) => {
     return await fetch(`${BASE_URL}/order/add`, {
         method: 'POST',

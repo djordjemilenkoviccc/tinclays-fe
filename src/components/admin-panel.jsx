@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 import { AuthContext } from './auth-context';
 import { Card, Button, Row, Col, Dropdown, DropdownButton, Form } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-import { loadOrdersByStatus, changeOrderStatus } from '../api/order-api';
+import { loadOrdersByStatus, changeOrderStatus, sendPaymentSlip } from '../api/order-api';
 import { Pencil } from 'react-bootstrap-icons';
 import { getImageUrl } from "../utils/image-utils";
 
@@ -31,6 +31,7 @@ export default function AdminPanel() {
     const navigate = useNavigate();
 
     const [orders, setOrders] = useState(null);
+    const [sendingSlipOrderId, setSendingSlipOrderId] = useState(null);
 
     const fetchOrders = async () => {
         try {
@@ -68,6 +69,25 @@ export default function AdminPanel() {
                 console.error('Failed to change status of order: ', error.message);
                 // TODO: Show alert
             }
+        }
+    };
+
+    const handleSendPaymentSlip = async (orderId) => {
+        setSendingSlipOrderId(orderId);
+        try {
+            await sendPaymentSlip(orderId);
+            setOrders(orders.map(o => o.id === orderId ? { ...o, slipSent: true } : o));
+            alert('Uplatnica je uspešno poslata!');
+        } catch (error) {
+            if (error.status === 401 || error.status === 403) {
+                console.warn('Unauthorized: Redirecting to login.');
+                navigate('/login');
+            } else {
+                console.error('Failed to send payment slip: ', error.message);
+                alert('Greška prilikom slanja uplatnice.');
+            }
+        } finally {
+            setSendingSlipOrderId(null);
         }
     };
 
@@ -213,6 +233,16 @@ export default function AdminPanel() {
                                 <Card.Text><span style={{ fontWeight: "bold" }}>Grad: </span>{order.city}</Card.Text>
                                 <Card.Text><span style={{ fontWeight: "bold" }}>Telefon: </span>{order.phoneNumber}</Card.Text>
                                 <Card.Text><span style={{ fontWeight: "bold" }}>Email: </span>{order.email}</Card.Text>
+                                {order.status === "IN_PROGRESS" && !order.slipSent && (
+                                    <Button
+                                        className="w-100 mt-3"
+                                        style={{ backgroundColor: '#6f42c1', borderColor: '#6f42c1' }}
+                                        onClick={() => handleSendPaymentSlip(order.id)}
+                                        disabled={sendingSlipOrderId === order.id}
+                                    >
+                                        {sendingSlipOrderId === order.id ? 'Slanje...' : 'Pošalji uplatnicu'}
+                                    </Button>
+                                )}
                             </Card.Body>
                         </Card>
                     </Col>

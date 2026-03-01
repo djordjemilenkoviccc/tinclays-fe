@@ -40,11 +40,36 @@ export default function Checkout() {
         setPhoneNumberError(false);
     };
 
+    const fieldOrder = [
+        { name: 'firstName', id: 'formFirstName' },
+        { name: 'lastName', id: 'formLastName' },
+        { name: 'address', id: 'formAddress' },
+        { name: 'houseNumber', id: 'formHouseNumber' },
+        { name: 'postalCode', id: 'formPostalCode' },
+        { name: 'city', id: 'formCity' },
+        { name: 'email', id: 'formEmail' },
+        { name: 'phoneNumber', id: 'formPhoneNumber' },
+    ];
+
+    const focusFirstInvalidField = () => {
+        for (const field of fieldOrder) {
+            if (!formData[field.name].trim()) {
+                const el = document.getElementById(field.id);
+                if (el) {
+                    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    el.focus();
+                }
+                return;
+            }
+        }
+    };
+
     const handleSubmit = async (e) => {
 
         setFormTouched(true);
         let isValid = Object.values(formData).every((value) => value.trim() !== '');
         if (!isValid) {
+            focusFirstInvalidField();
             return;
         }
 
@@ -60,6 +85,12 @@ export default function Checkout() {
         }
 
         if (!isValid) {
+            const emailInvalid = !emailRegex.test(formData.email);
+            const el = document.getElementById(emailInvalid ? 'formEmail' : 'formPhoneNumber');
+            if (el) {
+                el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                el.focus();
+            }
             return;
         }
 

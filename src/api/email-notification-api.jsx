@@ -25,7 +25,7 @@ export const getAllEmailSubscriptions = async () => {
 };
 
 export const sendNewCollectionAnnouncement = async () => {
-    const response = await authenticatedFetch(`${BASE_URL}/email-notifications/send-new-collection-announcement`, {
+    const response = await authenticatedFetch(`${BASE_URL}/email-notifications/send-new-collection-announcement-ses`, {
         method: 'POST'
     });
 
