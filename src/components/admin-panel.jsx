@@ -111,6 +111,9 @@ export default function AdminPanel() {
     };
 
     const handleNotifyShipped = async (orderId) => {
+        const confirmed = window.confirm('Da li želite da pošaljete obaveštenje?');
+        if (!confirmed) return;
+
         setSendingShippedOrderId(orderId);
         try {
             await notifyOrderShipped(orderId);
