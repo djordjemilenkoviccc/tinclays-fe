@@ -5,7 +5,7 @@ import { AuthContext } from './auth-context';
 import { Card, Button, Row, Col, Dropdown, DropdownButton, Form } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { loadOrdersByStatus, changeOrderStatus, sendPaymentSlip, markOrderAsPaid, notifyOrderShipped } from '../api/order-api';
-import { Pencil } from 'react-bootstrap-icons';
+import { Pencil, BellFill } from 'react-bootstrap-icons';
 import { getImageUrl } from "../utils/image-utils";
 
 const formatDateTime = (dateTime) => {
@@ -193,6 +193,7 @@ export default function AdminPanel() {
                                         </span>
                                         {order.slipSent && <span className="slip-sent-badge" style={{ backgroundColor: "#e3f2fd", color: "#1565c0" }}>Uplatnica poslata</span>}
                                         {order.paid && <span className="slip-sent-badge">$$$ Plaćeno</span>}
+                                        {order.shipped && <span className="slip-sent-badge" style={{ backgroundColor: "#fff3e0", color: "#e65100" }}><BellFill size={11} style={{ marginRight: "4px" }} />Poslato</span>}
                                     </div>
                                 </div>
                                 <DropdownButton
