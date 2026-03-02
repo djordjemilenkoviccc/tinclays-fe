@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 import { AuthContext } from './auth-context';
 import { Card, Button, Row, Col, Dropdown, DropdownButton, Form } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-import { loadOrdersByStatus, changeOrderStatus, sendPaymentSlip, markOrderAsPaid } from '../api/order-api';
+import { loadOrdersByStatus, changeOrderStatus, sendPaymentSlip, markOrderAsPaid, notifyOrderShipped } from '../api/order-api';
 import { Pencil } from 'react-bootstrap-icons';
 import { getImageUrl } from "../utils/image-utils";
 
@@ -32,6 +32,7 @@ export default function AdminPanel() {
 
     const [orders, setOrders] = useState(null);
     const [sendingSlipOrderId, setSendingSlipOrderId] = useState(null);
+    const [sendingShippedOrderId, setSendingShippedOrderId] = useState(null);
 
     const fetchOrders = async () => {
         try {
@@ -106,6 +107,25 @@ export default function AdminPanel() {
                 console.error('Failed to mark order as paid: ', error.message);
                 alert('Greška prilikom označavanja uplate.');
             }
+        }
+    };
+
+    const handleNotifyShipped = async (orderId) => {
+        setSendingShippedOrderId(orderId);
+        try {
+            await notifyOrderShipped(orderId);
+            setOrders(orders.map(o => o.id === orderId ? { ...o, shipped: true } : o));
+            alert('Obaveštenje o slanju je uspešno poslato!');
+        } catch (error) {
+            if (error.status === 401 || error.status === 403) {
+                console.warn('Unauthorized: Redirecting to login.');
+                navigate('/login');
+            } else {
+                console.error('Failed to notify order shipped: ', error.message);
+                alert('Greška prilikom slanja obaveštenja.');
+            }
+        } finally {
+            setSendingShippedOrderId(null);
         }
     };
 
@@ -264,9 +284,9 @@ export default function AdminPanel() {
                                     </div>
                                 </div>
 
-                                {/* Action button */}
-                                {order.status === "IN_PROGRESS" && !order.slipSent && (
-                                    <div className="order-section" style={{ paddingTop: "0" }}>
+                                {/* Action buttons */}
+                                <div className="order-section" style={{ paddingTop: "0", display: "flex", flexDirection: "column", gap: "8px" }}>
+                                    {order.status === "IN_PROGRESS" && !order.slipSent && (
                                         <Button
                                             className="w-100"
                                             style={{ backgroundColor: '#6f42c1', borderColor: '#6f42c1', borderRadius: '8px', padding: '10px' }}
@@ -275,8 +295,19 @@ export default function AdminPanel() {
                                         >
                                             {sendingSlipOrderId === order.id ? 'Slanje...' : 'Pošalji uplatnicu'}
                                         </Button>
-                                    </div>
-                                )}
+                                    )}
+                                    {!order.shipped && (
+                                        <Button
+                                            className="w-100"
+                                            variant="outline-primary"
+                                            style={{ borderRadius: '8px', padding: '10px' }}
+                                            onClick={() => handleNotifyShipped(order.id)}
+                                            disabled={sendingShippedOrderId === order.id}
+                                        >
+                                            {sendingShippedOrderId === order.id ? 'Slanje...' : 'Obavesti da je poslato'}
+                                        </Button>
+                                    )}
+                                </div>
                             </Card.Body>
                         </Card>
                     </Col>
