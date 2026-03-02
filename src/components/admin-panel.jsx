@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 import { AuthContext } from './auth-context';
 import { Card, Button, Row, Col, Dropdown, DropdownButton, Form } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-import { loadOrdersByStatus, changeOrderStatus, sendPaymentSlip } from '../api/order-api';
+import { loadOrdersByStatus, changeOrderStatus, sendPaymentSlip, markOrderAsPaid } from '../api/order-api';
 import { Pencil } from 'react-bootstrap-icons';
 import { getImageUrl } from "../utils/image-utils";
 
@@ -91,6 +91,24 @@ export default function AdminPanel() {
         }
     };
 
+    const handleMarkAsPaid = async (orderId) => {
+        try {
+            await markOrderAsPaid(orderId);
+            const updated = orders.map(o => o.id === orderId ? { ...o, paid: true } : o);
+            const paidOrder = updated.find(o => o.id === orderId);
+            const rest = updated.filter(o => o.id !== orderId);
+            setOrders([...rest, paidOrder]);
+        } catch (error) {
+            if (error.status === 401 || error.status === 403) {
+                console.warn('Unauthorized: Redirecting to login.');
+                navigate('/login');
+            } else {
+                console.error('Failed to mark order as paid: ', error.message);
+                alert('Greška prilikom označavanja uplate.');
+            }
+        }
+    };
+
     const getMessage = () => {
 
         if (orders.length === 0) {
@@ -143,29 +161,45 @@ export default function AdminPanel() {
                     <Col key={order.id} lg={4} md={6} sm={12} style={{ marginBottom: "3.5rem" }}>
                         <Card className="order-card">
                             {/* Header */}
-                            <div className="order-card-header" style={{ backgroundColor: statusStyle.bg }}>
-                                <div>
-                                    <span style={{ fontSize: "13px", color: "#888" }}>#{order.id}</span>
-                                    <span style={{ fontSize: "12px", color: "#aaa", marginLeft: "10px" }}>{formatDateTime(order.dateCreated)}</span>
+                            <div className="order-card-header" style={{ backgroundColor: statusStyle.bg, position: "relative" }}>
+                                <div style={{ paddingRight: "36px" }}>
+                                    <div style={{ marginBottom: "6px" }}>
+                                        <span style={{ fontSize: "13px", color: "#888" }}>#{order.id}</span>
+                                        <span style={{ fontSize: "12px", color: "#aaa", marginLeft: "10px" }}>{formatDateTime(order.dateCreated)}</span>
+                                    </div>
+                                    <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
+                                        <span className="order-status-badge" style={{ backgroundColor: statusStyle.color, color: "#fff" }}>
+                                            {statusStyle.label}
+                                        </span>
+                                        {order.slipSent && <span className="slip-sent-badge" style={{ backgroundColor: "#e3f2fd", color: "#1565c0" }}>Uplatnica poslata</span>}
+                                        {order.paid && <span className="slip-sent-badge">$$$ Plaćeno</span>}
+                                    </div>
                                 </div>
-                                <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                                    <span className="order-status-badge" style={{ backgroundColor: statusStyle.color, color: "#fff" }}>
-                                        {statusStyle.label}
-                                    </span>
-                                    {order.slipSent && <span className="slip-sent-badge">Uplatnica poslata</span>}
-                                    <DropdownButton
-                                        id={`status-dropdown-${order.id}`}
-                                        title={<Pencil size={14} />}
-                                        variant="secondary"
-                                        onSelect={(eventKey) => handleChangeOrderStatus(order.id, eventKey)}
-                                        align="end"
-                                        className="custom-dropdown-btn"
-                                    >
-                                        <Dropdown.Item eventKey="IN_PROGRESS">U toku</Dropdown.Item>
-                                        <Dropdown.Item eventKey="COMPLETED">Završena</Dropdown.Item>
-                                        <Dropdown.Item eventKey="FAILED">Neuspešna</Dropdown.Item>
-                                    </DropdownButton>
-                                </div>
+                                <DropdownButton
+                                    id={`status-dropdown-${order.id}`}
+                                    title={<Pencil size={14} />}
+                                    variant="secondary"
+                                    onSelect={(eventKey) => {
+                                        if (eventKey === "MARK_PAID") {
+                                            handleMarkAsPaid(order.id);
+                                        } else {
+                                            handleChangeOrderStatus(order.id, eventKey);
+                                        }
+                                    }}
+                                    align="end"
+                                    className="custom-dropdown-btn"
+                                    style={{ position: "absolute", top: "8px", right: "8px" }}
+                                >
+                                    <Dropdown.Item eventKey="IN_PROGRESS">U toku</Dropdown.Item>
+                                    <Dropdown.Item eventKey="COMPLETED">Završena</Dropdown.Item>
+                                    <Dropdown.Item eventKey="FAILED">Neuspešna</Dropdown.Item>
+                                    {!order.paid && (
+                                        <>
+                                            <Dropdown.Divider />
+                                            <Dropdown.Item eventKey="MARK_PAID">Označi kao plaćeno</Dropdown.Item>
+                                        </>
+                                    )}
+                                </DropdownButton>
                             </div>
 
                             <Card.Body>
