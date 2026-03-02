@@ -140,7 +140,7 @@ export default function AdminPanel() {
                 {orders ? orders.map((order) => {
                     const statusStyle = getStatusStyle(order.status);
                     return (
-                    <Col key={order.id} lg={4} md={6} sm={12} className="mb-4">
+                    <Col key={order.id} lg={4} md={6} sm={12} style={{ marginBottom: "3.5rem" }}>
                         <Card className="order-card">
                             {/* Header */}
                             <div className="order-card-header" style={{ backgroundColor: statusStyle.bg }}>
