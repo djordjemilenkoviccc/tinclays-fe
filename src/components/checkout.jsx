@@ -1,9 +1,9 @@
 import '../style/checkout.css';
 import React, { useContext, useState } from 'react';
-import { Form, Button, Row, Col, ListGroup } from 'react-bootstrap';
+import { Form, Button, Row, Col } from 'react-bootstrap';
 import { CartContext } from './cart-context';
 import { useNavigate } from 'react-router-dom';
-import {createOrder} from '../api/order-api';
+import { createOrder } from '../api/order-api';
 import { getImageUrl } from '../utils/image-utils';
 
 export default function Checkout() {
@@ -185,176 +185,206 @@ export default function Checkout() {
 
     };
 
+    const totalAmount = cartItems.reduce((total, item) => total + item.quantity * item.price, 0);
+
     return (
-        <div className="justify-content-center align-items-center root-div">
-            <Row>
-                {/* Left Column: Checkout Form */}
-                <Col md={12} lg={6} sm={12}>
-                    <Form>
-                        <Row className="mb-5">
-                            <Form.Group as={Col} controlId="formFirstName">
-                                <Form.Control
-                                    type="text"
-                                    name="firstName"
-                                    className={`custom-input ${formTouched && !formData.firstName.trim() ? 'is-invalid' : ''}`}
-                                    placeholder="Ime"
-                                    value={formData.firstName}
-                                    onChange={handleChange}
-                                    required
-                                />
-                                {formTouched && !formData.firstName.trim() && (
-                                    <div className="invalid-feedback">Ovo polje je obavezno.</div>
-                                )}
-                            </Form.Group>
+        <div className="home-root">
+            {/* Header */}
+            <section className="checkout-hero">
+                <span className="checkout-label">Završi kupovinu</span>
+                <h1 className="checkout-heading">Checkout</h1>
+                <div className="checkout-divider"></div>
+            </section>
 
-                            <Form.Group as={Col} controlId="formLastName">
-                                <Form.Control
-                                    type="text"
-                                    name="lastName"
-                                    placeholder="Prezime"
-                                    className={`custom-input ${formTouched && !formData.lastName.trim() ? 'is-invalid' : ''}`}
-                                    value={formData.lastName}
-                                    onChange={handleChange}
-                                    required
-                                />
-                                {formTouched && !formData.lastName.trim() && (
-                                    <div className="invalid-feedback">Ovo polje je obavezno.</div>
-                                )}
-                            </Form.Group>
-                        </Row>
+            <Row className="checkout-content g-5">
+                {/* Left Column: Form */}
+                <Col lg={7} md={12}>
+                    <div className="checkout-form-wrapper">
+                        <h2 className="checkout-section-title">Podaci za dostavu</h2>
+                        <Form>
+                            <Row className="mb-3">
+                                <Col sm={6} className="mb-3 mb-sm-0">
+                                    <Form.Group controlId="formFirstName">
+                                        <Form.Control
+                                            type="text"
+                                            name="firstName"
+                                            className={`custom-input ${formTouched && !formData.firstName.trim() ? 'is-invalid' : ''}`}
+                                            placeholder="Ime"
+                                            value={formData.firstName}
+                                            onChange={handleChange}
+                                            required
+                                        />
+                                        {formTouched && !formData.firstName.trim() && (
+                                            <div className="invalid-feedback">Ovo polje je obavezno.</div>
+                                        )}
+                                    </Form.Group>
+                                </Col>
+                                <Col sm={6}>
+                                    <Form.Group controlId="formLastName">
+                                        <Form.Control
+                                            type="text"
+                                            name="lastName"
+                                            placeholder="Prezime"
+                                            className={`custom-input ${formTouched && !formData.lastName.trim() ? 'is-invalid' : ''}`}
+                                            value={formData.lastName}
+                                            onChange={handleChange}
+                                            required
+                                        />
+                                        {formTouched && !formData.lastName.trim() && (
+                                            <div className="invalid-feedback">Ovo polje je obavezno.</div>
+                                        )}
+                                    </Form.Group>
+                                </Col>
+                            </Row>
 
-                        <Form.Group className="mb-5" controlId="formAddress">
-                            <Form.Control
-                                type="text"
-                                name="address"
-                                placeholder="Adresa"
-                                className={`custom-input ${formTouched && !formData.address.trim() ? 'is-invalid' : ''}`}
-                                value={formData.address}
-                                onChange={handleChange}
-                                required
-                            />
-                            {formTouched && !formData.address.trim() && (
-                                <div className="invalid-feedback">Ovo polje je obavezno.</div>
-                            )}
-                        </Form.Group>
+                            <div className="mb-3">
+                                <Form.Group controlId="formAddress">
+                                    <Form.Control
+                                        type="text"
+                                        name="address"
+                                        placeholder="Adresa"
+                                        className={`custom-input ${formTouched && !formData.address.trim() ? 'is-invalid' : ''}`}
+                                        value={formData.address}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                    {formTouched && !formData.address.trim() && (
+                                        <div className="invalid-feedback">Ovo polje je obavezno.</div>
+                                    )}
+                                </Form.Group>
+                            </div>
 
-                        <Row className="mb-5">
-                            <Form.Group as={Col} controlId="formHouseNumber">
-                                <Form.Control
-                                    type="text"
-                                    name="houseNumber"
-                                    placeholder="Kućni broj"
-                                    className={`custom-input ${formTouched && !formData.houseNumber.trim() ? 'is-invalid' : ''}`}
-                                    value={formData.houseNumber}
-                                    onChange={handleChange}
-                                    required
-                                />
-                                {formTouched && !formData.houseNumber.trim() && (
-                                    <div className="invalid-feedback">Ovo polje je obavezno.</div>
-                                )}
-                            </Form.Group>
+                            <Row className="mb-3">
+                                <Col sm={4} className="mb-3 mb-sm-0">
+                                    <Form.Group controlId="formHouseNumber">
+                                        <Form.Control
+                                            type="text"
+                                            name="houseNumber"
+                                            placeholder="Kućni broj"
+                                            className={`custom-input ${formTouched && !formData.houseNumber.trim() ? 'is-invalid' : ''}`}
+                                            value={formData.houseNumber}
+                                            onChange={handleChange}
+                                            required
+                                        />
+                                        {formTouched && !formData.houseNumber.trim() && (
+                                            <div className="invalid-feedback">Ovo polje je obavezno.</div>
+                                        )}
+                                    </Form.Group>
+                                </Col>
+                                <Col sm={4} className="mb-3 mb-sm-0">
+                                    <Form.Group controlId="formPostalCode">
+                                        <Form.Control
+                                            type="text"
+                                            name="postalCode"
+                                            placeholder="Poštanski broj"
+                                            maxLength="5"
+                                            className={`custom-input ${formTouched && !formData.postalCode.trim() ? 'is-invalid' : ''}`}
+                                            value={formData.postalCode}
+                                            onChange={handleChange}
+                                            onInput={(e) => {
+                                                e.target.value = e.target.value.replace(/[^0-9]/g, '');
+                                            }}
+                                            required
+                                        />
+                                        {formTouched && !formData.postalCode.trim() && (
+                                            <div className="invalid-feedback">Ovo polje je obavezno.</div>
+                                        )}
+                                    </Form.Group>
+                                </Col>
+                                <Col sm={4}>
+                                    <Form.Group controlId="formCity">
+                                        <Form.Control
+                                            type="text"
+                                            name="city"
+                                            placeholder="Grad"
+                                            className={`custom-input ${formTouched && !formData.city.trim() ? 'is-invalid' : ''}`}
+                                            value={formData.city}
+                                            onChange={handleChange}
+                                            required
+                                        />
+                                        {formTouched && !formData.city.trim() && (
+                                            <div className="invalid-feedback">Ovo polje je obavezno.</div>
+                                        )}
+                                    </Form.Group>
+                                </Col>
+                            </Row>
 
-                            <Form.Group className="mb-5" as={Col} controlId="formPostalCode">
-                                <Form.Control
-                                    type="text"
-                                    name="postalCode"
-                                    placeholder="Poštanski broj"
-                                    maxLength="5"
-                                    className={`custom-input ${formTouched && !formData.postalCode.trim() ? 'is-invalid' : ''}`}
-                                    value={formData.postalCode}
-                                    onChange={handleChange}
-                                    onInput={(e) => {
-                                        e.target.value = e.target.value.replace(/[^0-9]/g, ''); // Allow only numbers
-                                    }}
-                                    required
-                                />
-                                {formTouched && !formData.postalCode.trim() && (
-                                    <div className="invalid-feedback">Ovo polje je obavezno.</div>
-                                )}
-                            </Form.Group>
+                            <div className="mb-3">
+                                <Form.Group controlId="formEmail">
+                                    <Form.Control
+                                        type="email"
+                                        name="email"
+                                        placeholder="Email"
+                                        className={`custom-input ${(formTouched && !formData.email.trim()) || emailError ? 'is-invalid' : ''}`}
+                                        value={formData.email}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                    {formTouched && !formData.email.trim() && (
+                                        <div className="invalid-feedback">Ovo polje je obavezno.</div>
+                                    )}
+                                    {emailError && <div className="invalid-feedback">Pogrešan format email adrese.</div>}
+                                </Form.Group>
+                            </div>
 
+                            <div className="mb-3">
+                                <Form.Group controlId="formPhoneNumber">
+                                    <Form.Control
+                                        as="input"
+                                        type="text"
+                                        placeholder="Broj telefona"
+                                        name="phoneNumber"
+                                        className={`custom-input ${(formTouched && !formData.phoneNumber.trim()) || phoneNumberError ? 'is-invalid' : ''}`}
+                                        value={formData.phoneNumber}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                    {formTouched && !formData.phoneNumber.trim() && (
+                                        <div className="invalid-feedback">Ovo polje je obavezno.</div>
+                                    )}
+                                    {phoneNumberError && <div className="invalid-feedback">Pogrešan format broja telefona.</div>}
+                                </Form.Group>
+                            </div>
+                        </Form>
+                    </div>
+                </Col>
 
-                            <Form.Group controlId="formCity">
-                                <Form.Control
-                                    type="text"
-                                    name="city"
-                                    placeholder="Grad"
-                                    className={`custom-input ${formTouched && !formData.city.trim() ? 'is-invalid' : ''}`}
-                                    value={formData.city}
-                                    onChange={handleChange}
-                                    required
-                                />
-                                {formTouched && !formData.city.trim() && (
-                                    <div className="invalid-feedback">Ovo polje je obavezno.</div>
-                                )}
-                            </Form.Group>
-                        </Row>
+                {/* Right Column: Order Summary */}
+                <Col lg={5} md={12}>
+                    <div className="order-summary">
+                        <h2 className="checkout-section-title">Vaša porudžbina</h2>
 
-                        <Form.Group className="mb-5" controlId="formEmail">
-                            <Form.Control
-                                type="email"
-                                name="email"
-                                placeholder="Email"
-                                className={`custom-input ${(formTouched && !formData.email.trim()) || emailError ? 'is-invalid' : ''}`}
-                                value={formData.email}
-                                onChange={handleChange}
-                                required
-                            />
-                            {formTouched && !formData.email.trim() && (
-                                <div className="invalid-feedback">Ovo polje je obavezno.</div>
-                            )}
-                            {emailError && <div className="invalid-feedback">Pogrešan format email adrese.</div>}
-                        </Form.Group>
-
-                        <Form.Group className="mb-5" controlId="formPhoneNumber">
-                            <Form.Control
-                                as="input"
-                                type="text"
-                                placeholder="Broj telefona"
-                                name="phoneNumber"
-                                className={`custom-input ${(formTouched && !formData.phoneNumber.trim()) || phoneNumberError ? 'is-invalid' : ''}`}
-                                value={formData.phoneNumber}
-                                onChange={handleChange}
-                                required
-                            />
-                            {formTouched && !formData.phoneNumber.trim() && (
-                                <div className="invalid-feedback">Ovo polje je obavezno.</div>
-                            )}
-                            {phoneNumberError && <div className="invalid-feedback">Pogrešan format broja telefona.</div>}
-                        </Form.Group>
-                        <div className="text-center mt-4">
-                            <h5>
-                                Ukupno: {cartItems.reduce((total, item) => total + item.quantity * item.price, 0)} rsd
-                            </h5>
+                        <div className="order-items">
+                            {cartItems.map((item, index) => (
+                                <div key={index} className="order-item">
+                                    <img
+                                        src={getImageUrl(item.imageList[0].path)}
+                                        alt={item.name}
+                                        className="order-item-image"
+                                        fetchpriority="high"
+                                    />
+                                    <div className="order-item-details">
+                                        <p className="order-item-name">{item.name}</p>
+                                        <p className="order-item-qty">Količina: {item.quantity}</p>
+                                    </div>
+                                    <p className="order-item-price">{item.price * item.quantity} rsd</p>
+                                </div>
+                            ))}
                         </div>
 
-                    </Form>
-                </Col>
+                        <div className="order-total">
+                            <span className="order-total-label">Ukupno</span>
+                            <span className="order-total-amount">{totalAmount} rsd</span>
+                        </div>
 
-
-                <Col md={12} lg={6} sm={12} style={{ maxHeight: '600px', overflowY: 'auto' }}>
-                    <ListGroup variant="flush" style={{ textAlign: "center", backgroundColor: "white" }}>
-                        {cartItems.map((item, index) => (
-                            <ListGroup.Item key={index}>
-                                <p>{item.quantity} x {item.price} rsd</p>
-                                <img
-                                    src={getImageUrl(item.imageList[0].path)}
-                                    alt={item.name}
-                                    style={{ width: "70%", height: "auto", objectFit: "cover" }}
-                                    className='product-image'
-                                    fetchpriority="high"
-                                />
-                            </ListGroup.Item>
-                        ))}
-                    </ListGroup>
-
-                </Col>
-            </Row>
-            <Row>
-                <Col md={12} lg={6} sm={12}>
-                    <Button className="w-100 checkout-btn" onClick={() => handleSubmit()} disabled={isSubmitting}>
-                        {isSubmitting ? 'Naručivanje...' : 'Naruči'}
-                    </Button>
+                        <Button
+                            className="w-100 checkout-submit-btn"
+                            onClick={() => handleSubmit()}
+                            disabled={isSubmitting}
+                        >
+                            {isSubmitting ? 'Naručivanje...' : 'Naruči'}
+                        </Button>
+                    </div>
                 </Col>
             </Row>
         </div>
