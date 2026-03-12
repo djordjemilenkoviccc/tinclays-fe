@@ -45,7 +45,7 @@
 
 .btn-shop-now {
     background-color: #e8ddcf;
-    color: #2a3b59;
+    color: #000000;
     border-radius: 0;
     position: relative;
     font-family: Arial, Helvetica, sans-serif;
@@ -58,7 +58,7 @@
 
 .btn-shop-now:hover {
     background-color: #e8ddcf !important;
-    color: #2a3b59 !important;
+    color: #000000 !important;
 }
 
 .main-message {

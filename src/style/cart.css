@@ -113,3 +113,16 @@
 .cart-empty-text {
     font-size: 24px;
 }
+
+/* ===== Cart Close Button ===== */
+.offcanvas.cart-root .offcanvas-header {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    padding: 20px 24px;
+}
+
+.offcanvas.cart-root .offcanvas-header .btn-close {
+    margin: 0 !important;
+    padding: 8px;
+}

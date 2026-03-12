@@ -1,41 +1,151 @@
-.faq-container {
-    border-radius: 8px;
-    padding: 40px 20px;
+/* ===== Hero / Header ===== */
+.faq-hero {
+    padding-top: 5%;
+    text-align: center;
+    padding-bottom: 8px;
 }
 
-.faq-header {
-    font-size: 2.5rem;
-    font-weight: bold;
-    color: #333;
+.faq-label {
+    display: inline-block;
+    font-family: 'Raleway', serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #a9c3e6;
+    margin-bottom: 12px;
 }
 
-.faq-subheader {
-    font-size: 22px;
+.faq-heading {
+    font-family: 'Raleway', serif;
+    font-size: 38px;
+    font-weight: 500;
+    color: #2a3b59;
+    margin-bottom: 16px;
+    line-height: 1.2;
+}
+
+.faq-divider {
+    width: 50px;
+    height: 3px;
+    background-color: #e8ddcf;
+    margin: 0 auto 24px;
+    border-radius: 2px;
+}
+
+.faq-description {
+    font-size: 17px;
+    line-height: 1.8;
+    color: #3a3a3a;
+    max-width: 520px;
+    margin: 0 auto;
+}
+
+/* ===== Content ===== */
+.faq-content {
+    padding: 40px 0 48px;
+}
+
+/* ===== Section Groups ===== */
+.faq-group {
+    margin-bottom: 40px;
+}
+
+.faq-group:last-child {
+    margin-bottom: 0;
+}
+
+.faq-group-title {
+    font-family: 'Raleway', serif;
+    font-size: 20px;
+    font-weight: 600;
+    color: #2a3b59;
+    letter-spacing: 0.5px;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #e8e8e8;
+}
+
+/* ===== Accordion Overrides ===== */
+.accordion-item {
+    border: none;
+    border-bottom: 1px solid #ebebeb;
+}
+
+.accordion-item:last-child {
+    border-bottom: none;
 }
 
 .accordion-button {
-    font-weight: bold;
-    color: #333;
+    font-size: 16px;
+    font-weight: 600;
+    color: #2a3b59;
+    padding: 18px 8px;
+    background-color: transparent;
 }
 
 .accordion-button:not(.collapsed) {
-    color: black;
-    background-color: #f9f9f9;
+    color: #2a3b59;
+    background-color: transparent;
     border: none;
-    box-shadow: 0 0 0 0.0rem #c9c9c9;
+    box-shadow: none;
 }
 
 .accordion-button.collapsed {
-    color: black;
-    background-color: #f9f9f9;
+    color: #3a3a3a;
+    background-color: transparent;
     border: none;
-    box-shadow: 0 0 0 0.05rem #c9c9c9;
+    box-shadow: none;
+}
+
+.accordion-button:focus {
+    box-shadow: none;
+    border-color: transparent;
+}
+
+.accordion-button::after {
+    filter: none;
+    opacity: 0.5;
+    transition: opacity 0.2s ease;
+}
+
+.accordion-button:not(.collapsed)::after {
+    opacity: 1;
 }
 
 .accordion-body {
     color: #555;
-    font-size: 1rem;
-    line-height: 1.5;
+    font-size: 16px;
+    line-height: 1.7;
+    padding: 4px 8px 20px;
 }
 
+/* ===== Responsive ===== */
+@media (max-width: 991px) {
+    .faq-heading {
+        font-size: 32px;
+    }
 
+    .faq-content {
+        padding: 32px 0 40px;
+    }
+}
+
+@media (max-width: 576px) {
+    .faq-heading {
+        font-size: 28px;
+    }
+
+    .faq-description {
+        font-size: 16px;
+    }
+
+    .faq-group-title {
+        font-size: 18px;
+    }
+
+    .accordion-button {
+        font-size: 15px;
+        padding: 16px 4px;
+    }
+}

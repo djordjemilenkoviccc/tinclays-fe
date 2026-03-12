@@ -1,17 +1,98 @@
-
-
-.contact-div {
-    background-color: white;
-    height: auto;
-    padding-left: 5%;
-    padding-right: 5%;
+/* ===== Contact Section ===== */
+.contact-section {
     padding-top: 5%;
     padding-bottom: 5%;
-    margin-left: 5%;
-    margin-right: 5%;
-    
 }
 
+/* ===== Left Info Column ===== */
+.contact-info-col {
+    display: flex;
+    align-items: flex-start;
+}
+
+.contact-info-content {
+    padding: 40px 48px 40px 0;
+    position: sticky;
+    top: 160px;
+}
+
+.contact-label {
+    display: inline-block;
+    font-family: 'Raleway', serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #a9c3e6;
+    margin-bottom: 12px;
+}
+
+.contact-heading {
+    font-family: 'Raleway', serif;
+    font-size: 38px;
+    font-weight: 500;
+    color: #2a3b59;
+    margin-bottom: 16px;
+    line-height: 1.2;
+}
+
+.contact-divider {
+    width: 50px;
+    height: 3px;
+    background-color: #e8ddcf;
+    margin-bottom: 24px;
+    border-radius: 2px;
+}
+
+.contact-description {
+    font-size: 17px;
+    line-height: 1.8;
+    color: #3a3a3a;
+    margin-bottom: 40px;
+}
+
+/* ===== Social Links ===== */
+.contact-social {
+    padding-top: 16px;
+    border-top: 1px solid #e8e8e8;
+}
+
+.contact-social-label {
+    font-family: 'Raleway', serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #2a3b59;
+    margin-bottom: 12px;
+}
+
+.contact-social-icons {
+    display: flex;
+    gap: 16px;
+}
+
+.contact-social-icon {
+    color: rgb(65, 65, 65);
+    transition: color 0.2s ease;
+}
+
+.contact-social-icon:hover {
+    color: #2a3b59;
+}
+
+/* ===== Form Column ===== */
+.contact-form-wrapper {
+    background-color: #f9f9f9;
+    padding: 48px;
+    height: 100%;
+}
+
+.contact-alert {
+    text-align: center;
+}
+
+/* ===== Send Button ===== */
 .send-message-btn {
     background-color: #e8ddcf;
     color: #4a4a4a;
@@ -22,6 +103,7 @@
     width: 200px;
     height: 50px;
     border: 0px;
+    transition: color 0.2s ease;
 }
 
 .send-message-btn:hover {
@@ -39,4 +121,57 @@
 .send-message-btn:disabled:hover {
     background-color: #d0d0d0 !important;
     color: #808080 !important;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 991px) {
+    .contact-info-content {
+        padding: 0 0 32px 0;
+        position: static;
+        text-align: center;
+    }
+
+    .contact-divider {
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .contact-heading {
+        font-size: 32px;
+    }
+
+    .contact-description {
+        margin-bottom: 24px;
+    }
+
+    .contact-social {
+        padding-top: 12px;
+        margin-bottom: 8px;
+    }
+
+    .contact-social-icons {
+        justify-content: center;
+    }
+
+    .contact-form-wrapper {
+        padding: 32px 24px;
+    }
+
+    .d-flex.justify-content-start {
+        justify-content: center !important;
+    }
+}
+
+@media (max-width: 576px) {
+    .contact-heading {
+        font-size: 28px;
+    }
+
+    .contact-form-wrapper {
+        padding: 24px 16px;
+    }
+
+    .contact-description {
+        font-size: 16px;
+    }
 }
