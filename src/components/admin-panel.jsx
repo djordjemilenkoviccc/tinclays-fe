@@ -5,7 +5,7 @@ import { AuthContext } from './auth-context';
 import { Card, Button, Row, Col, Dropdown, DropdownButton, Form } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { loadOrdersByStatus, changeOrderStatus, sendPaymentSlip, markOrderAsPaid, notifyOrderShipped } from '../api/order-api';
-import { Pencil, BellFill } from 'react-bootstrap-icons';
+import { Pencil } from 'react-bootstrap-icons';
 import { getImageUrl } from "../utils/image-utils";
 
 const formatDateTime = (dateTime) => {
@@ -194,10 +194,58 @@ export default function AdminPanel() {
                                         <span className="order-status-badge" style={{ backgroundColor: statusStyle.color, color: "#fff" }}>
                                             {statusStyle.label}
                                         </span>
-                                        {order.slipSent && <span className="slip-sent-badge" style={{ backgroundColor: "#e3f2fd", color: "#1565c0" }}>Uplatnica poslata</span>}
-                                        {order.paid && <span className="slip-sent-badge">$$$ Plaćeno</span>}
-                                        {order.shipped && <span className="slip-sent-badge" style={{ backgroundColor: "#fff3e0", color: "#e65100" }}><BellFill size={11} style={{ marginRight: "4px" }} />Poslato</span>}
                                     </div>
+                                    {(() => {
+                                        const steps = [
+                                            { label: "Uplatnica poslata", done: !!order.slipSent, color: "#1565c0" },
+                                            { label: "Plaćeno", done: !!order.paid, color: "#1565c0" },
+                                            { label: "Poslato", done: !!order.shipped, color: "#1565c0" },
+                                        ];
+                                        return (
+                                            <div style={{ display: "flex", alignItems: "flex-start", marginTop: "12px", maxWidth: "320px" }}>
+                                                {steps.map((step, idx) => (
+                                                    <React.Fragment key={step.label}>
+                                                        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", flex: "0 0 auto" }}>
+                                                            <div style={{
+                                                                width: "26px",
+                                                                height: "26px",
+                                                                borderRadius: "50%",
+                                                                backgroundColor: step.done ? step.color : "#fff",
+                                                                border: `2px solid ${step.done ? step.color : "#cfcfcf"}`,
+                                                                color: step.done ? "#fff" : "#9e9e9e",
+                                                                display: "flex",
+                                                                alignItems: "center",
+                                                                justifyContent: "center",
+                                                                fontSize: "13px",
+                                                                fontWeight: 700,
+                                                                lineHeight: 1,
+                                                            }}>
+                                                                {step.done ? "✓" : idx + 1}
+                                                            </div>
+                                                            <span style={{
+                                                                fontSize: "11px",
+                                                                marginTop: "4px",
+                                                                color: step.done ? step.color : "#9e9e9e",
+                                                                fontWeight: step.done ? 600 : 400,
+                                                                whiteSpace: "nowrap",
+                                                            }}>
+                                                                {step.label}
+                                                            </span>
+                                                        </div>
+                                                        {idx < steps.length - 1 && (
+                                                            <div style={{
+                                                                flex: 1,
+                                                                height: "2px",
+                                                                backgroundColor: steps[idx + 1].done ? steps[idx + 1].color : "#e0e0e0",
+                                                                marginTop: "12px",
+                                                                minWidth: "20px",
+                                                            }} />
+                                                        )}
+                                                    </React.Fragment>
+                                                ))}
+                                            </div>
+                                        );
+                                    })()}
                                 </div>
                                 <DropdownButton
                                     id={`status-dropdown-${order.id}`}
