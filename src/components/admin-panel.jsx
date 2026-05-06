@@ -269,7 +269,18 @@ export default function AdminPanel() {
                                     </div>
                                     <div className="order-detail-row">
                                         <span className="order-detail-label">Email</span>
-                                        <span className="order-detail-value">{order.email}</span>
+                                        <span className="order-detail-value">
+                                            {order.email}
+                                            {order.emailBounced && (
+                                                <span
+                                                    className="slip-sent-badge"
+                                                    style={{ backgroundColor: "#fdecea", color: "#b71c1c", marginLeft: "8px" }}
+                                                    title="SES je prijavio neuspeno slanje email-a. Kupac verovatno nije primio email."
+                                                >
+                                                    Email nije dostavljen
+                                                </span>
+                                            )}
+                                        </span>
                                     </div>
                                 </div>
 

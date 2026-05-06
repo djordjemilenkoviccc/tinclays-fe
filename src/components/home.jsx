@@ -92,7 +92,7 @@ export default function Home() {
             if (errorMsg.includes('already subscribed')) {
                 setEmailError('Email je već registrovan.');
             } else {
-                setEmailError('Došlo je do greške. Pokušajte ponovo.');
+                setEmailError('Došlo je do greške. Proveriti format email-a i pokušajte ponovo.');
             }
         }
     };
