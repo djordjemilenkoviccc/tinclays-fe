@@ -42,6 +42,34 @@ export default function Products() {
         loadProductsByCategoryId();
     }, [categoryId]);
 
+    // On phone-size screens, reveal each product as it scrolls into view
+    useEffect(() => {
+        if (products.length === 0) return;
+
+        const isPhone = window.matchMedia('(max-width: 767.98px)').matches;
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (!isPhone || prefersReducedMotion) return;
+
+        const cols = document.querySelectorAll('.products-grid .product-col');
+        cols.forEach((col) => col.classList.add('reveal-on-scroll'));
+
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            },
+            { threshold: 0.15, rootMargin: '0px 0px -10% 0px' }
+        );
+
+        cols.forEach((col) => observer.observe(col));
+
+        return () => observer.disconnect();
+    }, [products]);
+
     return (
         <div className="home-root">
             <EmailNotificationModal
