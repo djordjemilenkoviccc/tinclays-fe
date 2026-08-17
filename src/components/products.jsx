@@ -70,6 +70,10 @@ export default function Products() {
         return () => observer.disconnect();
     }, [products]);
 
+    // Reserve description space only when the category actually has descriptions,
+    // so every card in the grid stays the same height
+    const hasDescriptions = products.some((p) => p.description);
+
     return (
         <div className="home-root">
             <EmailNotificationModal
@@ -130,6 +134,14 @@ export default function Products() {
                                     </div>
                                     <div className="product-info">
                                         <p className="product-name">{product.name}</p>
+                                        {hasDescriptions && (
+                                            <p
+                                                className="product-description"
+                                                title={product.description}
+                                            >
+                                                {product.description}
+                                            </p>
+                                        )}
                                         <p className="product-price">{product.price} rsd</p>
                                     </div>
 
