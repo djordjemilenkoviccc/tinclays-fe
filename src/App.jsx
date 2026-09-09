@@ -20,6 +20,7 @@ const AboutMe = lazy(() => import('./components/about-me'));
 const Contact = lazy(() => import('./components/contact'));
 const FAQ = lazy(() => import('./components/faq'));
 const Products = lazy(() => import('./components/products'));
+const CustomProduct = lazy(() => import('./components/custom-product'));
 const Login = lazy(() => import('./components/login'));
 const Checkout = lazy(() => import('./components/checkout'));
 const CheckoutStatus = lazy(() => import('./components/checkout-status'));
@@ -102,6 +103,19 @@ function AnimatedRoutes() {
                   transition={{ duration: 0.5 }}
                 >
                   <Products />
+                </motion.div>
+              }
+            />
+            <Route
+              path="/custom-product/:categoryId/:productId"
+              element={
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  <CustomProduct />
                 </motion.div>
               }
             />

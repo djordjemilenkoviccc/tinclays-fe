@@ -45,6 +45,16 @@ export default function Cart({ show, handleClose, setCartItems }) {
                                     />
                                     <div className="cart-item-details">
                                         <p className="cart-item-name">{item.name}</p>
+                                        {item.customization && (
+                                            <div className="cart-item-customization">
+                                                <span className="cart-item-custom-line">
+                                                    Dizajn: {item.customization.designName}
+                                                </span>
+                                                <span className="cart-item-custom-line">
+                                                    Tekst: „{item.customization.text}“
+                                                </span>
+                                            </div>
+                                        )}
                                         <p className="cart-item-price">{item.price * item.quantity} rsd</p>
                                         <div className="cart-item-actions">
                                             <div className="quantity-control">

@@ -63,14 +63,24 @@ export default function CartProvider({ children }) {
 
     const increaseQuantity = (productId) => {
         setCartItems((prevItems) => {
-            return prevItems.map(item => {
-                if (item.id === productId) {
-                    if (item.quantity < item.stock) {
-                        return { ...item, quantity: item.quantity + 1 };
-                    }
-                }
-                return item;
-            });
+            const target = prevItems.find(item => item.id === productId);
+            if (!target) return prevItems;
+
+            // A custom made product can occupy several lines (one per design/text),
+            // so the stock limit applies to the sum of all its lines
+            const orderedQuantity = prevItems.reduce((total, item) => (
+                (item.productId ?? item.id) === (target.productId ?? target.id)
+                    ? total + item.quantity
+                    : total
+            ), 0);
+
+            if (orderedQuantity >= target.stock) return prevItems;
+
+            return prevItems.map(item => (
+                item.id === productId
+                    ? { ...item, quantity: item.quantity + 1 }
+                    : item
+            ));
         });
     };
 

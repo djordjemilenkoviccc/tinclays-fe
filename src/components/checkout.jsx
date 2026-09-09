@@ -96,9 +96,17 @@ export default function Checkout() {
 
         const { firstName, lastName, address, city, houseNumber, postalCode, email, phoneNumber, status } = formData;
 
+        // Custom made products carry the chosen design and text; `productId` always
+        // points at the real product (a personalised line has its own cart id)
         const orderProductDtos = cartItems.map(item => ({
-            productId: item.id,
-            quantity: item.quantity
+            productId: item.productId ?? item.id,
+            quantity: item.quantity,
+            ...(item.customization ? {
+                customization: {
+                    designId: item.customization.designId,
+                    text: item.customization.text
+                }
+            } : {})
         }));
 
         const orderDtoRequest = {
@@ -115,15 +123,14 @@ export default function Checkout() {
             totalAmount: cartItems.reduce((total, item) => total + item.quantity * item.price, 0)
         };
 
-        console.log("Sanitized Form Data:", orderDtoRequest);
-
         setIsSubmitting(true);
 
         const orderItems = cartItems.map(item => ({
             name: item.name,
             price: item.price,
             quantity: item.quantity,
-            image: item.imageList[0]?.path
+            image: item.imageList[0]?.path,
+            ...(item.customization ? { customization: item.customization } : {})
         }));
         const totalAmount = cartItems.reduce((total, item) => total + item.quantity * item.price, 0);
 
@@ -365,6 +372,11 @@ export default function Checkout() {
                                     />
                                     <div className="order-item-details">
                                         <p className="order-item-name">{item.name}</p>
+                                        {item.customization && (
+                                            <p className="order-item-customization">
+                                                {item.customization.designName} · „{item.customization.text}“
+                                            </p>
+                                        )}
                                         <p className="order-item-qty">Količina: {item.quantity}</p>
                                     </div>
                                     <p className="order-item-price">{item.price * item.quantity} rsd</p>

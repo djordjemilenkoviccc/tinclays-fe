@@ -12,7 +12,6 @@ export default function ProtectedRoute({ children }) {
 
     // Once loading is done, check authentication
     if (!isAuthenticated) {
-        console.log("Not authenticated, redirecting to login...");
         return <Navigate to="/login" replace />;
     }
 

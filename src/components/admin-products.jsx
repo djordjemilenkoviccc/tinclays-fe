@@ -6,6 +6,7 @@ import { addProduct, loadAllProducts, archiveProduct } from '../api/product-api'
 import { loadAllCategoriesWithIdAndNames } from '../api/category-api';
 import { getImageUrl } from '../utils/image-utils';
 import { getErrorMessage } from '../utils/error-handler';
+import { isCustomProduct } from '../utils/custom-product';
 
 export default function AdminProducts() {
     const { isAuthenticated } = useContext(AuthContext);
@@ -32,6 +33,10 @@ export default function AdminProducts() {
     const [stock, setStock] = useState('');
     const [showOnSite, setShowOnSite] = useState(false);
 
+    // Custom made product (personalised, e.g. a mug with a chosen design and text)
+    const [customMade, setCustomMade] = useState(false);
+    const [designImages, setDesignImages] = useState([]);
+
     const handleImageChange = (e) => {
         const file = e.target.files[0];
         if (file) {
@@ -45,18 +50,65 @@ export default function AdminProducts() {
         }
     };
 
+    // The file goes to the backend, the data URL is only the preview in this modal
+    const handleDesignImagesChange = async (e) => {
+        const files = Array.from(e.target.files ?? []);
+        if (files.length === 0) return;
+
+        try {
+            const added = await Promise.all(files.map(async (file, index) => {
+                const image = await new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onloadend = () => resolve(reader.result);
+                    reader.onerror = reject;
+                    reader.readAsDataURL(file);
+                });
+
+                return {
+                    file,
+                    image,
+                    name: `Dizajn ${designImages.length + index + 1}`
+                };
+            }));
+
+            setDesignImages((prev) => [...prev, ...added]);
+        } catch (error) {
+            console.error('Error reading design images:', error);
+            setErrorMessage('Greška pri obradi slika dizajna, pokušajte ponovo.');
+        }
+
+        e.target.value = '';
+    };
+
+    const handleDesignNameChange = (index, value) => {
+        setDesignImages((prev) => prev.map((design, i) => (
+            i === index ? { ...design, name: value } : design
+        )));
+    };
+
+    const handleRemoveDesign = (index) => {
+        setDesignImages((prev) => prev.filter((_, i) => i !== index));
+    };
+
+    const resetAddForm = () => {
+        setCustomMade(false);
+        setDesignImages([]);
+    };
+
     const handleAddClose = () => {
         setShowAdd(false);
         setShowSuccessBanner(false);
         setErrorMessage(null);
         setImagePreview(null);
         setIsSubmitting(false);
+        resetAddForm();
     };
 
     const handleAddShow = () => {
         setShowAdd(true);
         setImagePreview(null);
         setIsSubmitting(false);
+        resetAddForm();
     };
 
     const submitAddProduct = async () => {
@@ -75,6 +127,8 @@ export default function AdminProducts() {
                 price: price,
                 stock: stock,
                 showOnSite: showOnSite,
+                customMade: customMade,
+                designNames: customMade ? designImages.map((design) => design.name) : null,
                 archived: false
             })],
             { type: "application/json" }
@@ -86,10 +140,15 @@ export default function AdminProducts() {
             formData.append("images", selectedImage);
         }
 
+        if (customMade) {
+            designImages.forEach((design) => formData.append("designImages", design.file));
+        }
+
         try {
             const response = await addProduct(formData);
             // Reload products from server to get updated data with correct structure
             await fetchAllProducts();
+
             setShowSuccessBanner(true);
             setIsSubmitting(false);
 
@@ -151,9 +210,6 @@ export default function AdminProducts() {
             alert('Proizvod uspesno arhiviran');
             setProducts((prevProducts) => {
                 const updatedProducts = prevProducts.filter((p) => p.id !== product.id);
-                console.log("filtered: " + updatedProducts);
-                console.log("sel. cat: " + selectedCategory);
-
                 if (selectedCategory === '' || selectedCategory === null) {
                     setFilteredProducts(updatedProducts);
                 } else {
@@ -244,6 +300,9 @@ export default function AdminProducts() {
                                 <Card.Text><span style={{ fontWeight: "bold" }}>Cena: </span>{product.price}</Card.Text>
                                 <Card.Text><span style={{ fontWeight: "bold" }}>Na stanju: </span>{product.stock}</Card.Text>
                                 <Card.Text><span style={{ fontWeight: "bold" }}>Prikaz na sajtu: </span>{product.showOnSite ? <span style={{ backgroundColor: "lightGreen" }}>Prikazan</span> : <span style={{ backgroundColor: "#FFCCCB" }}>Pauziran</span>}</Card.Text>
+                                {isCustomProduct(product) && (
+                                    <Card.Text><span style={{ backgroundColor: "#e8ddcf", padding: "2px 8px" }}>Custom made</span></Card.Text>
+                                )}
                             </Card.Body>
                             <Card.Footer className="text-center">
                                 <Button variant="secondary" onClick={() => handleEditProduct(product)}>Izmeni</Button>{' '}
@@ -260,6 +319,22 @@ export default function AdminProducts() {
                 </Modal.Header>
                 <Modal.Body>
                     <Form>
+                        <Form.Group className="mb-3 p-3" style={{ backgroundColor: '#f6f4f0', borderRadius: '6px' }}>
+                            <Form.Check
+                                type="checkbox"
+                                id="customMadeCheck"
+                                label="Custom made proizvod (kupac bira dizajn i tekst)"
+                                checked={customMade}
+                                onChange={(e) => setCustomMade(e.target.checked)}
+                            />
+                            {customMade && (
+                                <Form.Text className="text-muted">
+                                    Kupac na posebnoj strani bira jedan od dizajna i upisuje tekst
+                                    (do 12 karaktera) pre dodavanja u korpu.
+                                </Form.Text>
+                            )}
+                        </Form.Group>
+
                         <Form.Group className="mb-3">
                             <Form.Label>Naziv proizvoda</Form.Label>
                             <Form.Control
@@ -270,7 +345,9 @@ export default function AdminProducts() {
                         </Form.Group>
 
                         <Form.Group className="mb-3">
-                            <Form.Label>Slika proizvoda</Form.Label>
+                            <Form.Label>
+                                {customMade ? 'Slika custom proizvoda' : 'Slika proizvoda'}
+                            </Form.Label>
                             <Form.Control
                                 type="file"
                                 accept="image/*"
@@ -284,6 +361,54 @@ export default function AdminProducts() {
                                 />
                             )}
                         </Form.Group>
+
+                        {customMade && (
+                            <Form.Group className="mb-3">
+                                <Form.Label>Slike dizajna</Form.Label>
+                                <Form.Control
+                                    type="file"
+                                    accept="image/*"
+                                    multiple
+                                    onChange={handleDesignImagesChange}
+                                />
+                                <Form.Text className="text-muted">
+                                    Možete dodati više slika. Naziv dizajna se prikazuje kupcu.
+                                </Form.Text>
+
+                                {designImages.length > 0 && (
+                                    <Row className="mt-3 g-3">
+                                        {designImages.map((design, index) => (
+                                            <Col xs={6} key={`${design.name}-${index}`}>
+                                                <Card>
+                                                    <Card.Img
+                                                        variant="top"
+                                                        src={design.image}
+                                                        style={{ aspectRatio: '1', objectFit: 'cover' }}
+                                                    />
+                                                    <Card.Body className="p-2">
+                                                        <Form.Control
+                                                            size="sm"
+                                                            type="text"
+                                                            value={design.name}
+                                                            onChange={(e) => handleDesignNameChange(index, e.target.value)}
+                                                            placeholder={`Dizajn ${index + 1}`}
+                                                        />
+                                                        <Button
+                                                            variant="outline-danger"
+                                                            size="sm"
+                                                            className="w-100 mt-2"
+                                                            onClick={() => handleRemoveDesign(index)}
+                                                        >
+                                                            Ukloni
+                                                        </Button>
+                                                    </Card.Body>
+                                                </Card>
+                                            </Col>
+                                        ))}
+                                    </Row>
+                                )}
+                            </Form.Group>
+                        )}
 
                         <Form.Group className="mb-3">
                             <Form.Label>Kategorija proizvoda</Form.Label>

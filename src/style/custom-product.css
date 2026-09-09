@@ -1,0 +1,304 @@
+/* ===== Layout ===== */
+.custom-product {
+    padding: 0 5% 60px;
+}
+
+/* ===== Preview column ===== */
+.custom-preview-image-wrapper {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    aspect-ratio: 1;
+    background-color: #fbfaf8;
+}
+
+.custom-preview-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+}
+
+.custom-preview-summary {
+    margin-top: 20px;
+    border-top: 1px solid #ece7df;
+}
+
+.custom-preview-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 14px 0;
+    border-bottom: 1px solid #ece7df;
+}
+
+.custom-preview-label {
+    font-family: 'Raleway', serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #a9c3e6;
+}
+
+.custom-preview-value {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'Raleway', serif;
+    font-size: 15px;
+    font-weight: 500;
+    color: #2a3b59;
+}
+
+.custom-preview-design {
+    width: 36px;
+    height: 36px;
+    object-fit: cover;
+    border: 1px solid #ece7df;
+}
+
+.custom-preview-text {
+    font-family: 'Raleway', serif;
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    color: #2a3b59;
+}
+
+.custom-preview-placeholder {
+    font-family: 'Raleway', serif;
+    font-size: 14px;
+    font-style: italic;
+    color: #b3b9c2;
+}
+
+/* ===== Configurator column ===== */
+.custom-config-description {
+    font-family: 'Raleway', serif;
+    font-size: 14.5px;
+    line-height: 1.6;
+    color: #8a94a3;
+    margin-bottom: 10px;
+}
+
+.custom-config-price {
+    font-family: 'Raleway', serif;
+    font-size: 20px;
+    font-weight: 600;
+    color: #555;
+    letter-spacing: 0.5px;
+    margin-bottom: 32px;
+}
+
+.custom-config-block {
+    margin-bottom: 32px;
+}
+
+.custom-config-title {
+    font-family: 'Raleway', serif;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #2a3b59;
+    margin-bottom: 16px;
+}
+
+.custom-config-empty {
+    font-family: 'Raleway', serif;
+    font-size: 14px;
+    font-style: italic;
+    color: #b3b9c2;
+}
+
+/* ===== Design picker ===== */
+.custom-design-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 14px;
+}
+
+.custom-design-option {
+    padding: 8px;
+    background-color: #fff;
+    border: 1px solid #ece7df;
+    cursor: pointer;
+    transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+    text-align: center;
+}
+
+.custom-design-option:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(42, 59, 89, 0.08);
+}
+
+.custom-design-option.is-selected {
+    border-color: #2a3b59;
+    box-shadow: 0 0 0 1px #2a3b59;
+}
+
+.custom-design-image {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    display: block;
+}
+
+.custom-design-name {
+    display: block;
+    margin-top: 8px;
+    font-family: 'Raleway', serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: #2a3b59;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* ===== Text input ===== */
+.custom-text-input {
+    border-radius: 0;
+    border: 1px solid #ece7df;
+    padding: 12px 14px;
+    font-family: 'Raleway', serif;
+    font-size: 16px;
+    letter-spacing: 1px;
+}
+
+.custom-text-input:focus {
+    border-color: #2a3b59;
+    box-shadow: none;
+}
+
+.custom-text-counter {
+    margin-top: 8px;
+    font-family: 'Raleway', serif;
+    font-size: 12px;
+    color: #a9b0bb;
+}
+
+/* ===== Actions ===== */
+.custom-validation {
+    font-family: 'Raleway', serif;
+    font-size: 13.5px;
+    color: #b03a3a;
+    margin-bottom: 12px;
+}
+
+.custom-add-btn {
+    width: 100%;
+}
+
+.custom-back-btn {
+    display: block;
+    width: 100%;
+    margin-top: 12px;
+    font-family: 'Raleway', serif;
+    font-size: 13.5px;
+    color: #8a94a3;
+    text-decoration: none;
+}
+
+.custom-back-btn:hover {
+    color: #2a3b59;
+}
+
+/* ===== Custom badge on the product grid ===== */
+.custom-made-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 2;
+    padding: 6px 14px;
+    background: #e8ddcf;
+    color: #2a3b59;
+    font-family: 'Raleway', serif;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    border-radius: 4px;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 991px) {
+    .custom-product {
+        padding: 0 5% 40px;
+    }
+
+    .custom-config {
+        margin-top: 8px;
+    }
+}
+
+@media (max-width: 576px) {
+    .custom-note {
+        padding: 14px;
+        gap: 10px;
+    }
+
+    .custom-note-body p {
+        font-size: 12.5px;
+    }
+
+    .custom-design-grid {
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    }
+
+    .custom-config-price {
+        margin-bottom: 24px;
+    }
+}
+
+/* ===== Guarantee note ===== */
+.custom-note {
+    display: flex;
+    /* The icon belongs next to the title, not centred against the whole block */
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 16px;
+    padding: 16px;
+    background-color: #faf8f5;
+    border: 1px solid #ece7df;
+    border-left: 3px solid #e8ddcf;
+    font-family: 'Raleway', serif;
+    text-align: left;
+}
+
+.custom-note-icon {
+    flex-shrink: 0;
+    color: #2a3b59;
+    /* Optically centres the icon on the title's cap height */
+    margin-top: 1px;
+}
+
+.custom-note-body {
+    min-width: 0;
+}
+
+.custom-note-body p {
+    margin: 0 0 8px;
+    font-size: 13px;
+    line-height: 1.65;
+    color: #5c6675;
+    text-wrap: pretty;
+}
+
+.custom-note-body p:last-child {
+    margin-bottom: 0;
+}
+
+.custom-note-title {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    color: #2a3b59 !important;
+}
+
+.custom-note-signoff {
+    font-style: italic;
+    color: #8a94a3 !important;
+}

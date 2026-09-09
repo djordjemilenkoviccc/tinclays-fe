@@ -245,3 +245,17 @@
     background-color: #d0d0d0 !important;
     color: #808080 !important;
 }
+
+/* ===== Custom made products ===== */
+.cart-item-customization {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin-bottom: 6px;
+}
+
+.cart-item-custom-line {
+    font-family: 'Raleway', serif;
+    font-size: 12.5px;
+    color: #8a94a3;
+}

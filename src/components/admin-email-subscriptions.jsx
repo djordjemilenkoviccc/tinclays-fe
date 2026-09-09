@@ -71,7 +71,6 @@ export default function AdminEmailSubscriptions() {
 
             const response = await sendNewCollectionAnnouncement();
             setSendSuccess(response.message);
-            console.log('Bulk email sent successfully:', response.message);
         } catch (error) {
             if (error.status === 401 || error.status === 403) {
                 console.warn('Unauthorized: Redirecting to login.');

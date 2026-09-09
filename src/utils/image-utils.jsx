@@ -11,6 +11,5 @@ export const getImageUrl = (path) => {
         relativePath = path.substring('images/'.length);
     }
 
-    console.log('getImageUrl - relativePath:', relativePath);
     return `${baseUrl}?path=${encodeURIComponent(relativePath)}`;
 };

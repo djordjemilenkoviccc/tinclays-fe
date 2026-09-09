@@ -48,7 +48,6 @@ export default function AdminMainPage() {
             const response = await editMainMessage(mainMessage, showOnSiteMainMessage, collectionDate, showOnSiteCollectionDate);
 
             if (response) {
-                console.log('Main message updated successfully');
                 setMessageSaved(true);
                 setShowSuccessBanner(true);
             }

@@ -8,7 +8,6 @@ export const fetchMainMessage = async () => {
     });
 
     await handleResponse(response);
-    console.log("BASE URL: " + BASE_URL);
     return await response.json();
 };
 

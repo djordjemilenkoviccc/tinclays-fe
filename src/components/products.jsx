@@ -1,24 +1,36 @@
 import React, { useContext } from 'react';
 import { Row, Col, Button } from 'react-bootstrap';
 import { CartContext } from './cart-context';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { fetchProductsByCategoryId } from '../api/product-api';
 import { getImageUrl } from '../utils/image-utils';
 import EmailNotificationModal from './email-notification-modal';
+import { isCustomProduct } from '../utils/custom-product';
 import '../style/products.css';
+import '../style/custom-product.css';
 import '../style/home.css';
 
 export default function Products() {
     const { cartItems, addToCart } = useContext(CartContext);
     const { categoryId } = useParams();
+    const navigate = useNavigate();
     const [products, setProducts] = useState([]);
     const [categoryName, setCategoryName] = useState('');
     const [showEmailModal, setShowEmailModal] = useState(false);
 
+    // A custom made product can be in the cart several times (one line per
+    // design/text combination), so every line of the product counts
     const getCartItemQuantity = (productId) => {
-        const cartItem = cartItems.find(item => item.id === productId);
-        return cartItem ? cartItem.quantity : 0;
+        return cartItems.reduce((total, item) => (
+            item.id === productId || item.productId === productId
+                ? total + item.quantity
+                : total
+        ), 0);
+    };
+
+    const goToCustomization = (product) => {
+        navigate(`/custom-product/${categoryId}/${product.id}`, { state: { product } });
     };
 
     useEffect(() => {
@@ -95,11 +107,18 @@ export default function Products() {
                         const cartQuantity = getCartItemQuantity(product.id);
                         const isOutOfStock = product.stock <= 0;
                         const isMaxQuantityReached = cartQuantity >= product.stock;
+                        const isCustom = isCustomProduct(product);
                         const buttonLabel = isOutOfStock
                             ? "Nema na stanju"
                             : isMaxQuantityReached
                                 ? "Maksimalna količina"
-                                : "Dodaj u korpu";
+                                : isCustom
+                                    ? "Personalizuj"
+                                    : "Dodaj u korpu";
+                        // Custom made products are configured on their own page
+                        const handleProductAction = () => (
+                            isCustom ? goToCustomization(product) : addToCart(product)
+                        );
 
                         return (
                             <Col
@@ -116,6 +135,9 @@ export default function Products() {
                                         {isOutOfStock && (
                                             <div className="out-of-stock-badge">Nema na stanju</div>
                                         )}
+                                        {isCustom && (
+                                            <div className="custom-made-badge">Po želji</div>
+                                        )}
                                         <img
                                             src={getImageUrl(product.imageList[0].detailsPath)}
                                             alt={product.name}
@@ -125,7 +147,7 @@ export default function Products() {
                                         <div className="product-overlay">
                                             <Button
                                                 className="add-to-cart-btn"
-                                                onClick={() => addToCart(product)}
+                                                onClick={handleProductAction}
                                                 disabled={isMaxQuantityReached}
                                             >
                                                 {buttonLabel}
@@ -148,7 +170,7 @@ export default function Products() {
                                     {/* Mobile-only button */}
                                     <Button
                                         className="add-to-cart-btn add-to-cart-btn-mobile"
-                                        onClick={() => addToCart(product)}
+                                        onClick={handleProductAction}
                                         disabled={isMaxQuantityReached}
                                     >
                                         {buttonLabel}

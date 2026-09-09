@@ -19,12 +19,10 @@ export const compressProductImage = async (imageFile, maxSizeKB = 25) => {
       fileType: 'image/jpeg',            // JPEG has best compression
     };
 
-    console.log(`Original file size: ${(imageFile.size / 1024).toFixed(2)} KB`);
 
     // Compress the image
     const compressedFile = await imageCompression(imageFile, options);
 
-    console.log(`Compressed file size: ${(compressedFile.size / 1024).toFixed(2)} KB`);
 
     return compressedFile;
   } catch (error) {
