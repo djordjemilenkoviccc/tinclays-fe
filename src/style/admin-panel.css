@@ -71,10 +71,16 @@
 
 .order-product-row {
     display: flex;
-    align-items: center;
-    gap: 12px;
+    flex-direction: column;
     padding: 8px 0;
     border-bottom: 1px solid #f5f5f5;
+}
+
+/* Thumbnail, name/quantity and price stay on one line ... */
+.order-product-main {
+    display: flex;
+    align-items: center;
+    gap: 12px;
 }
 
 .order-product-row:last-child {
@@ -204,41 +210,62 @@
     vertical-align: middle;
 }
 
+/* ... and the personalisation details get the full card width underneath,
+   so the design name and the printed text never wrap letter by letter */
 .order-product-custom {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-top: 8px;
-    padding: 8px 10px;
-    background-color: #faf8f5;
-    border: 1px solid #ece7df;
+    width: 100%;
+    margin-top: 10px;
+    padding: 10px 12px;
+    background-color: #f7f2ea;
+    border: 1px solid #ddd0bc;
+    border-left: 4px solid #a08d72;
     border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(42, 59, 89, 0.08);
+}
+
+.order-custom-title {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #8a7458;
+    margin-bottom: 8px;
+}
+
+.order-custom-body {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
 }
 
 .order-custom-design-img {
-    width: 44px;
-    height: 44px;
+    width: 56px;
+    height: 56px;
     object-fit: cover;
     border-radius: 6px;
-    border: 1px solid #ece7df;
+    border: 1px solid #ddd0bc;
+    background-color: #fff;
     flex-shrink: 0;
 }
 
 .order-custom-details {
+    flex: 1;
     min-width: 0;
 }
 
 .order-custom-line {
     display: flex;
     align-items: baseline;
-    gap: 6px;
+    gap: 10px;
     margin: 0;
     font-size: 13px;
     color: #333;
 }
 
 .order-custom-line + .order-custom-line {
-    margin-top: 2px;
+    margin-top: 6px;
+    padding-top: 6px;
+    border-top: 1px dashed #e2d6c2;
 }
 
 .order-custom-label {
@@ -246,9 +273,16 @@
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    color: #a08d72;
+    color: #8a7458;
     flex-shrink: 0;
-    min-width: 42px;
+    width: 46px;
+}
+
+.order-custom-value {
+    font-size: 13px;
+    font-weight: 600;
+    color: #2a3b59;
+    word-break: break-word;
 }
 
 /* The text is what actually gets printed, so it stays easy to read letter by letter */

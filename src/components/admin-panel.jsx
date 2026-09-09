@@ -280,24 +280,31 @@ export default function AdminPanel() {
                                     {order.products.map((product, productIndex) =>
                                         product.images.map((image, imageIndex) => (
                                             <div className="order-product-row" key={`product-${productIndex}-image-${imageIndex}`}>
-                                                <img
-                                                    src={getImageUrl(image.path)}
-                                                    alt={product.productName}
-                                                    className="order-product-img"
-                                                />
-                                                <div className="order-product-info">
-                                                    <p className="order-product-name">
-                                                        {product.productName}
-                                                        {product.customText && (
-                                                            <span className="order-custom-badge">Po želji</span>
-                                                        )}
-                                                    </p>
-                                                    <p className="order-product-qty">x {product.quantity}</p>
+                                                <div className="order-product-main">
+                                                    <img
+                                                        src={getImageUrl(image.path)}
+                                                        alt={product.productName}
+                                                        className="order-product-img"
+                                                    />
+                                                    <div className="order-product-info">
+                                                        <p className="order-product-name">
+                                                            {product.productName}
+                                                            {product.customText && (
+                                                                <span className="order-custom-badge">Po želji</span>
+                                                            )}
+                                                        </p>
+                                                        <p className="order-product-qty">x {product.quantity}</p>
+                                                    </div>
+                                                    <span className="order-product-price">{product.price * product.quantity} rsd</span>
+                                                </div>
 
-                                                    {/* What has to be put on a personalised product.
-                                                        Shown once per product, not once per image. */}
-                                                    {imageIndex === 0 && (product.designName || product.customText) && (
-                                                        <div className="order-product-custom">
+                                                {/* What has to be put on a personalised product. Kept on its own
+                                                    full-width row so the design and text stay readable.
+                                                    Shown once per product, not once per image. */}
+                                                {imageIndex === 0 && (product.designName || product.customText) && (
+                                                    <div className="order-product-custom">
+                                                        <div className="order-custom-title">Personalizacija</div>
+                                                        <div className="order-custom-body">
                                                             {product.designImagePath && (
                                                                 <img
                                                                     src={getImageUrl(product.designImagePath)}
@@ -307,22 +314,21 @@ export default function AdminPanel() {
                                                             )}
                                                             <div className="order-custom-details">
                                                                 {product.designName && (
-                                                                    <p className="order-custom-line">
+                                                                    <div className="order-custom-line">
                                                                         <span className="order-custom-label">Dizajn</span>
-                                                                        {product.designName}
-                                                                    </p>
+                                                                        <span className="order-custom-value">{product.designName}</span>
+                                                                    </div>
                                                                 )}
                                                                 {product.customText && (
-                                                                    <p className="order-custom-line">
+                                                                    <div className="order-custom-line">
                                                                         <span className="order-custom-label">Tekst</span>
                                                                         <span className="order-custom-text">{product.customText}</span>
-                                                                    </p>
+                                                                    </div>
                                                                 )}
                                                             </div>
                                                         </div>
-                                                    )}
-                                                </div>
-                                                <span className="order-product-price">{product.price * product.quantity} rsd</span>
+                                                    </div>
+                                                )}
                                             </div>
                                         ))
                                     )}
