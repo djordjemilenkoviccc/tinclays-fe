@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 import { AuthContext } from './auth-context';
 import { Card, Button, Row, Col, Dropdown, DropdownButton, Form } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-import { loadOrdersByStatus, changeOrderStatus, sendPaymentSlip, markOrderAsPaid, notifyOrderShipped } from '../api/order-api';
+import { loadOrdersByStatus, changeOrderStatus, markOrderAsPaid, notifyOrderShipped } from '../api/order-api';
 import { Pencil } from 'react-bootstrap-icons';
 import { getImageUrl } from "../utils/image-utils";
 
@@ -31,7 +31,6 @@ export default function AdminPanel() {
     const navigate = useNavigate();
 
     const [orders, setOrders] = useState(null);
-    const [sendingSlipOrderId, setSendingSlipOrderId] = useState(null);
     const [sendingShippedOrderId, setSendingShippedOrderId] = useState(null);
 
     const fetchOrders = async () => {
@@ -69,25 +68,6 @@ export default function AdminPanel() {
                 console.error('Failed to change status of order: ', error.message);
                 // TODO: Show alert
             }
-        }
-    };
-
-    const handleSendPaymentSlip = async (orderId) => {
-        setSendingSlipOrderId(orderId);
-        try {
-            await sendPaymentSlip(orderId);
-            setOrders(orders.map(o => o.id === orderId ? { ...o, slipSent: true } : o));
-            alert('Uplatnica je uspešno poslata!');
-        } catch (error) {
-            if (error.status === 401 || error.status === 403) {
-                console.warn('Unauthorized: Redirecting to login.');
-                navigate('/login');
-            } else {
-                console.error('Failed to send payment slip: ', error.message);
-                alert('Greška prilikom slanja uplatnice.');
-            }
-        } finally {
-            setSendingSlipOrderId(null);
         }
     };
 
@@ -196,7 +176,6 @@ export default function AdminPanel() {
                                     </div>
                                     {(() => {
                                         const steps = [
-                                            { label: "Uplatnica poslata", done: !!order.slipSent, color: "#1565c0" },
                                             { label: "Plaćeno", done: !!order.paid, color: "#1565c0" },
                                             { label: "Poslato", done: !!order.shipped, color: "#1565c0" },
                                         ];
@@ -387,16 +366,6 @@ export default function AdminPanel() {
 
                                 {/* Action buttons */}
                                 <div className="order-section" style={{ paddingTop: "0", display: "flex", flexDirection: "column", gap: "8px" }}>
-                                    {order.status === "IN_PROGRESS" && !order.slipSent && (
-                                        <Button
-                                            className="w-100"
-                                            style={{ backgroundColor: '#6f42c1', borderColor: '#6f42c1', borderRadius: '8px', padding: '10px' }}
-                                            onClick={() => handleSendPaymentSlip(order.id)}
-                                            disabled={sendingSlipOrderId === order.id}
-                                        >
-                                            {sendingSlipOrderId === order.id ? 'Slanje...' : 'Pošalji uplatnicu'}
-                                        </Button>
-                                    )}
                                     {!order.shipped && (
                                         <Button
                                             className="w-100"

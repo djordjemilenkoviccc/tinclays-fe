@@ -35,7 +35,7 @@ export default function Faq() {
             items: [
                 {
                     question: "Kako funkcioniše prodaja?",
-                    answer: "Prodaja trenutno funkcioniše na sledeći način. Nakon što izaberete proizvod koji želite i kreirate porudžbinu, na Vaš email ćemo poslati instrukcije za plaćanje. Plaćanje možete izvršiti u pošti ili preko mobilne aplikacije Vaše banke popunjavanjem uplatnice ili skeniranjem QR koda iz aplikacije banke. Nakon što evidentiramo uplatu, Vaš proizvod šaljemo brzom poštom.",
+                    answer: "Prodaja trenutno funkcioniše na sledeći način. Nakon što izaberete proizvod koji želite i kreirate porudžbinu, na Vaš email ćete odmah dobiti potvrdu porudžbine sa instrukcijama za plaćanje. Plaćanje možete izvršiti u pošti ili preko mobilne aplikacije Vaše banke popunjavanjem uplatnice ili skeniranjem QR koda iz aplikacije banke. Nakon što evidentiramo uplatu, Vaš proizvod šaljemo brzom poštom.",
                 },
                 {
                     question: "Koji je način preuzimanja i slanja?",

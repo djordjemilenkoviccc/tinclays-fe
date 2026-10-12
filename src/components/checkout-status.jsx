@@ -34,7 +34,7 @@ export default function CheckoutStatus() {
                         </p>
                     )}
                     <p className="status-description">
-                        Proverite Vaš email {customerEmail && <strong>({customerEmail})</strong>} na koji ćemo poslati detalje o porudžbini kao i uputstvo za plaćanje.
+                        Proverite Vaš email {customerEmail && <strong>({customerEmail})</strong>} na koji smo poslali potvrdu porudžbine sa uputstvom za plaćanje.
                     </p>
                 </div>
             )}
