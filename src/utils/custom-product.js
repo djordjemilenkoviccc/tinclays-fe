@@ -9,7 +9,7 @@ import { getImageUrl } from './image-utils';
  */
 
 /** Maximum number of characters the customer may print on the product. */
-export const CUSTOM_TEXT_MAX_LENGTH = 12;
+export const CUSTOM_TEXT_MAX_LENGTH = 20;
 
 /** True when the product has to be personalised before it can be bought. */
 export const isCustomProduct = (product) => {

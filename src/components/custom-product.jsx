@@ -219,7 +219,6 @@ export default function CustomProduct() {
                                     value={customText}
                                     onChange={handleTextChange}
                                     maxLength={CUSTOM_TEXT_MAX_LENGTH}
-                                    placeholder="Npr. Mogu sve"
                                 />
                                 <div className="custom-text-counter">
                                     {customText.length}/{CUSTOM_TEXT_MAX_LENGTH} karaktera
