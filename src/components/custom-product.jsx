@@ -212,7 +212,7 @@ export default function CustomProduct() {
                             </div>
 
                             <div className="custom-config-block">
-                                <h2 className="custom-config-title">2. Upišite tekst</h2>
+                                <h2 className="custom-config-title">2. Upišite tekst (latinica)</h2>
                                 <Form.Control
                                     type="text"
                                     className="custom-text-input"
